@@ -1,34 +1,66 @@
-
 body {
   font-family: Arial, sans-serif;
+  background: #eef2f6;
+  margin: 0;
+}
+
+.container {
+  max-width: 480px;
+  margin: auto;
   padding: 15px;
-  background: #f5f5f5;
 }
 
-h1 {
-  text-align: center;
-}
-
-fieldset {
-  border: 1px solid #ccc;
+.progress-bar {
+  height: 6px;
+  background: #ccc;
+  border-radius: 5px;
   margin-bottom: 15px;
-  padding: 10px;
+}
+
+#progress {
+  height: 100%;
+  width: 0%;
+  background: #007bff;
+  border-radius: 5px;
+}
+
+.step {
+  display: none;
   background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.step.active {
+  display: block;
 }
 
 label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-input, select, button {
+input, select, textarea, button {
   width: 100%;
-  padding: 6px;
+  padding: 8px;
   margin-top: 4px;
 }
 
+textarea {
+  resize: vertical;
+}
+
 button {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
   margin-top: 10px;
+}
+
+.nav {
+  display: flex;
+  gap: 10px;
 }
 
 .hidden {
