@@ -88,27 +88,75 @@ function mostrarResumo(d) {
   r.innerHTML = html;
   r.classList.remove("hidden");
 }
-
 async function confirmarEnvio() {
   const { jsPDF } = window.jspdf;
+  const d = window.dadosResumo;
   const pdf = new jsPDF();
-  pdf.text("Cadastro de Poço", 10, 10);
-  let y = 20;
 
-  Object.entries(window.dadosResumo).forEach(([k, v]) => {
-    pdf.text(`${k}: ${v}`, 10, y);
-    y += 7;
+  let y = 10;
+
+  pdf.setFontSize(14);
+  pdf.text("LAUDO DE CADASTRO DE POÇO TUBULAR", 105, y, { align: "center" });
+
+  y += 10;
+  pdf.setFontSize(10);
+
+  pdf.text(`Cliente: ${d.cliente}`, 10, y); y += 6;
+  pdf.text(`Endereço: ${d.endereco}`, 10, y); y += 6;
+  pdf.text(`Empresa Perfuradora: ${d.empresa || "-"}`, 10, y); y += 6;
+
+  pdf.line(10, y, 200, y); y += 6;
+
+  pdf.text(`Profundidade do Poço: ${d.profundidade} m`, 10, y); y += 6;
+  pdf.text(`Método de Perfuração: ${d.metodo}`, 10, y); y += 6;
+
+  pdf.line(10, y, 200, y); y += 6;
+
+  pdf.text("REVESTIMENTO", 10, y); y += 6;
+  pdf.text(`Tipo: ${document.getElementById("tipoRevPoco").value}`, 10, y); y += 6;
+  pdf.text(`Material: ${d.materialRev}`, 10, y); y += 6;
+  pdf.text(`Polegadas: ${d.polRev}"`, 10, y); y += 6;
+
+  if (d.compRev) {
+    pdf.text(`Comprimento: ${d.compRev} m`, 10, y); y += 6;
+  }
+
+  pdf.line(10, y, 200, y); y += 6;
+
+  pdf.text("HIDRÁULICA", 10, y); y += 6;
+  pdf.text(`NE: ${d.ne} m`, 10, y); y += 6;
+  pdf.text(`ND: ${d.nd} m`, 10, y); y += 6;
+  pdf.text(`Posição da Bomba: ${d.posBomba} m`, 10, y); y += 6;
+  pdf.text(`Vazão do Poço: ${d.vazPoco || "-"} m³/h`, 10, y); y += 6;
+  pdf.text(`Vazão da Bomba: ${d.vazBomba || "-"} m³/h`, 10, y); y += 6;
+
+  pdf.line(10, y, 200, y); y += 6;
+
+  pdf.text("GEOLOGIA", 10, y); y += 6;
+  pdf.text(pdf.splitTextToSize(d.geologia || "-", 180), 10, y);
+  y += 10;
+
+  pdf.text("FRATURAS", 10, y); y += 6;
+  pdf.text(pdf.splitTextToSize(d.fraturas || "-", 180), 10, y);
+
+  // GERA PDF
+  const blob = pdf.output("blob");
+
+  // CONVERTE PARA BASE64
+  const base64 = await new Promise(resolve => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result.split(",")[1]);
+    r.readAsDataURL(blob);
   });
 
-  const blob = pdf.output("blob");
-  const reader = new FileReader();
-  reader.onload = async () => {
-    await emailjs.send("SEU_SERVICE_ID", "SEU_TEMPLATE_ID", {
-      cliente: window.dadosResumo.cliente,
-      pdf: reader.result.split(",")[1]
-    });
-    alert("Poço enviado com sucesso!");
-    location.reload();
-  };
-  reader.readAsDataURL(blob);
+  // ENVIO EMAIL
+  await emailjs.send("SEU_SERVICE_ID", "SEU_TEMPLATE_ID", {
+    cliente: d.cliente,
+    endereco: d.endereco,
+    mensagem: "Segue em anexo o laudo de cadastro do poço.",
+    pdf: base64
+  });
+
+  alert("Poço enviado com sucesso!");
+  location.reload();
 }
