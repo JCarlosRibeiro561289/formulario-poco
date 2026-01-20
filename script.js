@@ -1,52 +1,77 @@
-let stepAtual = 0;
-const steps = document.querySelectorAll(".step");
-const progress = document.getElementById("progress");
-
-function showStep() {
-  steps.forEach((s, i) => {
-    s.classList.toggle("active", i === stepAtual);
-  });
-  progress.style.width = ((stepAtual + 1) / steps.length) * 100 + "%";
+function alternarRevestimento() {
+  const tipo = tipoRevPoco.value;
+  areaFiltros.classList.toggle("hidden", tipo !== "total");
+  revComprimento.classList.toggle("hidden", tipo === "total");
 }
-
-function nextStep() {
-  if (stepAtual < steps.length - 1) {
-    stepAtual++;
-    showStep();
-  }
-}
-
-function prevStep() {
-  if (stepAtual > 0) {
-    stepAtual--;
-    showStep();
-  }
-}
-
-showStep();
-
-// Revestimento
-const tipoColuna = document.getElementById("tipoColuna");
-const campoTotal = document.getElementById("campoTotal");
-const campoParcial = document.getElementById("campoParcial");
-const listaFiltros = document.getElementById("listaFiltros");
-
-tipoColuna.addEventListener("change", () => {
-  campoTotal.classList.toggle("hidden", tipoColuna.value === "parcial");
-  campoParcial.classList.toggle("hidden", tipoColuna.value !== "parcial");
-});
 
 function addFiltro() {
   const div = document.createElement("div");
   div.className = "filtro";
   div.innerHTML = `
-    <input type="number" placeholder="Início (m)">
-    <input type="number" placeholder="Fim (m)">
+    <input class="ini" type="number" placeholder="Início (m)">
+    <input class="fim" type="number" placeholder="Fim (m)">
   `;
-  listaFiltros.appendChild(div);
+  filtros.appendChild(div);
 }
 
-document.getElementById("formPoco").addEventListener("submit", function(e) {
-  e.preventDefault();
-  alert("Resumo será implementado na próxima etapa.");
-});
+function gerarResumo() {
+  const prof = +profundidade.value;
+  const ndv = +nd.value;
+  const bomba = +posBomba.value;
+
+  if (ndv >= bomba) {
+    alert("ND não pode ser maior ou igual à posição da bomba");
+    return;
+  }
+
+  const dados = {
+    cliente: cliente.value,
+    documento: documento.value,
+    endereco: endereco.value,
+    empresa: empresa.value,
+    metodo: metodo.value,
+    profundidade: prof,
+    materialRev: materialRev.value,
+    polRev: polRev.value,
+    compRev: compRev.value,
+    ne: ne.value,
+    nd: nd.value,
+    posBomba: posBomba.value,
+    vazPoco: vazPoco.value,
+    vazBomba: vazBomba.value,
+    geologia: geologia.value,
+    fraturas: fraturas.value
+  };
+
+  mostrarResumo(dados);
+}
+
+function mostrarResumo(d) {
+  let html = `
+  <div class="card resumo-card">
+    <h2>Resumo do Poço</h2>
+
+    <h3>Cliente</h3>
+    <p><b>${d.cliente}</b></p>
+    <p>${d.endereco}</p>
+
+    <h3>Perfuração</h3>
+    <p>Empresa: ${d.empresa}</p>
+    <p>Método: ${d.metodo}</p>
+    <p>Profundidade: ${d.profundidade} m</p>
+
+    <h3>Hidráulica</h3>
+    <p>NE: ${d.ne} m</p>
+    <p>ND: ${d.nd} m</p>
+    <p>Bomba: ${d.posBomba} m</p>
+
+    <div class="nav">
+      <button onclick="location.reload()">Editar</button>
+      <button onclick="alert('PDF + Email (próxima etapa)')">Confirmar e Enviar</button>
+    </div>
+  </div>
+  `;
+  app.classList.add("hidden");
+  resumo.innerHTML = html;
+  resumo.classList.remove("hidden");
+}
