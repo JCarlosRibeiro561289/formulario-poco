@@ -3,11 +3,10 @@ const steps = document.querySelectorAll(".step");
 const progress = document.getElementById("progress");
 
 function showStep() {
-  steps.forEach((s, i) => {
-    s.classList.toggle("active", i === stepAtual);
-  });
+  steps.forEach((s, i) => s.classList.toggle("active", i === stepAtual));
   progress.style.width = ((stepAtual + 1) / steps.length) * 100 + "%";
 }
+showStep();
 
 function nextStep() {
   if (stepAtual < steps.length - 1) {
@@ -22,8 +21,6 @@ function prevStep() {
     showStep();
   }
 }
-
-showStep();
 
 // Revestimento
 const tipoColuna = document.getElementById("tipoColuna");
@@ -40,13 +37,11 @@ function addFiltro() {
   const div = document.createElement("div");
   div.className = "filtro";
   div.innerHTML = `
-    <input type="number" placeholder="Início (m)">
-    <input type="number" placeholder="Fim (m)">
+    <input type="text" class="numero" inputmode="decimal" placeholder="Início (m)">
+    <input type="text" class="numero" inputmode="decimal" placeholder="Fim (m)">
   `;
   listaFiltros.appendChild(div);
 }
 
-document.getElementById("formPoco").addEventListener("submit", function(e) {
-  e.preventDefault();
-  alert("Resumo será implementado na próxima etapa.");
-});
+// Máscara numérica
+d
