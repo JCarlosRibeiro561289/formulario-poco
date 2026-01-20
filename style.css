@@ -44,50 +44,40 @@ label {
   color: #64748b;
 }
 
-input, select, textarea {
+input, select {
   padding: 14px;
   border-radius: 12px;
   border: 1px solid #cbd5f5;
-  font-size: 1rem;
 }
 
 button {
   padding: 14px;
   border-radius: 12px;
   border: none;
-  cursor: pointer;
 }
 
-.primary {
-  background: linear-gradient(90deg,#2563eb,#1d4ed8);
-  color: #fff;
-}
+.primary { background:#2563eb;color:#fff; }
+.secondary { background:#e5e7eb; }
 
-.secondary {
-  background: #e5e7eb;
-}
+.nav { display:flex; gap:10px; }
 
-.nav {
-  display: flex;
-  gap: 10px;
-}
+.filtro { display:flex; gap:8px; margin-bottom:6px; }
 
-.filtro {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-}
+.hidden { display:none; }
 
-.hidden { display: none; }
+.erro {
+  color:#b91c1c;
+  font-size:.75rem;
+  margin-bottom:10px;
+}
 
 table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
+  width:100%;
+  border-collapse:collapse;
 }
 
-td, th {
-  border: 1px solid #e5e7eb;
-  padding: 8px;
-  text-align: center;
+td,th {
+  border:1px solid #e5e7eb;
+  padding:6px;
+  text-align:center;
 }
