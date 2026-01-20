@@ -69,25 +69,96 @@ document.getElementById("formPoco").addEventListener("submit", async e => {
 
 /* Resumo + PDF + Email */
 function mostrarResumo(d) {
-  let html = `<div class="card">
+  let html = `
+  <div class="card">
     <h2>Resumo do Poço</h2>
+
+    <h3>Cliente</h3>
     <p><b>Cliente:</b> ${d.cliente}</p>
+    <p><b>Documento:</b> ${d.documento || "-"}</p>
     <p><b>Endereço:</b> ${d.endereco}</p>
-    <p><b>Profundidade:</b> ${d.profundidade} m</p>
-    <p><b>NE:</b> ${d.ne} m | <b>ND:</b> ${d.nd} m</p>
-    <p><b>Bomba:</b> ${d.posBomba} m</p>
+
+    <h3>Perfuração</h3>
+    <p><b>Empresa Perfuradora:</b> ${d.empresa || "-"}</p>
+    <p><b>Método:</b> ${d.metodo}</p>
+    <p><b>Profundidade do Poço:</b> ${d.profundidade} m</p>
+
+    <h3>Revestimento do Poço</h3>
+    <p><b>Tipo:</b> ${document.getElementById("tipoRevPoco").value}</p>
+    <p><b>Material:</b> ${d.materialRev}</p>
+    <p><b>Polegadas:</b> ${d.polRev}"</p>
+  `;
+
+  if (d.compRev) {
+    html += `<p><b>Comprimento:</b> ${d.compRev} m</p>`;
+  }
+
+  /* Se for TOTAL, mostra filtros */
+  if (document.getElementById("tipoRevPoco").value === "total") {
+    html += `
+      <h4>Revestimento (Liso / Filtro)</h4>
+      <table>
+        <tr>
+          <th>Início (m)</th>
+          <th>Fim (m)</th>
+          <th>Tipo</th>
+        </tr>
+    `;
+
+    const profundidade = parseFloat(d.profundidade);
+    let filtros = [];
+
+    document.querySelectorAll(".filtro").forEach(f => {
+      const ini = parseFloat(f.querySelector(".ini").value);
+      const fim = parseFloat(f.querySelector(".fim").value);
+      if (!isNaN(ini) && !isNaN(fim)) filtros.push({ ini, fim });
+    });
+
+    filtros.sort((a, b) => a.ini - b.ini);
+
+    let atual = 0;
+    filtros.forEach(f => {
+      if (f.ini > atual) {
+        html += `<tr><td>${atual}</td><td>${f.ini}</td><td>Liso</td></tr>`;
+      }
+      html += `<tr><td>${f.ini}</td><td>${f.fim}</td><td>Filtro</td></tr>`;
+      atual = f.fim;
+    });
+
+    if (atual < profundidade) {
+      html += `<tr><td>${atual}</td><td>${profundidade}</td><td>Liso</td></tr>`;
+    }
+
+    html += `</table>`;
+  }
+
+  html += `
+    <h3>Hidráulica</h3>
+    <p><b>NE:</b> ${d.ne} m</p>
+    <p><b>ND:</b> ${d.nd} m</p>
+    <p><b>Posição da Bomba:</b> ${d.posBomba} m</p>
+    <p><b>Vazão do Poço:</b> ${d.vazPoco || "-"} m³/h</p>
+    <p><b>Vazão da Bomba:</b> ${d.vazBomba || "-"} m³/h</p>
+
+    <h3>Geologia</h3>
+    <p>${d.geologia || "-"}</p>
+
+    <h3>Fraturas</h3>
+    <p>${d.fraturas || "-"}</p>
 
     <div class="nav">
       <button class="secondary" onclick="location.reload()">Editar</button>
       <button class="primary" onclick="confirmarEnvio()">Confirmar e Enviar</button>
     </div>
-  </div>`;
+  </div>
+  `;
 
   document.getElementById("app").classList.add("hidden");
   const r = document.getElementById("resumo");
   r.innerHTML = html;
   r.classList.remove("hidden");
 }
+
 async function confirmarEnvio() {
   const { jsPDF } = window.jspdf;
   const d = window.dadosResumo;
