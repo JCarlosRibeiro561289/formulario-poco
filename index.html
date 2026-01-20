@@ -1,123 +1,195 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Cadastro de Poço</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="style.css">
-
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Cadastro de Poço</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container" id="app">
-  <div class="progress-bar"><div id="progress"></div></div>
+<div class="container">
+
+  <div class="progress-bar">
+    <div id="progress"></div>
+  </div>
 
   <form id="formPoco">
 
     <!-- ETAPA 1 -->
     <section class="step active">
-      <div class="card">
-        <h2>Cliente</h2>
-        <label>Cliente<input name="cliente" required></label>
-        <label>Documento<input name="documento"></label>
-        <label>Endereço<input name="endereco" required></label>
-        <button type="button" class="primary" onclick="next()">Avançar</button>
-      </div>
+      <h2>Cliente</h2>
+
+      <label>Cliente
+        <input type="text" name="cliente" required>
+      </label>
+
+      <label>CNPJ / Documento
+        <input type="text" name="documento">
+      </label>
+
+      <label>Endereço do Poço
+        <input type="text" name="endereco" required>
+      </label>
+
+      <button type="button" onclick="nextStep()">Avançar</button>
     </section>
 
     <!-- ETAPA 2 -->
     <section class="step">
-      <div class="card">
-        <h2>Perfuração</h2>
-        <label>Empresa Perfuradora<input name="empresa"></label>
-        <label>Profundidade do Poço (m)<input class="num" name="profundidade" required></label>
-        <label>Método
-          <select name="metodo">
-            <option>Rotativa</option>
-            <option>Pneumático</option>
-            <option>Ambos</option>
-          </select>
-        </label>
-        <div class="nav">
-          <button type="button" class="secondary" onclick="prev()">Voltar</button>
-          <button type="button" class="primary" onclick="next()">Avançar</button>
-        </div>
+      <h2>Perfuração</h2>
+
+      <label>Empresa Perfuradora
+        <input type="text" name="empresa">
+      </label>
+
+      <label>Encarregado
+        <input type="text" name="encarregado">
+      </label>
+
+      <label>Data Início
+        <input type="date" name="inicio">
+      </label>
+
+      <label>Data Término
+        <input type="date" name="termino">
+      </label>
+
+      <label>Método de Perfuração</label>
+      <select name="metodo">
+        <option>Rotativa</option>
+        <option>Pneumático</option>
+        <option>Ambos</option>
+      </select>
+
+      <label>POL Inicial
+        <input type="number" name="polInicial">
+      </label>
+
+      <label>POL Final
+        <input type="number" name="polFinal">
+      </label>
+
+      <label>Qtd m perfurados (QTM)
+        <input type="number" name="qtm">
+      </label>
+
+      <div class="nav">
+        <button type="button" onclick="prevStep()">Voltar</button>
+        <button type="button" onclick="nextStep()">Avançar</button>
       </div>
     </section>
 
     <!-- ETAPA 3 -->
     <section class="step">
-      <div class="card">
-        <h2>Revestimento do Poço</h2>
+      <h2>Revestimentos</h2>
 
-        <label>Tipo de Revestimento
-          <select id="tipoRevPoco">
-            <option value="">Selecione</option>
-            <option value="sanitario">Sanitário</option>
-            <option value="parcial">Parcial</option>
-            <option value="total">Total</option>
-          </select>
+      <h3>Proteção Sanitária</h3>
+
+      <label>Possui proteção sanitária?
+        <select name="protecaoSanitaria">
+          <option>Sim</option>
+          <option>Não</option>
+        </select>
+      </label>
+
+      <label>Tipo
+        <input type="text" name="tipoSanitario">
+      </label>
+
+      <label>Polegadas
+        <input type="number" name="polSanitario">
+      </label>
+
+      <label>Quantidade (m)
+        <input type="number" name="qtdSanitario">
+      </label>
+
+      <h3>Revestimento Principal</h3>
+
+      <label>Tipo
+        <input type="text" name="tipoPrincipal">
+      </label>
+
+      <label>Polegadas
+        <input type="number" name="polPrincipal">
+      </label>
+
+      <label>Revestimento
+        <select id="tipoColuna">
+          <option value="total">Total</option>
+          <option value="parcial">Parcial</option>
+        </select>
+      </label>
+
+      <div id="campoTotal">
+        <label>Quantidade (m)
+          <input type="number" name="qtdPrincipal">
         </label>
+      </div>
 
-        <div id="revComum" class="hidden">
-          <label>Material
-            <select name="materialRev">
-              <option>PVC</option>
-              <option>Aço</option>
-              <option>Inox</option>
-            </select>
-          </label>
-          <label>Polegadas<input class="num" name="polRev"></label>
-        </div>
+      <div id="campoParcial" class="hidden">
+        <h4>Filtros</h4>
+        <div id="listaFiltros"></div>
+        <button type="button" onclick="addFiltro()">Adicionar Filtro</button>
+      </div>
 
-        <div id="revComprimento" class="hidden">
-          <label>Comprimento (m)<input class="num" name="compRev"></label>
-        </div>
-
-        <div id="revFiltros" class="hidden">
-          <h3>Filtros</h3>
-          <div id="listaFiltros"></div>
-          <p id="erroFiltro" class="erro hidden"></p>
-          <button type="button" class="secondary" onclick="addFiltro()">Adicionar Filtro</button>
-        </div>
-
-        <div class="nav">
-          <button type="button" class="secondary" onclick="prev()">Voltar</button>
-          <button type="button" class="primary" onclick="next()">Avançar</button>
-        </div>
+      <div class="nav">
+        <button type="button" onclick="prevStep()">Voltar</button>
+        <button type="button" onclick="nextStep()">Avançar</button>
       </div>
     </section>
 
     <!-- ETAPA 4 -->
     <section class="step">
-      <div class="card">
-        <h2>Hidráulica e Geologia</h2>
+      <h2>Geologia & Hidráulica</h2>
 
-        <label>NE – Nível Estático (m)<input class="num" name="ne" required></label>
-        <label>ND – Nível Dinâmico (m)<input class="num" name="nd" required></label>
-        <label>Posição da Bomba (m)<input class="num" name="posBomba" required></label>
+      <label>Geologia
+        <textarea name="geologia"></textarea>
+      </label>
 
-        <label>Vazão Total do Poço (m³/h)<input class="num" name="vazPoco"></label>
-        <label>Vazão Indicada da Bomba (m³/h)<input class="num" name="vazBomba"></label>
+      <label>Fraturas
+        <select name="fraturas">
+          <option>Sim</option>
+          <option>Não</option>
+        </select>
+      </label>
 
-        <label>Geologia<textarea name="geologia"></textarea></label>
-        <label>Posição das Fraturas<textarea name="fraturas"></textarea></label>
+      <label>Vazão total do poço
+        <input type="number" name="vazaoTotal">
+      </label>
 
-        <p id="erroHid" class="erro hidden"></p>
+      <label>Posição da bomba (m)
+        <input type="number" name="posicaoBomba">
+      </label>
 
-        <div class="nav">
-          <button type="button" class="secondary" onclick="prev()">Voltar</button>
-          <button type="submit" class="primary">Ver Resumo</button>
-        </div>
+      <label>Vazão da bomba
+        <input type="number" name="vazaoBomba">
+      </label>
+
+      <label>NE
+        <input type="number" name="ne">
+      </label>
+
+      <label>ND
+        <input type="number" name="nd">
+      </label>
+
+      <label>Observações
+        <textarea name="observacoes"></textarea>
+      </label>
+
+      <div class="nav">
+        <button type="button" onclick="prevStep()">Voltar</button>
+        <button type="submit">Resumo</button>
       </div>
     </section>
 
   </form>
-</div>
 
-<div id="resumo" class="container hidden"></div>
+  <div id="resumo" class="hidden"></div>
+
+</div>
 
 <script src="script.js"></script>
 </body>
