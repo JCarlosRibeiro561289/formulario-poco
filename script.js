@@ -1,126 +1,114 @@
+emailjs.init("SUA_PUBLIC_KEY");
+
 let step = 0;
 const steps = document.querySelectorAll(".step");
 const progress = document.getElementById("progress");
 
 function update() {
-  steps.forEach((s,i)=>s.classList.toggle("active",i===step));
-  progress.style.width = ((step+1)/steps.length*100)+"%";
+  steps.forEach((s, i) => s.classList.toggle("active", i === step));
+  progress.style.width = ((step + 1) / steps.length * 100) + "%";
 }
 update();
 
-function nextStep(){ if(step<steps.length-1){step++;update();} }
-function prevStep(){ if(step>0){step--;update();} }
+function next() { if (step < steps.length - 1) { step++; update(); } }
+function prev() { if (step > 0) { step--; update(); } }
 
-/* Sanitário */
-document.getElementById("temSanitario").addEventListener("change",e=>{
-  document.getElementById("blocoSanitario")
-    .classList.toggle("hidden",e.target.value==="nao");
+/* Máscara */
+document.addEventListener("input", e => {
+  if (e.target.classList.contains("num")) {
+    e.target.value = e.target.value.replace(",", ".").replace(/[^0-9.]/g, "");
+  }
 });
 
-/* Total x Parcial */
-document.getElementById("tipoPoco").addEventListener("change",e=>{
-  const total=e.target.value==="total";
-  document.getElementById("blocoFiltros").classList.toggle("hidden",!total);
-  document.getElementById("blocoParcial").classList.toggle("hidden",total);
+/* Revestimento */
+const tipoRev = document.getElementById("tipoRevPoco");
+tipoRev.addEventListener("change", e => {
+  const v = e.target.value;
+  document.getElementById("revComum").classList.toggle("hidden", !v);
+  document.getElementById("revComprimento").classList.toggle("hidden", v === "total");
+  document.getElementById("revFiltros").classList.toggle("hidden", v !== "total");
 });
 
 /* Filtros */
-const listaFiltros=document.getElementById("listaFiltros");
-function addFiltro(){
-  const d=document.createElement("div");
-  d.className="filtro";
-  d.innerHTML=`
-    <input class="numero ini" placeholder="Início">
-    <input class="numero fim" placeholder="Fim">
+function addFiltro() {
+  const d = document.createElement("div");
+  d.className = "filtro";
+  d.innerHTML = `
+    <input class="num ini" placeholder="Início">
+    <input class="num fim" placeholder="Fim">
   `;
   listaFiltros.appendChild(d);
 }
 
-/* Máscara */
-document.addEventListener("input",e=>{
-  if(e.target.classList.contains("numero")){
-    e.target.value=e.target.value.replace(",",".").replace(/[^0-9.]/g,"");
-  }
-});
-
-/* Validação filtros */
-function validarFiltros(filtros,polFinal){
-  for(let i=0;i<filtros.length;i++){
-    if(filtros[i].ini>=filtros[i].fim) return "Início maior ou igual ao fim";
-    if(filtros[i].fim>polFinal) return "Filtro ultrapassa POL final";
-    if(i>0 && filtros[i].ini<filtros[i-1].fim) return "Filtros sobrepostos";
+function validarFiltros(filtros, profundidade) {
+  for (let i = 0; i < filtros.length; i++) {
+    if (filtros[i].ini >= filtros[i].fim) return "Início maior ou igual ao fim";
+    if (filtros[i].fim > profundidade) return "Filtro ultrapassa profundidade do poço";
+    if (i > 0 && filtros[i].ini < filtros[i - 1].fim) return "Filtros sobrepostos";
   }
   return null;
 }
 
-function gerarSequencia(filtros,polFinal){
-  let seq=[],atual=0;
-  filtros.forEach(f=>{
-    if(f.ini>atual) seq.push({i:atual,f:f.ini,t:"Liso"});
-    seq.push({i:f.ini,f:f.fim,t:"Filtro"});
-    atual=f.fim;
-  });
-  if(atual<polFinal) seq.push({i:atual,f:polFinal,t:"Liso"});
-  return seq;
-}
-
 /* Submit */
-document.getElementById("formPoco").addEventListener("submit",e=>{
+document.getElementById("formPoco").addEventListener("submit", async e => {
   e.preventDefault();
+  const dados = Object.fromEntries(new FormData(e.target));
+  window.dadosResumo = dados;
 
-  const dados=Object.fromEntries(new FormData(e.target));
-  const erroEl=document.getElementById("erroFiltro");
-  erroEl.classList.add("hidden");
+  const erroH = document.getElementById("erroHid");
+  erroH.classList.add("hidden");
 
-  let filtros=[];
-  if(document.getElementById("tipoPoco").value==="total"){
-    document.querySelectorAll(".filtro").forEach(f=>{
-      const i=parseFloat(f.querySelector(".ini").value);
-      const fim=parseFloat(f.querySelector(".fim").value);
-      if(!isNaN(i)&&!isNaN(fim)) filtros.push({ini:i,fim});
-    });
-
-    filtros.sort((a,b)=>a.ini-b.ini);
-    const erro=validarFiltros(filtros,parseFloat(dados.polFinal));
-    if(erro){
-      erroEl.textContent=erro;
-      erroEl.classList.remove("hidden");
-      return;
-    }
+  if (parseFloat(dados.posBomba) <= parseFloat(dados.nd)) {
+    erroH.textContent = "Posição da bomba deve ser maior que o ND.";
+    erroH.classList.remove("hidden");
+    return;
   }
 
-  let html=`<div class="card"><h2>Resumo do Poço</h2>
-  <p><b>Cliente:</b> ${dados.cliente}</p>
-  <p><b>Endereço:</b> ${dados.endereco}</p>`;
+  mostrarResumo(dados);
+});
 
-  if(dados.tipoSanitario){
-    html+=`<h3>Sanitário</h3>
-    <p>${dados.tipoSanitario} ${dados.polSanitario}" – ${dados.compSanitario} m</p>`;
-  }
+/* Resumo + PDF + Email */
+function mostrarResumo(d) {
+  let html = `<div class="card">
+    <h2>Resumo do Poço</h2>
+    <p><b>Cliente:</b> ${d.cliente}</p>
+    <p><b>Endereço:</b> ${d.endereco}</p>
+    <p><b>Profundidade:</b> ${d.profundidade} m</p>
+    <p><b>NE:</b> ${d.ne} m | <b>ND:</b> ${d.nd} m</p>
+    <p><b>Bomba:</b> ${d.posBomba} m</p>
 
-  html+=`<h3>Revestimento do Poço</h3>
-  <p>${dados.tipoRev} ${dados.polRev}"</p>`;
-
-  if(document.getElementById("tipoPoco").value==="total"){
-    const seq=gerarSequencia(filtros,parseFloat(dados.polFinal));
-    html+=`<table><tr><th>Início</th><th>Fim</th><th>Tipo</th></tr>`;
-    seq.forEach(s=>{
-      html+=`<tr><td>${s.i}</td><td>${s.f}</td><td>${s.t}</td></tr>`;
-    });
-    html+=`</table>`;
-  } else {
-    html+=`<p>Revestimento parcial de ${dados.compParcial} m</p>`;
-  }
-
-  html+=`
-  <div class="nav">
-    <button class="secondary" onclick="location.reload()">Editar</button>
-    <button class="primary" onclick="location.reload()">Confirmar e Enviar</button>
-  </div>
+    <div class="nav">
+      <button class="secondary" onclick="location.reload()">Editar</button>
+      <button class="primary" onclick="confirmarEnvio()">Confirmar e Enviar</button>
+    </div>
   </div>`;
 
   document.getElementById("app").classList.add("hidden");
-  const r=document.getElementById("resumo");
-  r.innerHTML=html;
+  const r = document.getElementById("resumo");
+  r.innerHTML = html;
   r.classList.remove("hidden");
-});
+}
+
+async function confirmarEnvio() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+  pdf.text("Cadastro de Poço", 10, 10);
+  let y = 20;
+
+  Object.entries(window.dadosResumo).forEach(([k, v]) => {
+    pdf.text(`${k}: ${v}`, 10, y);
+    y += 7;
+  });
+
+  const blob = pdf.output("blob");
+  const reader = new FileReader();
+  reader.onload = async () => {
+    await emailjs.send("SEU_SERVICE_ID", "SEU_TEMPLATE_ID", {
+      cliente: window.dadosResumo.cliente,
+      pdf: reader.result.split(",")[1]
+    });
+    alert("Poço enviado com sucesso!");
+    location.reload();
+  };
+  reader.readAsDataURL(blob);
+}
