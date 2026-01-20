@@ -1,1 +1,49 @@
-html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cadastro de Poço</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Cadastro de Dados do Poço</h1>
+
+<form id="pocoForm">
+
+  <fieldset>
+    <legend>Dados do Cliente</legend>
+    <label>Cliente
+      <input type="text" name="cliente" required>
+    </label>
+
+    <label>CNPJ / Documento
+      <input type="text" name="documento">
+    </label>
+
+    <label>Endereço do Poço
+      <input type="text" name="endereco" required>
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Dados da Perfuração</legend>
+
+    <label>Data Início
+      <input type="date" name="inicio">
+    </label>
+
+    <label>Data Término
+      <input type="date" name="termino">
+    </label>
+
+    <label>Encarregado da Perfuração
+      <input type="text" name="encarregado">
+    </label>
+
+    <label>Método de Perfuração</label>
+    <select name="metodo">
+      <option value="Rotativa">Rotativa</option>
+      <option value="Pneumático">Pneumático</option>
+      <o
