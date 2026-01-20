@@ -10,14 +10,13 @@
 
 <div class="container">
 
-  <!-- Barra de progresso -->
   <div class="progress-bar">
     <div id="progress"></div>
   </div>
 
   <form id="formPoco">
 
-    <!-- ETAPA 1 – CLIENTE -->
+    <!-- ETAPA 1 -->
     <section class="step active">
       <div class="card">
         <h2>Cliente</h2>
@@ -38,7 +37,7 @@
       </div>
     </section>
 
-    <!-- ETAPA 2 – PERFURAÇÃO -->
+    <!-- ETAPA 2 -->
     <section class="step">
       <div class="card">
         <h2>Perfuração</h2>
@@ -68,15 +67,15 @@
         </label>
 
         <label>POL Inicial
-          <input type="number" name="polInicial">
+          <input type="text" class="numero" name="polInicial" inputmode="decimal">
         </label>
 
         <label>POL Final
-          <input type="number" name="polFinal">
+          <input type="text" class="numero" name="polFinal" inputmode="decimal">
         </label>
 
         <label>Qtd m perfurados (QTM)
-          <input type="number" name="qtm">
+          <input type="text" class="numero" name="qtm" inputmode="decimal">
         </label>
 
         <div class="nav">
@@ -86,7 +85,7 @@
       </div>
     </section>
 
-    <!-- ETAPA 3 – REVESTIMENTOS -->
+    <!-- ETAPA 3 -->
     <section class="step">
       <div class="card">
         <h2>Revestimentos</h2>
@@ -105,11 +104,11 @@
         </label>
 
         <label>Polegadas
-          <input type="number" name="polSanitario">
+          <input type="text" class="numero" name="polSanitario" inputmode="decimal">
         </label>
 
         <label>Quantidade (m)
-          <input type="number" name="qtdSanitario">
+          <input type="text" class="numero" name="qtdSanitario" inputmode="decimal">
         </label>
 
         <hr>
@@ -121,7 +120,7 @@
         </label>
 
         <label>Polegadas
-          <input type="number" name="polPrincipal">
+          <input type="text" class="numero" name="polPrincipal" inputmode="decimal">
         </label>
 
         <label>Tipo de Revestimento
@@ -131,14 +130,12 @@
           </select>
         </label>
 
-        <!-- TOTAL -->
         <div id="campoTotal">
           <label>Quantidade (m)
-            <input type="number" name="qtdPrincipal">
+            <input type="text" class="numero" name="qtdPrincipal" inputmode="decimal">
           </label>
         </div>
 
-        <!-- PARCIAL -->
         <div id="campoParcial" class="hidden">
           <h4>Filtros</h4>
           <div id="listaFiltros"></div>
@@ -152,7 +149,7 @@
       </div>
     </section>
 
-    <!-- ETAPA 4 – GEOLOGIA / HIDRÁULICA -->
+    <!-- ETAPA 4 -->
     <section class="step">
       <div class="card">
         <h2>Geologia & Hidráulica</h2>
@@ -169,23 +166,23 @@
         </label>
 
         <label>Vazão total do poço
-          <input type="number" name="vazaoTotal">
+          <input type="text" class="numero" name="vazaoTotal" inputmode="decimal">
         </label>
 
         <label>Posição da bomba (m)
-          <input type="number" name="posicaoBomba">
+          <input type="text" class="numero" name="posicaoBomba" inputmode="decimal">
         </label>
 
         <label>Vazão da bomba
-          <input type="number" name="vazaoBomba">
+          <input type="text" class="numero" name="vazaoBomba" inputmode="decimal">
         </label>
 
         <label>NE
-          <input type="number" name="ne">
+          <input type="text" class="numero" name="ne" inputmode="decimal">
         </label>
 
         <label>ND
-          <input type="number" name="nd">
+          <input type="text" class="numero" name="nd" inputmode="decimal">
         </label>
 
         <label>Observações
@@ -201,7 +198,6 @@
 
   </form>
 
-  <!-- RESUMO -->
   <div id="resumo" class="hidden"></div>
 
 </div>
