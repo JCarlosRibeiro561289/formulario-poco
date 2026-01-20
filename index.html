@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Cadastro de Poço</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Cadastro de Poço</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="app">
 
   <div class="progress-bar">
     <div id="progress"></div>
@@ -22,18 +22,18 @@
         <h2>Cliente</h2>
 
         <label>Cliente
-          <input type="text" name="cliente" required>
+          <input name="cliente" required>
         </label>
 
         <label>CNPJ / Documento
-          <input type="text" name="documento">
+          <input name="documento">
         </label>
 
         <label>Endereço do Poço
-          <input type="text" name="endereco" required>
+          <input name="endereco" required>
         </label>
 
-        <button class="primary" type="button" onclick="nextStep()">Avançar</button>
+        <button type="button" class="primary" onclick="nextStep()">Avançar</button>
       </div>
     </section>
 
@@ -43,11 +43,11 @@
         <h2>Perfuração</h2>
 
         <label>Empresa Perfuradora
-          <input type="text" name="empresa">
+          <input name="empresa">
         </label>
 
         <label>Encarregado
-          <input type="text" name="encarregado">
+          <input name="encarregado">
         </label>
 
         <label>Data Início
@@ -58,7 +58,7 @@
           <input type="date" name="termino">
         </label>
 
-        <label>Método de Perfuração
+        <label>Método
           <select name="metodo">
             <option>Rotativa</option>
             <option>Pneumático</option>
@@ -66,21 +66,13 @@
           </select>
         </label>
 
-        <label>POL Inicial
-          <input type="text" class="numero" name="polInicial" inputmode="decimal">
-        </label>
-
-        <label>POL Final
-          <input type="text" class="numero" name="polFinal" inputmode="decimal">
-        </label>
-
-        <label>Qtd m perfurados (QTM)
-          <input type="text" class="numero" name="qtm" inputmode="decimal">
+        <label>POL Final (m)
+          <input class="numero" name="polFinal">
         </label>
 
         <div class="nav">
-          <button class="secondary" type="button" onclick="prevStep()">Voltar</button>
-          <button class="primary" type="button" onclick="nextStep()">Avançar</button>
+          <button type="button" class="secondary" onclick="prevStep()">Voltar</button>
+          <button type="button" class="primary" onclick="nextStep()">Avançar</button>
         </div>
       </div>
     </section>
@@ -88,63 +80,24 @@
     <!-- ETAPA 3 -->
     <section class="step">
       <div class="card">
-        <h2>Revestimentos</h2>
+        <h2>Revestimento Principal</h2>
 
-        <h3>Proteção Sanitária</h3>
-
-        <label>Possui proteção sanitária?
-          <select name="protecaoSanitaria">
-            <option>Sim</option>
-            <option>Não</option>
-          </select>
-        </label>
-
-        <label>Tipo
-          <input type="text" name="tipoSanitario">
+        <label>Tipo do Revestimento
+          <input name="tipoRev">
         </label>
 
         <label>Polegadas
-          <input type="text" class="numero" name="polSanitario" inputmode="decimal">
+          <input class="numero" name="polRev">
         </label>
 
-        <label>Quantidade (m)
-          <input type="text" class="numero" name="qtdSanitario" inputmode="decimal">
-        </label>
+        <h3>Filtros</h3>
+        <div id="listaFiltros"></div>
 
-        <hr>
-
-        <h3>Revestimento Principal</h3>
-
-        <label>Tipo
-          <input type="text" name="tipoPrincipal">
-        </label>
-
-        <label>Polegadas
-          <input type="text" class="numero" name="polPrincipal" inputmode="decimal">
-        </label>
-
-        <label>Tipo de Revestimento
-          <select id="tipoColuna">
-            <option value="total">Total</option>
-            <option value="parcial">Parcial</option>
-          </select>
-        </label>
-
-        <div id="campoTotal">
-          <label>Quantidade (m)
-            <input type="text" class="numero" name="qtdPrincipal" inputmode="decimal">
-          </label>
-        </div>
-
-        <div id="campoParcial" class="hidden">
-          <h4>Filtros</h4>
-          <div id="listaFiltros"></div>
-          <button class="secondary" type="button" onclick="addFiltro()">Adicionar Filtro</button>
-        </div>
+        <button type="button" class="secondary" onclick="addFiltro()">Adicionar Filtro</button>
 
         <div class="nav">
-          <button class="secondary" type="button" onclick="prevStep()">Voltar</button>
-          <button class="primary" type="button" onclick="nextStep()">Avançar</button>
+          <button type="button" class="secondary" onclick="prevStep()">Voltar</button>
+          <button type="button" class="primary" onclick="nextStep()">Avançar</button>
         </div>
       </div>
     </section>
@@ -152,55 +105,35 @@
     <!-- ETAPA 4 -->
     <section class="step">
       <div class="card">
-        <h2>Geologia & Hidráulica</h2>
+        <h2>Hidráulica / Observações</h2>
 
-        <label>Geologia
-          <textarea name="geologia"></textarea>
+        <label>Vazão do Poço
+          <input class="numero" name="vazao">
         </label>
 
-        <label>Fraturas
-          <select name="fraturas">
-            <option>Sim</option>
-            <option>Não</option>
-          </select>
+        <label>NE (m)
+          <input class="numero" name="ne">
         </label>
 
-        <label>Vazão total do poço
-          <input type="text" class="numero" name="vazaoTotal" inputmode="decimal">
-        </label>
-
-        <label>Posição da bomba (m)
-          <input type="text" class="numero" name="posicaoBomba" inputmode="decimal">
-        </label>
-
-        <label>Vazão da bomba
-          <input type="text" class="numero" name="vazaoBomba" inputmode="decimal">
-        </label>
-
-        <label>NE
-          <input type="text" class="numero" name="ne" inputmode="decimal">
-        </label>
-
-        <label>ND
-          <input type="text" class="numero" name="nd" inputmode="decimal">
+        <label>ND (m)
+          <input class="numero" name="nd">
         </label>
 
         <label>Observações
-          <textarea name="observacoes"></textarea>
+          <textarea name="obs"></textarea>
         </label>
 
         <div class="nav">
-          <button class="secondary" type="button" onclick="prevStep()">Voltar</button>
-          <button class="primary" type="submit">Ver Resumo</button>
+          <button type="button" class="secondary" onclick="prevStep()">Voltar</button>
+          <button type="submit" class="primary">Ver Resumo</button>
         </div>
       </div>
     </section>
 
   </form>
-
-  <div id="resumo" class="hidden"></div>
-
 </div>
+
+<div id="resumo" class="container hidden"></div>
 
 <script src="script.js"></script>
 </body>
