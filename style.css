@@ -1,23 +1,20 @@
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
-  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-  background: linear-gradient(180deg, #0f172a, #020617);
   margin: 0;
-  color: #0f172a;
+  font-family: system-ui, sans-serif;
+  background: linear-gradient(180deg,#020617,#0f172a);
 }
 
 .container {
   max-width: 480px;
   margin: auto;
-  padding: 20px 15px 40px;
+  padding: 20px;
 }
 
 .progress-bar {
-  height: 8px;
-  background: rgba(255,255,255,0.15);
+  height: 6px;
+  background: rgba(255,255,255,.2);
   border-radius: 10px;
   margin-bottom: 20px;
 }
@@ -25,8 +22,7 @@ body {
 #progress {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, #38bdf8, #2563eb);
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg,#38bdf8,#2563eb);
 }
 
 .step { display: none; }
@@ -36,38 +32,24 @@ body {
   background: #fff;
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  box-shadow: 0 15px 30px rgba(0,0,0,.25);
 }
-
-h2 { margin: 0 0 15px; }
-h3 { margin-top: 20px; }
-h4 { margin-bottom: 10px; }
 
 label {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #64748b;
   margin-bottom: 14px;
+  font-size: .8rem;
+  color: #64748b;
 }
 
 input, select, textarea {
-  width: 100%;
   padding: 14px;
   border-radius: 12px;
   border: 1px solid #cbd5f5;
   font-size: 1rem;
 }
-
-input:focus, select:focus, textarea:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
-  outline: none;
-}
-
-textarea { resize: vertical; }
 
 button {
   padding: 14px;
@@ -76,12 +58,12 @@ button {
   cursor: pointer;
 }
 
-button.primary {
-  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+.primary {
+  background: linear-gradient(90deg,#2563eb,#1d4ed8);
   color: #fff;
 }
 
-button.secondary {
+.secondary {
   background: #e5e7eb;
 }
 
@@ -90,8 +72,22 @@ button.secondary {
   gap: 10px;
 }
 
-.hidden { display: none; }
-
 .filtro {
   display: flex;
   gap: 8px;
+  margin-bottom: 8px;
+}
+
+.hidden { display: none; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+td, th {
+  border: 1px solid #e5e7eb;
+  padding: 8px;
+  text-align: center;
+}
