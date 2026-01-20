@@ -1,77 +1,118 @@
-function alternarRevestimento() {
-  const tipo = tipoRevPoco.value;
-  areaFiltros.classList.toggle("hidden", tipo !== "total");
-  revComprimento.classList.toggle("hidden", tipo === "total");
+let step = 0;
+const steps = document.querySelectorAll(".step");
+
+function showStep() {
+  steps.forEach((s, i) => s.classList.toggle("active", i === step));
+  progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
+}
+
+function nextStep() {
+  if (step < steps.length - 1) step++;
+  showStep();
+}
+
+function prevStep() {
+  if (step > 0) step--;
+  showStep();
+}
+
+showStep();
+
+/* Sanitário */
+function toggleSanitario() {
+  sanitarioCampos.classList.toggle("hidden", temSanitario.value !== "sim");
+}
+
+/* Revestimento */
+function controlarFluxoRevestimento() {
+  filtrosArea.classList.toggle("hidden", tipoRevPoco.value !== "total");
+  if (tipoRevPoco.value !== "total") listaFiltros.innerHTML = "";
 }
 
 function addFiltro() {
   const div = document.createElement("div");
-  div.className = "filtro";
   div.innerHTML = `
-    <input class="ini" type="number" placeholder="Início (m)">
-    <input class="fim" type="number" placeholder="Fim (m)">
+    <input type="number" placeholder="Início (m)">
+    <input type="number" placeholder="Fim (m)">
   `;
-  filtros.appendChild(div);
+  listaFiltros.appendChild(div);
 }
 
-function gerarResumo() {
-  const prof = +profundidade.value;
-  const ndv = +nd.value;
-  const bomba = +posBomba.value;
+/* Teste Vazão */
+function toggleTesteVazao() {
+  testeVazaoCampos.classList.toggle("hidden", testeVazao.value !== "sim");
+}
 
-  if (ndv >= bomba) {
-    alert("ND não pode ser maior ou igual à posição da bomba");
+/* Validações Hidráulica */
+function validarHidraulica() {
+  const vp = +vazaoPoco.value;
+  const vb = +vazaoBomba.value;
+  const bomba = +posBomba.value;
+  const ndv = +nd.value;
+  const prof = +profundidade.value;
+
+  if (vb > vp) {
+    alert("A vazão da bomba não pode ser maior que a vazão do poço.");
     return;
   }
 
-  const dados = {
-    cliente: cliente.value,
-    documento: documento.value,
-    endereco: endereco.value,
-    empresa: empresa.value,
-    metodo: metodo.value,
-    profundidade: prof,
-    materialRev: materialRev.value,
-    polRev: polRev.value,
-    compRev: compRev.value,
-    ne: ne.value,
-    nd: nd.value,
-    posBomba: posBomba.value,
-    vazPoco: vazPoco.value,
-    vazBomba: vazBomba.value,
-    geologia: geologia.value,
-    fraturas: fraturas.value
-  };
+  if (bomba > prof) {
+    alert("A posição da bomba não pode ser maior que a profundidade.");
+    return;
+  }
 
-  mostrarResumo(dados);
+  if (bomba <= ndv) {
+    alert("A bomba deve estar abaixo do nível dinâmico (ND).");
+    return;
+  }
+
+  if (testeVazao.value === "sim" && +vazaoTeste.value > vp) {
+    alert("A vazão do teste não pode ser maior que a vazão do poço.");
+    return;
+  }
+
+  nextStep();
 }
 
-function mostrarResumo(d) {
-  let html = `
-  <div class="card resumo-card">
+/* Resumo */
+function gerarResumo() {
+  resumo.innerHTML = `
     <h2>Resumo do Poço</h2>
 
-    <h3>Cliente</h3>
-    <p><b>${d.cliente}</b></p>
-    <p>${d.endereco}</p>
+    <p><b>Cliente:</b> ${cliente.value}</p>
+    <p><b>Endereço:</b> ${endereco.value}</p>
 
     <h3>Perfuração</h3>
-    <p>Empresa: ${d.empresa}</p>
-    <p>Método: ${d.metodo}</p>
-    <p>Profundidade: ${d.profundidade} m</p>
+    <p>${empresa.value} – ${metodo.value}</p>
+
+    <h3>Poço</h3>
+    <p>Profundidade: ${profundidade.value} m</p>
+
+    <h3>Revestimento</h3>
+    <p>${tipoRevPoco.value} – ${materialRev.value} – ${polRev.value}"</p>
 
     <h3>Hidráulica</h3>
-    <p>NE: ${d.ne} m</p>
-    <p>ND: ${d.nd} m</p>
-    <p>Bomba: ${d.posBomba} m</p>
+    <p>Teste de Vazão: ${testeVazao.value}</p>
+    <p>Vazão do Poço: ${vazaoPoco.value}</p>
+    <p>Vazão da Bomba: ${vazaoBomba.value}</p>
+    <p>NE: ${ne.value} | ND: ${nd.value}</p>
 
-    <div class="nav">
-      <button onclick="location.reload()">Editar</button>
-      <button onclick="alert('PDF + Email (próxima etapa)')">Confirmar e Enviar</button>
-    </div>
-  </div>
+    <button onclick="step=0;showStep()">Editar</button>
+    <button onclick="enviarEmail()">Enviar por Email</button>
+    <button onclick="location.reload()">Novo Poço</button>
   `;
-  app.classList.add("hidden");
-  resumo.innerHTML = html;
-  resumo.classList.remove("hidden");
+
+  step = steps.length - 1;
+  showStep();
+}
+
+/* Envio Email */
+function enviarEmail() {
+  emailjs.send("SEU_SERVICE_ID", "SEU_TEMPLATE_ID", {
+    cliente: cliente.value,
+    resumo: resumo.innerText
+  }).then(() => {
+    alert("Poço enviado com sucesso!");
+    location.reload();
+  });
 }
