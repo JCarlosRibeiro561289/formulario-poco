@@ -4,6 +4,78 @@
 }
 
 body {
+  background: #020617;
+  padding: 16px;
+}
+
+.container {
+  max-width: 480px;
+  margin: auto;
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.step {
+  display: none;
+}
+
+.step.active {
+  display: block;
+}
+
+label {
+  font-size: 0.8rem;
+  margin-top: 12px;
+  display: block;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 4px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+}
+
+textarea {
+  min-height: 80px;
+}
+
+button {
+  margin-top: 18px;
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.hidden {
+  display: none;
+}
+
+.progress {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+#progressBar {
+  height: 100%;
+  width: 0;
+  background: #2563eb;
+  border-radius: 4px;
+}
+* {
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+body {
   background: linear-gradient(135deg, #020617, #020617);
   padding: 16px;
 }
