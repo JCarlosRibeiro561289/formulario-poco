@@ -10,9 +10,7 @@
 
 <div class="container" id="app">
 
-  <div class="progress-bar">
-    <div id="progress"></div>
-  </div>
+  <div class="progress-bar"><div id="progress"></div></div>
 
   <form id="formPoco">
 
@@ -20,19 +18,9 @@
     <section class="step active">
       <div class="card">
         <h2>Cliente</h2>
-
-        <label>Cliente
-          <input name="cliente" required>
-        </label>
-
-        <label>CNPJ / Documento
-          <input name="documento">
-        </label>
-
-        <label>Endereço do Poço
-          <input name="endereco" required>
-        </label>
-
+        <label>Cliente<input name="cliente" required></label>
+        <label>Documento<input name="documento"></label>
+        <label>Endereço<input name="endereco" required></label>
         <button type="button" class="primary" onclick="nextStep()">Avançar</button>
       </div>
     </section>
@@ -41,23 +29,7 @@
     <section class="step">
       <div class="card">
         <h2>Perfuração</h2>
-
-        <label>Empresa Perfuradora
-          <input name="empresa">
-        </label>
-
-        <label>Encarregado
-          <input name="encarregado">
-        </label>
-
-        <label>Data Início
-          <input type="date" name="inicio">
-        </label>
-
-        <label>Data Término
-          <input type="date" name="termino">
-        </label>
-
+        <label>Empresa Perfuradora<input name="empresa"></label>
         <label>Método
           <select name="metodo">
             <option>Rotativa</option>
@@ -65,11 +37,7 @@
             <option>Ambos</option>
           </select>
         </label>
-
-        <label>POL Final (m)
-          <input class="numero" name="polFinal">
-        </label>
-
+        <label>POL Final (m)<input class="numero" name="polFinal" required></label>
         <div class="nav">
           <button type="button" class="secondary" onclick="prevStep()">Voltar</button>
           <button type="button" class="primary" onclick="nextStep()">Avançar</button>
@@ -80,20 +48,28 @@
     <!-- ETAPA 3 -->
     <section class="step">
       <div class="card">
-        <h2>Revestimento Principal</h2>
+        <h2>Revestimento Sanitário</h2>
 
-        <label>Tipo do Revestimento
-          <input name="tipoRev">
+        <label>Possui Sanitário?
+          <select id="temSanitario">
+            <option value="nao">Não</option>
+            <option value="sim">Sim</option>
+          </select>
         </label>
 
-        <label>Polegadas
-          <input class="numero" name="polRev">
-        </label>
-
-        <h3>Filtros</h3>
-        <div id="listaFiltros"></div>
-
-        <button type="button" class="secondary" onclick="addFiltro()">Adicionar Filtro</button>
+        <div id="blocoSanitario" class="hidden">
+          <label>Tipo
+            <select name="tipoSanitario">
+              <option>Defofo</option>
+              <option>PVC</option>
+              <option>Geo</option>
+              <option>Aço</option>
+              <option>Inox</option>
+            </select>
+          </label>
+          <label>Polegadas<input class="numero" name="polSanitario"></label>
+          <label>Comprimento (m)<input class="numero" name="compSanitario"></label>
+        </div>
 
         <div class="nav">
           <button type="button" class="secondary" onclick="prevStep()">Voltar</button>
@@ -105,23 +81,37 @@
     <!-- ETAPA 4 -->
     <section class="step">
       <div class="card">
-        <h2>Hidráulica / Observações</h2>
+        <h2>Revestimento do Poço</h2>
 
-        <label>Vazão do Poço
-          <input class="numero" name="vazao">
+        <label>Tipo do Poço
+          <select id="tipoPoco">
+            <option value="total">Total</option>
+            <option value="parcial">Parcial</option>
+          </select>
         </label>
 
-        <label>NE (m)
-          <input class="numero" name="ne">
+        <label>Material
+          <select name="tipoRev">
+            <option>PVC</option>
+            <option>Aço</option>
+            <option>Inox</option>
+          </select>
         </label>
 
-        <label>ND (m)
-          <input class="numero" name="nd">
-        </label>
+        <label>Polegadas<input class="numero" name="polRev"></label>
 
-        <label>Observações
-          <textarea name="obs"></textarea>
-        </label>
+        <div id="blocoParcial" class="hidden">
+          <label>Comprimento do Revestimento (m)
+            <input class="numero" name="compParcial">
+          </label>
+        </div>
+
+        <div id="blocoFiltros">
+          <h3>Filtros</h3>
+          <div id="listaFiltros"></div>
+          <p class="erro hidden" id="erroFiltro"></p>
+          <button type="button" class="secondary" onclick="addFiltro()">Adicionar Filtro</button>
+        </div>
 
         <div class="nav">
           <button type="button" class="secondary" onclick="prevStep()">Voltar</button>
