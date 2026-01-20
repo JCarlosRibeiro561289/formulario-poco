@@ -1,49 +1,78 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background: #eef2f6;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  background: linear-gradient(180deg, #0f172a, #020617);
   margin: 0;
+  padding: 0;
+  color: #0f172a;
 }
 
 .container {
   max-width: 480px;
   margin: auto;
-  padding: 15px;
+  padding: 20px 15px 40px;
 }
 
 .progress-bar {
-  height: 6px;
-  background: #ccc;
-  border-radius: 5px;
-  margin-bottom: 15px;
+  height: 8px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
 }
 
 #progress {
   height: 100%;
   width: 0%;
-  background: #007bff;
-  border-radius: 5px;
+  background: linear-gradient(90deg, #38bdf8, #2563eb);
+  transition: width 0.3s ease;
 }
 
 .step {
   display: none;
-  background: #fff;
-  padding: 15px;
-  border-radius: 10px;
 }
 
 .step.active {
   display: block;
 }
 
-label {
-  display: block;
-  margin-bottom: 10px;
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
-input, select, textarea, button {
+h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #020617;
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  color: #475569;
+  margin-bottom: 14px;
+}
+
+input, select, textarea {
   width: 100%;
-  padding: 8px;
+  border: 1px solid #cbd5f5;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 1rem;
   margin-top: 4px;
+  outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
 }
 
 textarea {
@@ -51,16 +80,28 @@ textarea {
 }
 
 button {
-  background: #007bff;
-  color: #fff;
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  border-radius: 12px;
   border: none;
-  border-radius: 6px;
-  margin-top: 10px;
+  cursor: pointer;
+}
+
+button.primary {
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  color: #fff;
+}
+
+button.secondary {
+  background: #e5e7eb;
+  color: #020617;
 }
 
 .nav {
   display: flex;
   gap: 10px;
+  margin-top: 10px;
 }
 
 .hidden {
@@ -69,6 +110,10 @@ button {
 
 .filtro {
   display: flex;
-  gap: 5px;
-  margin-bottom: 5px;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.filtro input {
+  flex: 1;
 }
