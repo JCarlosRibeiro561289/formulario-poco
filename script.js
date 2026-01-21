@@ -1,21 +1,22 @@
 let step = 0;
+let filtros = [];
+
 const steps = document.querySelectorAll(".step");
 
 function showStep() {
   steps.forEach((s, i) => s.classList.toggle("active", i === step));
   progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
+  window.scrollTo(0, 0);
 }
 
 function nextStep() {
   if (step < steps.length - 1) step++;
   showStep();
-  window.scrollTo(0, 0);
 }
 
 function prevStep() {
   if (step > 0) step--;
   showStep();
-  window.scrollTo(0, 0);
 }
 
 showStep();
@@ -28,22 +29,41 @@ function toggleSanitario() {
 /* Revestimento */
 function controlarFluxoRevestimento() {
   filtrosArea.classList.toggle("hidden", tipoRevPoco.value !== "total");
-  if (tipoRevPoco.value !== "total") listaFiltros.innerHTML = "";
+  if (tipoRevPoco.value !== "total") {
+    filtros = [];
+    listaFiltros.innerHTML = "";
+  }
 }
 
 function lancarFiltro() {
-  if (!filtroInicio.value || !filtroFim.value) return;
-  const li = document.createElement("li");
-  li.textContent = `Filtro de ${filtroInicio.value} m até ${filtroFim.value} m`;
-  listaFiltros.appendChild(li);
+  const inicio = filtroInicio.value;
+  const fim = filtroFim.value;
+
+  if (!inicio || !fim) {
+    alert("Informe início e fim do filtro.");
+    return;
+  }
+
+  filtros.push({ inicio, fim });
+  atualizarListaFiltros();
+
   filtroInicio.value = "";
   filtroFim.value = "";
+}
+
+function atualizarListaFiltros() {
+  listaFiltros.innerHTML = "";
+  filtros.forEach((f, i) => {
+    const li = document.createElement("li");
+    li.textContent = `Filtro ${i + 1}: ${f.inicio} m até ${f.fim} m`;
+    listaFiltros.appendChild(li);
+  });
 }
 
 /* Teste de Vazão */
 function validarTesteVazao() {
   if (+vazaoBomba.value > +vazaoPoco.value) {
-    alert("Vazão da bomba não pode ser maior que a vazão do poço.");
+    alert("A vazão da bomba não pode ser maior que a vazão do poço.");
     return;
   }
   nextStep();
@@ -51,9 +71,7 @@ function validarTesteVazao() {
 
 /* Resumo */
 function gerarResumo() {
-  resumo.innerHTML = `
-    <button class="btn-voltar-topo" onclick="voltarEtapaResumo()">← Voltar etapa</button>
-
+  resumoConteudo.innerHTML = `
     <h2>Resumo do Poço</h2>
 
     <h3>Cliente</h3>
@@ -69,7 +87,11 @@ function gerarResumo() {
     <p>${tipoRevPoco.value} - ${materialRev.value} - ${polRev.value}"</p>
 
     <h3>Filtros</h3>
-    <ul>${listaFiltros.innerHTML}</ul>
+    <ul>
+      ${filtros.length
+        ? filtros.map(f => `<li>${f.inicio} m até ${f.fim} m</li>`).join("")
+        : "<li>Não possui filtros</li>"}
+    </ul>
 
     <h3>Teste de Vazão</h3>
     <p>
@@ -85,7 +107,7 @@ function gerarResumo() {
     <h3>Fraturas</h3>
     <p>${fraturas.value}</p>
 
-    <button onclick="step=0;showStep()">Editar Tudo</button>
+    <button onclick="step=0;showStep()">Editar tudo</button>
     <button onclick="enviarEmail()">Enviar por Email</button>
     <button onclick="baixarResumo()">Baixar</button>
   `;
@@ -103,13 +125,13 @@ function voltarEtapaResumo() {
 function enviarEmail() {
   emailjs.send("SEU_SERVICE_ID", "SEU_TEMPLATE_ID", {
     cliente: cliente.value,
-    resumo: resumo.innerText
+    resumo: resumoConteudo.innerText
   }).then(() => alert("Enviado com sucesso"));
 }
 
 /* Download */
 function baixarResumo() {
-  const blob = new Blob([resumo.innerText], { type: "text/plain" });
+  const blob = new Blob([resumoConteudo.innerText], { type: "text/plain" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "poco.txt";
