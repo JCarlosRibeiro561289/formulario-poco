@@ -11,22 +11,27 @@ function prevStep() { if (step > 0) step--; showStep(); }
 showStep();
 
 /* MÁSCARA DECIMAL 18,00 */
-document.querySelectorAll(".decimal").forEach(input => {
-  input.addEventListener("input", () => {
-    let v = input.value.replace(/\D/g, "");
-    if (!v) return input.value = "";
-    v = (parseInt(v) / 100).toFixed(2).replace(".", ",");
-    input.value = v;
+function aplicarMascara(inputs) {
+  inputs.forEach(input => {
+    input.addEventListener("input", () => {
+      let v = input.value.replace(/\D/g, "");
+      if (!v) { input.value = ""; return; }
+      v = (parseInt(v) / 100).toFixed(2).replace(".", ",");
+      input.value = v;
+    });
   });
-});
+}
+aplicarMascara(document.querySelectorAll(".decimal"));
+
 const num = v => parseFloat(v.replace(",", "."));
 
-/* CONTROLES */
+/* SANITÁRIO */
 function controleSanitario() {
   sanitarioBox.classList.toggle("hidden", temSanitario.value !== "sim");
   if (temSanitario.value === "sim") tipoRev.value = "";
 }
 
+/* REVESTIMENTO */
 function controleRevestimento() {
   filtrosBox.classList.add("hidden");
   parcialBox.classList.add("hidden");
@@ -36,20 +41,72 @@ function controleRevestimento() {
 }
 
 function addFiltro() {
-  const d = document.createElement("div");
-  d.innerHTML = `
-    <input class="decimal" placeholder="Início">
-    <input class="decimal" placeholder="Fim">
+  const div = document.createElement("div");
+  div.className = "filtro-item";
+  div.innerHTML = `
+    <input class="decimal inicio" placeholder="Início (m)">
+    <input class="decimal fim" placeholder="Fim (m)">
+    <button type="button" class="btn-remove" onclick="removerFiltro(this)">🗑</button>
+    <small class="erro"></small>
   `;
-  listaFiltros.appendChild(d);
+  listaFiltros.appendChild(div);
+  aplicarMascara(div.querySelectorAll(".decimal"));
 }
 
-/* TESTE */
+function removerFiltro(btn) {
+  btn.parentElement.remove();
+}
+
+listaFiltros.addEventListener("input", validarFiltros);
+
+function validarFiltros() {
+  const filtros = document.querySelectorAll(".filtro-item");
+  const prof = num(profundidade.value);
+  let intervalos = [];
+  let valido = true;
+
+  filtros.forEach(f => {
+    const ini = num(f.querySelector(".inicio").value);
+    const fim = num(f.querySelector(".fim").value);
+    const erro = f.querySelector(".erro");
+    erro.innerText = "";
+
+    if (!ini || !fim) return;
+
+    if (ini >= fim) {
+      erro.innerText = "Início deve ser menor que o fim";
+      valido = false;
+    }
+    if (fim > prof) {
+      erro.innerText = "Ultrapassa a profundidade do poço";
+      valido = false;
+    }
+    intervalos.push({ ini, fim, erro });
+  });
+
+  intervalos.sort((a, b) => a.ini - b.ini);
+  for (let i = 1; i < intervalos.length; i++) {
+    if (intervalos[i].ini < intervalos[i - 1].fim) {
+      intervalos[i].erro.innerText = "Sobreposição com filtro anterior";
+      valido = false;
+    }
+  }
+  return valido;
+}
+
+function validarRevestimento() {
+  if (tipoRev.value === "total" && !validarFiltros()) {
+    alert("Corrija os filtros antes de continuar");
+    return;
+  }
+  nextStep();
+}
+
+/* HIDRÁULICA */
 function controleTeste() {
   testeBox.classList.toggle("hidden", testeVazao.value !== "sim");
 }
 
-/* VALIDAÇÕES */
 function validarHidraulica() {
   if (num(vazaoBomba.value) > num(vazaoPoco.value)) {
     alert("Vazão da bomba maior que a do poço");
