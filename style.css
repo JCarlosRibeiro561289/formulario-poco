@@ -5,6 +5,7 @@
 
 body {
   background: #020617;
+  color: #020617;
   padding: 16px;
 }
 
@@ -22,6 +23,10 @@ body {
 
 .step.active {
   display: block;
+}
+
+h2 {
+  margin-bottom: 16px;
 }
 
 label {
@@ -53,6 +58,10 @@ button {
   font-weight: bold;
 }
 
+button + button {
+  margin-top: 8px;
+}
+
 .hidden {
   display: none;
 }
@@ -66,7 +75,7 @@ button {
 
 #progressBar {
   height: 100%;
-  width: 0;
+  width: 0%;
   background: #2563eb;
   border-radius: 4px;
 }
