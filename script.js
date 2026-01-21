@@ -53,6 +53,8 @@ const resumo = document.getElementById("resumo");
 function showStep() {
   steps.forEach((s, i) => s.classList.toggle("active", i === step));
 }
+showStep();
+
 function nextStep() {
   if (step < steps.length - 1) {
     step++;
@@ -67,15 +69,34 @@ function prevStep() {
 }
 
 /* =====================
-   VALIDAÇÕES
+   UTIL
+===================== */
+function num(v) {
+  return parseFloat((v || "").replace(",", "."));
+}
+
+/* =====================
+   ETAPA 1 - CLIENTE
+===================== */
+function validarCliente() {
+  if (!cliente.value.trim()) {
+    alert("Informe o cliente");
+    cliente.focus();
+    return;
+  }
+  nextStep();
+}
+
+/* =====================
+   ETAPA 2 - PERFURAÇÃO
 ===================== */
 function validarPerf() {
-  if (empresa.value.trim() === "") {
+  if (!empresa.value.trim()) {
     alert("Informe a empresa perfuradora");
     empresa.focus();
     return;
   }
-  if (encarregado.value.trim() === "") {
+  if (!encarregado.value.trim()) {
     alert("Informe o encarregado");
     encarregado.focus();
     return;
@@ -83,6 +104,9 @@ function validarPerf() {
   nextStep();
 }
 
+/* =====================
+   ETAPA 3 - POÇO
+===================== */
 function validarPoco() {
   if (!profundidade.value || !diamInicial.value || !diamFinal.value) {
     alert("Preencha profundidade e diâmetros");
@@ -91,20 +115,22 @@ function validarPoco() {
   nextStep();
 }
 
+/* =====================
+   SANITÁRIO
+===================== */
 function controleSanitario() {
   sanitarioBox.classList.toggle("hidden", temSanitario.value !== "sim");
 }
 
+/* =====================
+   REVESTIMENTO
+===================== */
 function controleRevestimento() {
   parcialBox.classList.add("hidden");
   filtrosBox.classList.add("hidden");
 
-  if (tipoRev.value === "parcial") {
-    parcialBox.classList.remove("hidden");
-  }
-  if (tipoRev.value === "total") {
-    filtrosBox.classList.remove("hidden");
-  }
+  if (tipoRev.value === "parcial") parcialBox.classList.remove("hidden");
+  if (tipoRev.value === "total") filtrosBox.classList.remove("hidden");
 }
 
 function validarRevestimento() {
@@ -112,35 +138,13 @@ function validarRevestimento() {
     alert("Preencha os dados do revestimento");
     return;
   }
-  nextStep();
-}
 
-function validarHidraulica() {
-  if (
-    vazaoPoco.value &&
-    vazaoBomba.value &&
-    parseFloat(vazaoBomba.value) > parseFloat(vazaoPoco.value)
-  ) {
-    alert("Vazão da bomba não pode ser maior que a vazão do poço");
-    return;
-  }
-
-  if (
-    posBomba.value &&
-    profundidade.value &&
-    parseFloat(posBomba.value) > parseFloat(profundidade.value)
-  ) {
-    alert("Posição da bomba não pode ser maior que a profundidade do poço");
-    return;
-  }
-
-  if (
-    nd.value &&
-    posBomba.value &&
-    parseFloat(posBomba.value) < parseFloat(nd.value)
-  ) {
-    alert("Bomba não pode estar acima do nível dinâmico");
-    return;
+  if (tipoRev.value === "total") {
+    if (listaFiltros.children.length === 0) {
+      alert("Revestimento total exige filtros");
+      return;
+    }
+    if (!validarFiltros()) return;
   }
 
   nextStep();
@@ -160,105 +164,84 @@ function addFiltro() {
   listaFiltros.appendChild(div);
 }
 
+function validarFiltros() {
+  const filtros = [];
+
+  document.querySelectorAll(".filtro-item").forEach(f => {
+    const ini = num(f.querySelector(".filtroIni").value);
+    const fim = num(f.querySelector(".filtroFim").value);
+
+    if (!ini || !fim || ini >= fim) {
+      alert("Filtro com intervalo inválido");
+      throw new Error();
+    }
+    filtros.push({ ini, fim });
+  });
+
+  filtros.sort((a, b) => a.ini - b.ini);
+
+  for (let i = 1; i < filtros.length; i++) {
+    if (filtros[i].ini <= filtros[i - 1].fim) {
+      alert("Filtros com sobreposição");
+      return false;
+    }
+  }
+  return true;
+}
+
+/* =====================
+   HIDRÁULICA
+===================== */
+function validarHidraulica() {
+  if (num(vazaoBomba.value) > num(vazaoPoco.value)) {
+    alert("Vazão da bomba maior que a do poço");
+    return;
+  }
+  if (num(posBomba.value) > num(profundidade.value)) {
+    alert("Bomba mais profunda que o poço");
+    return;
+  }
+  if (num(posBomba.value) < num(nd.value)) {
+    alert("Bomba acima do nível dinâmico");
+    return;
+  }
+  nextStep();
+}
+
 /* =====================
    RESUMO
 ===================== */
 function gerarResumo() {
   let filtrosHTML = "";
   document.querySelectorAll(".filtro-item").forEach((f, i) => {
-    const ini = f.querySelector(".filtroIni").value;
-    const fim = f.querySelector(".filtroFim").value;
-    if (ini && fim) {
-      filtrosHTML += `<li>Filtro ${i + 1}: ${ini} m até ${fim} m</li>`;
-    }
+    filtrosHTML += `<li>Filtro ${i + 1}: ${f.querySelector(".filtroIni").value} – ${f.querySelector(".filtroFim").value} m</li>`;
   });
 
   resumo.innerHTML = `
     <h2>Resumo do Poço</h2>
-
-    <h3>Cliente</h3>
-    <p>${cliente.value}</p>
-    <p>${documento.value}</p>
-    <p>${endereco.value} - ${cidade.value}/${estado.value}</p>
+    <p><strong>Cliente:</strong> ${cliente.value}</p>
+    <p><strong>Endereço:</strong> ${endereco.value} - ${cidade.value}/${estado.value}</p>
 
     <h3>Perfuração</h3>
     <p>${empresa.value} – ${metodo.value}</p>
-    <p>Encarregado: ${encarregado.value}</p>
 
     <h3>Poço</h3>
     <p>Profundidade: ${profundidade.value} m</p>
     <p>Diâmetro: ${diamInicial.value}" → ${diamFinal.value}"</p>
 
-    <h3>Sanitário</h3>
-    <p>${temSanitario.value === "sim"
-      ? `${sanitarioMaterial.value} ${sanitarioPol.value}" (${sanitarioComp.value} m)`
-      : "Não possui"
-    }</p>
-
     <h3>Revestimento</h3>
     <p>${tipoRev.value} – ${revMaterial.value} – ${revPol.value}"</p>
-    <p>Pré-filtro: ${prefiltro.value}</p>
     ${filtrosHTML ? `<ul>${filtrosHTML}</ul>` : ""}
 
     <h3>Hidráulica</h3>
     <p>NE: ${ne.value} | ND: ${nd.value}</p>
     <p>Bomba: ${posBomba.value} m</p>
-    <p>Vazão Poço: ${vazaoPoco.value}</p>
-    <p>Vazão Bomba: ${vazaoBomba.value}</p>
-
-    <h3>Geologia</h3>
-    <p>${geologia.value}</p>
-    <p>${fraturas.value}</p>
 
     <h3>Observações</h3>
     <p>${observacao.value}</p>
 
-    <button type="button" onclick="prevStep()">Editar</button>
-    <button type="button" onclick="enviar()">Enviar</button>
+    <button onclick="prevStep()">Editar</button>
+    <button onclick="enviar()">Enviar</button>
   `;
   nextStep();
-}
-
-/* =====================
-   PDF + EMAIL
-===================== */
-async function enviar() {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
-
-  let y = 10;
-  pdf.setFontSize(10);
-
-  function linha(t, v) {
-    pdf.text(t, 10, y);
-    y += 5;
-    pdf.text(v || "-", 10, y);
-    y += 7;
-  }
-
-  pdf.setFontSize(14);
-  pdf.text("RELATÓRIO TÉCNICO DE POÇO", 10, y);
-  y += 10;
-  pdf.setFontSize(10);
-
-  linha("Cliente", cliente.value);
-  linha("Empresa", empresa.value);
-  linha("Profundidade", profundidade.value + " m");
-  linha("Vazão do Poço", vazaoPoco.value);
-  linha("Vazão da Bomba", vazaoBomba.value);
-  linha("Observações", observacao.value);
-
-  const pdfBase64 = pdf.output("datauristring");
-
-  emailjs.send("SERVICE_ID", "TEMPLATE_ID", {
-    cliente: cliente.value,
-    empresa: empresa.value,
-    profundidade: profundidade.value,
-    pdf: pdfBase64
-  }).then(() => {
-    alert("Poço enviado com sucesso!");
-    location.reload();
-  }).catch(() => {
-    alert("Erro ao enviar e-mail");
-  });
 }
