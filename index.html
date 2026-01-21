@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Cadastro de Poço</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -20,6 +20,7 @@
   <!-- ETAPA 1 -->
   <section class="step active">
     <h2>Cliente</h2>
+    <button class="btn-back hidden"></button>
 
     <label>Cliente</label>
     <input id="cliente">
@@ -36,6 +37,7 @@
   <!-- ETAPA 2 -->
   <section class="step">
     <h2>Perfuração</h2>
+    <button class="btn-back" onclick="prevStep()">← Voltar</button>
 
     <label>Empresa Perfuradora</label>
     <input id="empresa">
@@ -50,13 +52,13 @@
       <option>Ambos</option>
     </select>
 
-    <button onclick="prevStep()">Voltar</button>
     <button onclick="nextStep()">Continuar</button>
   </section>
 
   <!-- ETAPA 3 -->
   <section class="step">
     <h2>Dados do Poço</h2>
+    <button class="btn-back" onclick="prevStep()">← Voltar</button>
 
     <label>Profundidade (m)</label>
     <input class="decimal" id="profundidade">
@@ -64,13 +66,13 @@
     <label>Polegada Final</label>
     <input class="decimal" id="polFinal">
 
-    <button onclick="prevStep()">Voltar</button>
     <button onclick="nextStep()">Continuar</button>
   </section>
 
   <!-- ETAPA 4 -->
   <section class="step">
     <h2>Revestimento Sanitário</h2>
+    <button class="btn-back" onclick="prevStep()">← Voltar</button>
 
     <label>Possui Sanitário?</label>
     <select id="temSanitario" onchange="controleSanitario()">
@@ -93,15 +95,15 @@
       <input class="decimal" id="sanitarioComp">
     </div>
 
-    <button onclick="prevStep()">Voltar</button>
     <button onclick="nextStep()">Continuar</button>
   </section>
 
   <!-- ETAPA 5 -->
   <section class="step">
     <h2>Revestimento do Poço</h2>
+    <button class="btn-back" onclick="prevStep()">← Voltar</button>
 
-    <label>Tipo</label>
+    <label>Tipo de Revestimento</label>
     <select id="tipoRev" onchange="controleRevestimento()">
       <option value="">Selecione</option>
       <option value="total">Total</option>
@@ -119,25 +121,25 @@
       <label>Polegadas</label>
       <input class="decimal" id="revPol">
 
+      <div id="parcialBox" class="hidden">
+        <label>Comprimento (m)</label>
+        <input class="decimal" id="revComp">
+      </div>
+
       <div id="filtrosBox" class="hidden">
         <h4>Filtros</h4>
         <div id="listaFiltros"></div>
         <button type="button" onclick="addFiltro()">+ Adicionar Filtro</button>
       </div>
-
-      <div id="parcialBox" class="hidden">
-        <label>Comprimento (m)</label>
-        <input class="decimal" id="revComp">
-      </div>
     </div>
 
-    <button onclick="prevStep()">Voltar</button>
-    <button onclick="nextStep()">Continuar</button>
+    <button onclick="validarRevestimento()">Continuar</button>
   </section>
 
   <!-- ETAPA 6 -->
   <section class="step">
     <h2>Hidráulica</h2>
+    <button class="btn-back" onclick="prevStep()">← Voltar</button>
 
     <label>Teste de Vazão?</label>
     <select id="testeVazao" onchange="controleTeste()">
@@ -165,13 +167,13 @@
     <label>Posição da Bomba</label>
     <input class="decimal" id="posBomba">
 
-    <button onclick="prevStep()">Voltar</button>
     <button onclick="validarHidraulica()">Continuar</button>
   </section>
 
   <!-- ETAPA 7 -->
   <section class="step">
     <h2>Geologia</h2>
+    <button class="btn-back" onclick="prevStep()">← Voltar</button>
 
     <label>Geologia</label>
     <textarea id="geologia"></textarea>
@@ -179,7 +181,6 @@
     <label>Fraturas</label>
     <textarea id="fraturas"></textarea>
 
-    <button onclick="prevStep()">Voltar</button>
     <button onclick="gerarResumo()">Resumo</button>
   </section>
 
