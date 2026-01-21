@@ -4,7 +4,7 @@ body {
 }
 
 .container {
-  max-width: 600px;
+  max-width: 650px;
   margin: auto;
   background: #fff;
   padding: 20px;
@@ -48,7 +48,11 @@ ul {
   padding-left: 20px;
 }
 
-.btn-voltar-topo {
-  background: #eee;
-  margin-bottom: 10px;
+.resumo-header {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+  z-index: 10;
 }
