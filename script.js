@@ -2,82 +2,58 @@ let step = 0;
 const steps = document.querySelectorAll(".step");
 const progressBar = document.getElementById("progressBar");
 
-// ELEMENTOS IMPORTANTES
 const temSanitario = document.getElementById("temSanitario");
 const sanitarioCampos = document.getElementById("sanitarioCampos");
 const tipoRevPoco = document.getElementById("tipoRevPoco");
 const filtrosArea = document.getElementById("filtrosArea");
 const listaFiltros = document.getElementById("listaFiltros");
+const listaFiltrosPoco = document.getElementById("listaFiltrosPoco");
 const resumo = document.getElementById("resumo");
-const testeVazaoCampos = document.getElementById("testeVazaoCampos");
-const testeVazao = document.getElementById("testeVazao");
 
 function showStep() {
   steps.forEach((s, i) => s.classList.toggle("active", i === step));
   progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
 }
-
-function nextStep() {
-  if (step < steps.length - 1) step++;
-  showStep();
-}
-
-function prevStep() {
-  if (step > 0) step--;
-  showStep();
-}
-
+function nextStep() { if (step < steps.length - 1) step++; showStep(); }
+function prevStep() { if (step > 0) step--; showStep(); }
 showStep();
 
-/* ===================== */
-/*  SANITÁRIO / PARCIAL  */
-/* ===================== */
+/* Sanitário */
 function toggleSanitario() {
-  const isSanitario = temSanitario.value === "sim";
-  sanitarioCampos.classList.toggle("hidden", !isSanitario);
+  const isSan = temSanitario.value === "sim";
+  sanitarioCampos.classList.toggle("hidden", !isSan);
 
-  if (isSanitario) {
-    // Se o usuário marcou sanitário, desabilita parcial no poço
+  if (isSan) {
     if (tipoRevPoco.querySelector('option[value="parcial"]')) {
       tipoRevPoco.querySelector('option[value="parcial"]').disabled = true;
       if (tipoRevPoco.value === "parcial") tipoRevPoco.value = "";
     }
-    // Mostra filtros do sanitário
-    filtrosArea.classList.remove("hidden");
-    listaFiltros.innerHTML = ""; // limpa qualquer filtro antigo
+    filtrosArea.classList.add("hidden");
+    listaFiltros.innerHTML = "";
   } else {
-    // Se sanitário não marcado, habilita parcial
     if (tipoRevPoco.querySelector('option[value="parcial"]')) {
       tipoRevPoco.querySelector('option[value="parcial"]').disabled = false;
     }
-    filtrosArea.classList.add("hidden");
-    listaFiltros.innerHTML = "";
   }
 }
 
-/* ===================== */
-/*  REVESTIMENTO DO POÇO */
-/* ===================== */
+/* Revestimento */
 function controlarFluxoRevestimento() {
-  const isSanitario = temSanitario.value === "sim";
-
-  if (isSanitario) {
-    // Se sanitário está ativo, apenas total do poço é permitido
-    if (tipoRevPoco.value !== "total") tipoRevPoco.value = "";
-    filtrosArea.classList.remove("hidden"); // filtros são do sanitário
+  if (temSanitario.value === "sim") {
+    tipoRevPoco.value = "total";
+    filtrosArea.classList.add("hidden");
+    listaFiltrosPoco.innerHTML = "";
     return;
   }
-
-  // Usuário não marcou sanitário
   if (tipoRevPoco.value === "total") {
     filtrosArea.classList.remove("hidden");
   } else {
     filtrosArea.classList.add("hidden");
-    listaFiltros.innerHTML = "";
+    listaFiltrosPoco.innerHTML = "";
   }
 }
 
-function addFiltro() {
+function addFiltro(tipo) {
   const div = document.createElement("div");
   div.className = "filtroItem";
   div.innerHTML = `
@@ -85,19 +61,11 @@ function addFiltro() {
     <input type="number" placeholder="Fim (m)">
     <button type="button" onclick="this.parentElement.remove()">Remover</button>
   `;
-  listaFiltros.appendChild(div);
+  if (tipo === 'sanitario') listaFiltros.appendChild(div);
+  else listaFiltrosPoco.appendChild(div);
 }
 
-/* ===================== */
-/*  TESTE DE VAZÃO       */
-/* ===================== */
-function toggleTesteVazao() {
-  testeVazaoCampos.classList.toggle("hidden", testeVazao.value !== "sim");
-}
-
-/* ===================== */
-/*  VALIDAÇÃO HIDRÁULICA */
-/* ===================== */
+/* Hidráulica */
 function validarHidraulica() {
   const vp = +vazaoPoco.value;
   const vb = +vazaoBomba.value;
@@ -105,105 +73,81 @@ function validarHidraulica() {
   const ndv = +nd.value;
   const prof = +profundidade.value;
 
-  if (vb > vp) {
-    alert("A vazão da bomba não pode ser maior que a vazão do poço.");
-    return;
-  }
-
-  if (bomba > prof) {
-    alert("A posição da bomba não pode ser maior que a profundidade.");
-    return;
-  }
-
-  if (bomba <= ndv) {
-    alert("A bomba deve estar abaixo do nível dinâmico (ND).");
-    return;
-  }
-
-  if (testeVazao.value === "sim" && +vazaoTeste.value > vp) {
-    alert("A vazão do teste não pode ser maior que a vazão do poço.");
-    return;
-  }
+  if (vb > vp) { alert("A vazão da bomba não pode ser maior que a vazão do poço."); return; }
+  if (bomba > prof) { alert("A posição da bomba não pode ser maior que a profundidade."); return; }
+  if (bomba <= ndv) { alert("A bomba deve estar abaixo do nível dinâmico (ND)."); return; }
 
   nextStep();
 }
 
-/* ===================== */
-/*  RESUMO FINAL         */
-/* ===================== */
+/* Resumo */
 function gerarResumo() {
-  // Captura filtros
-  let filtros = [];
-  document.querySelectorAll("#listaFiltros .filtroItem").forEach(div => {
-    const inicio = div.children[0].value;
-    const fim = div.children[1].value;
-    if (inicio && fim) filtros.push(`${inicio}m → ${fim}m`);
-  });
+  function pegarFiltros(container) {
+    const arr = [];
+    container.querySelectorAll(".filtroItem").forEach(d => {
+      const i = d.children[0].value;
+      const f = d.children[1].value;
+      if(i && f) arr.push(`${i}m → ${f}m`);
+    });
+    return arr;
+  }
+
+  const filtrosSan = pegarFiltros(listaFiltros);
+  const filtrosPoco = pegarFiltros(listaFiltrosPoco);
 
   let revestimentoDesc = "";
   if (temSanitario.value === "sim") {
     revestimentoDesc = `Sanitário (parcial) – ${sanitarioTipo.value} – ${sanitarioPol.value}" – ${sanitarioComp.value}m`;
-    if (filtros.length) revestimentoDesc += ` | Filtros: ${filtros.join(", ")}`;
+    if(filtrosSan.length) revestimentoDesc += ` | Filtros: ${filtrosSan.join(", ")}`;
   } else if (tipoRevPoco.value) {
-    revestimentoDesc = `${tipoRevPoco.value.charAt(0).toUpperCase() + tipoRevPoco.value.slice(1)} – ${materialRev.value} – ${polRev.value}"`;
-    if (filtros.length) revestimentoDesc += ` | Filtros: ${filtros.join(", ")}`;
+    revestimentoDesc = `${tipoRevPoco.value.charAt(0).toUpperCase()+tipoRevPoco.value.slice(1)} – ${materialRev.value} – ${polRev.value}"`;
+    if(filtrosPoco.length) revestimentoDesc += ` | Filtros: ${filtrosPoco.join(", ")}`;
   }
 
   resumo.innerHTML = `
     <h2>Resumo do Poço</h2>
 
-    <p><b>Cliente:</b> ${cliente.value}</p>
-    <p><b>Endereço:</b> ${endereco.value}</p>
+    <h3>Cliente</h3>
+    <p>Nome: ${cliente.value}<br>Documento: ${documento.value}<br>Endereço: ${endereco.value}</p>
 
     <h3>Perfuração</h3>
-    <p>${empresa.value} – ${metodo.value}</p>
+    <p>Empresa: ${empresa.value}<br>Encarregado: ${encarregado.value}<br>Data Início: ${dataInicio.value}<br>Data Fim: ${dataFim.value}<br>Método: ${metodo.value}</p>
 
     <h3>Poço</h3>
-    <p>Profundidade: ${profundidade.value} m</p>
+    <p>Profundidade: ${profundidade.value} m<br>Polegada Final: ${polFinal.value}</p>
 
     <h3>Revestimento</h3>
-    <p>${revestimentoDesc || "Não informado"}</p>
+    <p>${revestimentoDesc || 'Não informado'}</p>
 
     <h3>Hidráulica</h3>
-    <p>Teste de Vazão: ${testeVazao.value}</p>
-    <p>Vazão do Poço: ${vazaoPoco.value}</p>
-    <p>Vazão da Bomba: ${vazaoBomba.value}</p>
-    <p>NE: ${ne.value} | ND: ${nd.value}</p>
+    <p>Vazão do Poço: ${vazaoPoco.value} m³/h<br>Vazão da Bomba: ${vazaoBomba.value} m³/h<br>Posição da Bomba: ${posBomba.value} m<br>NE: ${ne.value} m | ND: ${nd.value} m</p>
 
-    <button onclick="step=0;showStep()">Editar</button>
+    <h3>Geologia</h3>
+    <p>${geologia.value}</p>
+
+    <h3>Fraturas</h3>
+    <p>${fraturas.value}</p>
+
+    <button onclick="step=0;showStep()">Editar Tudo</button>
     <button onclick="enviarEmail()">Enviar por Email</button>
-    <button onclick="location.reload()">Novo Poço</button>
+    <button onclick="baixarResumo()">Baixar Resumo</button>
   `;
-
   step = steps.length - 1;
   showStep();
 }
 
-/* ===================== */
-/*  ENVIO POR EMAIL      */
-/* ===================== */
+/* Envio Email */
 function enviarEmail() {
-  const filtrosTexto = [];
-  document.querySelectorAll("#listaFiltros .filtroItem").forEach(div => {
-    const inicio = div.children[0].value;
-    const fim = div.children[1].value;
-    if (inicio && fim) filtrosTexto.push(`${inicio}m → ${fim}m`);
-  });
+  emailjs.send("SEU_SERVICE_ID", "SEU_TEMPLATE_ID", { cliente: cliente.value, resumo: resumo.innerText })
+    .then(()=>alert("Poço enviado com sucesso!"))
+    .catch(err=>alert("Erro ao enviar: "+err));
+}
 
-  const mensagem = `
-Cliente: ${cliente.value}
-Endereço: ${endereco.value}
-Revestimento: ${resumo.querySelector("h3 + p").innerText}
-Filtros: ${filtrosTexto.join(", ")}
-  `;
-
-  emailjs.send("SEU_SERVICE_ID", "SEU_TEMPLATE_ID", {
-    cliente: cliente.value,
-    resumo: mensagem
-  }).then(() => {
-    alert("Poço enviado com sucesso!");
-    location.reload();
-  }).catch(err => {
-    alert("Erro ao enviar: " + err);
-  });
+/* Baixar Resumo */
+function baixarResumo() {
+  const blob = new Blob([resumo.innerText], {type: "text/plain"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `resumo_poco.txt`;
+  link.click();
 }
