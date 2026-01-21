@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 
-  <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     (function(){
@@ -100,7 +99,6 @@
       <input type="number" id="filtroInicio" placeholder="Início (m)">
       <input type="number" id="filtroFim" placeholder="Fim (m)">
       <button type="button" onclick="lancarFiltro()">Lançar Filtro</button>
-
       <ul id="listaFiltros"></ul>
     </div>
 
@@ -123,14 +121,19 @@
   <!-- ETAPA 7 -->
   <section class="step">
     <h2>Geologia</h2>
-    <textarea id="geologia" placeholder="Descrição geológica"></textarea>
+    <textarea id="geologia" placeholder="Geologia"></textarea>
     <textarea id="fraturas" placeholder="Fraturas"></textarea>
     <button onclick="prevStep()">Voltar</button>
     <button onclick="gerarResumo()">Gerar Resumo</button>
   </section>
 
   <!-- RESUMO -->
-  <section class="step" id="resumo"></section>
+  <section class="step" id="resumo">
+    <div class="resumo-header">
+      <button onclick="voltarEtapaResumo()">← Voltar etapa</button>
+    </div>
+    <div id="resumoConteudo"></div>
+  </section>
 
 </div>
 
