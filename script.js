@@ -1,139 +1,91 @@
 let step = 0;
-let filtros = [];
-
 const steps = document.querySelectorAll(".step");
+const progressBar = document.getElementById("progressBar");
 
 function showStep() {
   steps.forEach((s, i) => s.classList.toggle("active", i === step));
   progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
-  window.scrollTo(0, 0);
 }
-
-function nextStep() {
-  if (step < steps.length - 1) step++;
-  showStep();
-}
-
-function prevStep() {
-  if (step > 0) step--;
-  showStep();
-}
-
+function nextStep() { if (step < steps.length - 1) step++; showStep(); }
+function prevStep() { if (step > 0) step--; showStep(); }
 showStep();
 
-/* Sanitário */
-function toggleSanitario() {
-  sanitarioCampos.classList.toggle("hidden", temSanitario.value !== "sim");
+/* MÁSCARA DECIMAL 18,00 */
+document.querySelectorAll(".decimal").forEach(input => {
+  input.addEventListener("input", () => {
+    let v = input.value.replace(/\D/g, "");
+    if (!v) return input.value = "";
+    v = (parseInt(v) / 100).toFixed(2).replace(".", ",");
+    input.value = v;
+  });
+});
+const num = v => parseFloat(v.replace(",", "."));
+
+/* CONTROLES */
+function controleSanitario() {
+  sanitarioBox.classList.toggle("hidden", temSanitario.value !== "sim");
+  if (temSanitario.value === "sim") tipoRev.value = "";
 }
 
-/* Revestimento */
-function controlarFluxoRevestimento() {
-  filtrosArea.classList.toggle("hidden", tipoRevPoco.value !== "total");
-  if (tipoRevPoco.value !== "total") {
-    filtros = [];
-    listaFiltros.innerHTML = "";
-  }
+function controleRevestimento() {
+  filtrosBox.classList.add("hidden");
+  parcialBox.classList.add("hidden");
+
+  if (tipoRev.value === "total") filtrosBox.classList.remove("hidden");
+  if (tipoRev.value === "parcial") parcialBox.classList.remove("hidden");
 }
 
-function lancarFiltro() {
-  const inicio = filtroInicio.value;
-  const fim = filtroFim.value;
+function addFiltro() {
+  const d = document.createElement("div");
+  d.innerHTML = `
+    <input class="decimal" placeholder="Início">
+    <input class="decimal" placeholder="Fim">
+  `;
+  listaFiltros.appendChild(d);
+}
 
-  if (!inicio || !fim) {
-    alert("Informe início e fim do filtro.");
+/* TESTE */
+function controleTeste() {
+  testeBox.classList.toggle("hidden", testeVazao.value !== "sim");
+}
+
+/* VALIDAÇÕES */
+function validarHidraulica() {
+  if (num(vazaoBomba.value) > num(vazaoPoco.value)) {
+    alert("Vazão da bomba maior que a do poço");
     return;
   }
-
-  filtros.push({ inicio, fim });
-  atualizarListaFiltros();
-
-  filtroInicio.value = "";
-  filtroFim.value = "";
-}
-
-function atualizarListaFiltros() {
-  listaFiltros.innerHTML = "";
-  filtros.forEach((f, i) => {
-    const li = document.createElement("li");
-    li.textContent = `Filtro ${i + 1}: ${f.inicio} m até ${f.fim} m`;
-    listaFiltros.appendChild(li);
-  });
-}
-
-/* Teste de Vazão */
-function validarTesteVazao() {
-  if (+vazaoBomba.value > +vazaoPoco.value) {
-    alert("A vazão da bomba não pode ser maior que a vazão do poço.");
+  if (num(posBomba.value) > num(profundidade.value)) {
+    alert("Bomba maior que profundidade");
+    return;
+  }
+  if (num(posBomba.value) <= num(nd.value)) {
+    alert("Bomba deve estar abaixo do ND");
     return;
   }
   nextStep();
 }
 
-/* Resumo */
+/* RESUMO */
 function gerarResumo() {
-  resumoConteudo.innerHTML = `
+  resumo.innerHTML = `
     <h2>Resumo do Poço</h2>
-
-    <h3>Cliente</h3>
-    <p>${cliente.value}<br>${documento.value}<br>${endereco.value}</p>
-
-    <h3>Perfuração</h3>
-    <p>${empresa.value} - ${metodo.value}</p>
+    <p><b>Cliente:</b> ${cliente.value}</p>
+    <p><b>Endereço:</b> ${endereco.value}</p>
 
     <h3>Poço</h3>
-    <p>Profundidade: ${profundidade.value} m<br>Polegada Final: ${polFinal.value}</p>
+    <p>Profundidade: ${profundidade.value} m</p>
 
     <h3>Revestimento</h3>
-    <p>${tipoRevPoco.value} - ${materialRev.value} - ${polRev.value}"</p>
+    <p>${temSanitario.value === "sim" ? "Sanitário" : tipoRev.value}</p>
 
-    <h3>Filtros</h3>
-    <ul>
-      ${filtros.length
-        ? filtros.map(f => `<li>${f.inicio} m até ${f.fim} m</li>`).join("")
-        : "<li>Não possui filtros</li>"}
-    </ul>
+    <h3>Hidráulica</h3>
+    <p>Vazão Poço: ${vazaoPoco.value}</p>
+    <p>Vazão Bomba: ${vazaoBomba.value}</p>
 
-    <h3>Teste de Vazão</h3>
-    <p>
-      Vazão do Poço: ${vazaoPoco.value}<br>
-      Vazão da Bomba: ${vazaoBomba.value}<br>
-      Posição da Bomba: ${posBomba.value}<br>
-      NE: ${ne.value} | ND: ${nd.value}
-    </p>
-
-    <h3>Geologia</h3>
-    <p>${geologia.value}</p>
-
-    <h3>Fraturas</h3>
-    <p>${fraturas.value}</p>
-
-    <button onclick="step=0;showStep()">Editar tudo</button>
-    <button onclick="enviarEmail()">Enviar por Email</button>
-    <button onclick="baixarResumo()">Baixar</button>
+    <button onclick="step=0;showStep()">Editar</button>
+    <button onclick="location.reload()">Novo Poço</button>
   `;
-
   step = steps.length - 1;
   showStep();
-}
-
-function voltarEtapaResumo() {
-  step = steps.length - 2;
-  showStep();
-}
-
-/* Email */
-function enviarEmail() {
-  emailjs.send("SEU_SERVICE_ID", "SEU_TEMPLATE_ID", {
-    cliente: cliente.value,
-    resumo: resumoConteudo.innerText
-  }).then(() => alert("Enviado com sucesso"));
-}
-
-/* Download */
-function baixarResumo() {
-  const blob = new Blob([resumoConteudo.innerText], { type: "text/plain" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "poco.txt";
-  a.click();
 }
