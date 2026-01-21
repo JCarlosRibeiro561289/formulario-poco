@@ -6,143 +6,109 @@ function showStep() {
   steps.forEach((s, i) => s.classList.toggle("active", i === step));
   progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
 }
-function nextStep() { if (step < steps.length - 1) step++; showStep(); }
-function prevStep() { if (step > 0) step--; showStep(); }
+function nextStep(){ if(step < steps.length-1) step++; showStep(); }
+function prevStep(){ if(step > 0) step--; showStep(); }
 showStep();
 
-/* MÁSCARA DECIMAL 18,00 */
-function aplicarMascara(inputs) {
-  inputs.forEach(input => {
-    input.addEventListener("input", () => {
-      let v = input.value.replace(/\D/g, "");
-      if (!v) { input.value = ""; return; }
-      v = (parseInt(v) / 100).toFixed(2).replace(".", ",");
-      input.value = v;
+/* máscara 18,00 */
+function aplicarMascara(inputs){
+  inputs.forEach(i=>{
+    i.addEventListener("input",()=>{
+      let v=i.value.replace(/\D/g,"");
+      if(!v){i.value="";return;}
+      i.value=(parseInt(v)/100).toFixed(2).replace(".",",");
     });
   });
 }
 aplicarMascara(document.querySelectorAll(".decimal"));
+const num=v=>parseFloat(v.replace(",","."))||0;
 
-const num = v => parseFloat(v.replace(",", "."));
-
-/* SANITÁRIO */
-function controleSanitario() {
-  sanitarioBox.classList.toggle("hidden", temSanitario.value !== "sim");
-  if (temSanitario.value === "sim") tipoRev.value = "";
-}
-
-/* REVESTIMENTO */
-function controleRevestimento() {
-  filtrosBox.classList.add("hidden");
-  parcialBox.classList.add("hidden");
-
-  if (tipoRev.value === "total") filtrosBox.classList.remove("hidden");
-  if (tipoRev.value === "parcial") parcialBox.classList.remove("hidden");
-}
-
-function addFiltro() {
-  const div = document.createElement("div");
-  div.className = "filtro-item";
-  div.innerHTML = `
-    <input class="decimal inicio" placeholder="Início (m)">
-    <input class="decimal fim" placeholder="Fim (m)">
-    <button type="button" class="btn-remove" onclick="removerFiltro(this)">🗑</button>
-    <small class="erro"></small>
-  `;
-  listaFiltros.appendChild(div);
-  aplicarMascara(div.querySelectorAll(".decimal"));
-}
-
-function removerFiltro(btn) {
-  btn.parentElement.remove();
-}
-
-listaFiltros.addEventListener("input", validarFiltros);
-
-function validarFiltros() {
-  const filtros = document.querySelectorAll(".filtro-item");
-  const prof = num(profundidade.value);
-  let intervalos = [];
-  let valido = true;
-
-  filtros.forEach(f => {
-    const ini = num(f.querySelector(".inicio").value);
-    const fim = num(f.querySelector(".fim").value);
-    const erro = f.querySelector(".erro");
-    erro.innerText = "";
-
-    if (!ini || !fim) return;
-
-    if (ini >= fim) {
-      erro.innerText = "Início deve ser menor que o fim";
-      valido = false;
-    }
-    if (fim > prof) {
-      erro.innerText = "Ultrapassa a profundidade do poço";
-      valido = false;
-    }
-    intervalos.push({ ini, fim, erro });
-  });
-
-  intervalos.sort((a, b) => a.ini - b.ini);
-  for (let i = 1; i < intervalos.length; i++) {
-    if (intervalos[i].ini < intervalos[i - 1].fim) {
-      intervalos[i].erro.innerText = "Sobreposição com filtro anterior";
-      valido = false;
-    }
-  }
-  return valido;
-}
-
-function validarRevestimento() {
-  if (tipoRev.value === "total" && !validarFiltros()) {
-    alert("Corrija os filtros antes de continuar");
+/* validações */
+function validarPerf(){
+  if(!empresa.value||!encarregado.value){
+    alert("Preencha empresa e encarregado");
     return;
   }
   nextStep();
 }
 
-/* HIDRÁULICA */
-function controleTeste() {
-  testeBox.classList.toggle("hidden", testeVazao.value !== "sim");
+function validarPoco(){
+  if(!profundidade.value||!diamInicial.value||!diamFinal.value){
+    alert("Dados do poço obrigatórios");
+    return;
+  }
+  nextStep();
 }
 
-function validarHidraulica() {
-  if (num(vazaoBomba.value) > num(vazaoPoco.value)) {
+/* sanitário */
+function controleSanitario(){
+  sanitarioBox.classList.toggle("hidden",temSanitario.value!=="sim");
+}
+
+/* revestimento */
+function controleRevestimento(){
+  filtrosBox.classList.add("hidden");
+  parcialBox.classList.add("hidden");
+  if(tipoRev.value==="total") filtrosBox.classList.remove("hidden");
+  if(tipoRev.value==="parcial") parcialBox.classList.remove("hidden");
+}
+
+function addFiltro(){
+  const d=document.createElement("div");
+  d.className="filtro-item";
+  d.innerHTML=`
+    <input class="decimal inicio" placeholder="Início (m)">
+    <input class="decimal fim" placeholder="Fim (m)">
+    <button type="button" class="btn-remove" onclick="this.parentElement.remove()">🗑</button>
+    <small class="erro"></small>
+  `;
+  listaFiltros.appendChild(d);
+  aplicarMascara(d.querySelectorAll(".decimal"));
+}
+
+function validarRevestimento(){
+  if(tipoRev.value==="total" && !listaFiltros.children.length){
+    alert("Informe ao menos um filtro");
+    return;
+  }
+  nextStep();
+}
+
+/* hidráulica */
+function validarHidraulica(){
+  if(num(vazaoBomba.value)>num(vazaoPoco.value)){
     alert("Vazão da bomba maior que a do poço");
     return;
   }
-  if (num(posBomba.value) > num(profundidade.value)) {
-    alert("Bomba maior que profundidade");
-    return;
-  }
-  if (num(posBomba.value) <= num(nd.value)) {
-    alert("Bomba deve estar abaixo do ND");
+  if(num(posBomba.value)>=num(profundidade.value)||num(posBomba.value)<=num(nd.value)){
+    alert("Posição da bomba inválida");
     return;
   }
   nextStep();
 }
 
-/* RESUMO */
-function gerarResumo() {
-  resumo.innerHTML = `
+/* resumo */
+function gerarResumo(){
+  resumo.innerHTML=`
     <h2>Resumo do Poço</h2>
     <p><b>Cliente:</b> ${cliente.value}</p>
-    <p><b>Endereço:</b> ${endereco.value}</p>
+    <p><b>Endereço:</b> ${endereco.value} - ${cidade.value}/${estado.value}</p>
+
+    <h3>Perfuração</h3>
+    <p>${empresa.value} – ${metodo.value}</p>
 
     <h3>Poço</h3>
     <p>Profundidade: ${profundidade.value} m</p>
-
-    <h3>Revestimento</h3>
-    <p>${temSanitario.value === "sim" ? "Sanitário" : tipoRev.value}</p>
+    <p>Diâmetros: ${diamInicial.value}" → ${diamFinal.value}"</p>
 
     <h3>Hidráulica</h3>
-    <p>Vazão Poço: ${vazaoPoco.value}</p>
-    <p>Vazão Bomba: ${vazaoBomba.value}</p>
+    <p>NE: ${ne.value} | ND: ${nd.value}</p>
+    <p>Bomba: ${posBomba.value} m</p>
+    <p>Vazão Poço: ${vazaoPoco.value} | Bomba: ${vazaoBomba.value}</p>
 
     <button onclick="step=0;showStep()">Editar</button>
     <button onclick="location.reload()">Novo Poço</button>
   `;
-  step = steps.length - 1;
+  step=steps.length-1;
   showStep();
 }
