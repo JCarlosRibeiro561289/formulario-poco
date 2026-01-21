@@ -158,6 +158,11 @@
       <div id="listaFiltros"></div>
       <button type="button" onclick="addFiltro()">+ Adicionar Filtro</button>
     </div>
+    <label>Possui Pré-filtro?</label>
+<select id="prefiltro">
+  <option value="nao">Não</option>
+  <option value="sim">Sim</option>
+</select>
 
     <button onclick="validarRevestimento()">Continuar</button>
     
@@ -196,6 +201,8 @@
 
     <label>Fraturas</label>
     <textarea id="fraturas"></textarea>
+    <label>Observações</label>
+<textarea id="observacao" placeholder="Observações gerais do poço"></textarea>
 
     <button onclick="gerarResumo()">Resumo</button>
   </section>
