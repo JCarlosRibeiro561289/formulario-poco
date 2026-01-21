@@ -78,65 +78,75 @@
     <button onclick="nextStep()">Avançar</button>
   </section>
 
-  <!-- ETAPA 4 -->
-  <section class="step">
-    <h2>Revestimento Sanitário</h2>
+<!-- ETAPA 4 -->
+<section class="step">
+  <h2>Revestimento Sanitário</h2>
 
-    <label>Possui Sanitário?</label>
-    <select id="temSanitario" onchange="toggleSanitario()">
-      <option value="nao">Não</option>
-      <option value="sim">Sim</option>
-    </select>
+  <label>Possui Sanitário?</label>
+  <select id="temSanitario" onchange="toggleSanitario()">
+    <option value="nao">Não</option>
+    <option value="sim">Sim</option>
+  </select>
 
-    <div id="sanitarioCampos" class="hidden">
-      <label>Tipo</label>
-      <select id="sanitarioTipo">
-        <option>PVC</option>
-        <option>Aço</option>
-        <option>Inox</option>
-      </select>
-
-      <label>Polegadas</label>
-      <input type="number" id="sanitarioPol">
-
-      <label>Comprimento (m)</label>
-      <input type="number" id="sanitarioComp">
-    </div>
-
-    <button onclick="prevStep()">Voltar</button>
-    <button onclick="nextStep()">Avançar</button>
-  </section>
-
-  <!-- ETAPA 5 -->
-  <section class="step">
-    <h2>Revestimento do Poço</h2>
-
-    <label>Tipo de Revestimento</label>
-    <select id="tipoRevPoco" onchange="controlarFluxoRevestimento()">
-      <option value="">Selecione</option>
-      <option value="parcial">Parcial</option>
-      <option value="total">Total</option>
-    </select>
-
-    <label>Material</label>
-    <select id="materialRev">
+  <!-- Campos do Sanitário -->
+  <div id="sanitarioCampos" class="hidden">
+    <label>Tipo</label>
+    <select id="sanitarioTipo">
       <option>PVC</option>
       <option>Aço</option>
       <option>Inox</option>
     </select>
 
     <label>Polegadas</label>
-    <input type="number" id="polRev">
+    <input type="number" id="sanitarioPol">
 
-    <div id="filtrosArea" class="hidden">
-      <h4>Filtros (início e fim)</h4>
+    <label>Comprimento (m)</label>
+    <input type="number" id="sanitarioComp">
+
+    <!-- Filtros dentro do Sanitário -->
+    <div id="filtrosSanitarioArea">
+      <h4>Filtros do Sanitário (opcional)</h4>
       <div id="listaFiltros"></div>
       <button type="button" onclick="addFiltro()">+ Adicionar Filtro</button>
     </div>
+  </div>
 
-    <button onclick="prevStep()">Voltar</button>
-    <button onclick="nextStep()">Avançar</button>
-  </section>
+  <button onclick="prevStep()">Voltar</button>
+  <button onclick="nextStep()">Avançar</button>
+</section>
+
+<!-- ETAPA 5 -->
+<section class="step">
+  <h2>Revestimento do Poço</h2>
+
+  <label>Tipo de Revestimento</label>
+  <select id="tipoRevPoco" onchange="controlarFluxoRevestimento()">
+    <option value="">Selecione</option>
+    <option value="parcial">Parcial</option>
+    <option value="total">Total</option>
+  </select>
+
+  <label>Material</label>
+  <select id="materialRev">
+    <option>PVC</option>
+    <option>Aço</option>
+    <option>Inox</option>
+  </select>
+
+  <label>Polegadas</label>
+  <input type="number" id="polRev">
+
+  <!-- Filtros do Revestimento Total -->
+  <div id="filtrosArea" class="hidden">
+    <h4>Filtros do Revestimento Total</h4>
+    <div id="listaFiltros"></div>
+    <button type="button" onclick="addFiltro()">+ Adicionar Filtro</button>
+  </div>
+
+  <button onclick="prevStep()">Voltar</button>
+  <button onclick="nextStep()">Avançar</button>
+</section>
+
 
   <!-- ETAPA 6 -->
   <section class="step">
