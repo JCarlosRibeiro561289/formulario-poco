@@ -1,18 +1,12 @@
-* {
-  box-sizing: border-box;
-  font-family: system-ui, sans-serif;
-}
-
 body {
-  background: #020617;
-  padding: 16px;
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
 }
 
 .container {
-  max-width: 480px;
+  max-width: 600px;
   margin: auto;
   background: #fff;
-  border-radius: 14px;
   padding: 20px;
 }
 
@@ -24,127 +18,37 @@ body {
   display: block;
 }
 
-label {
-  font-size: 0.8rem;
-  margin-top: 12px;
-  display: block;
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 4px;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-}
-
-textarea {
-  min-height: 80px;
-}
-
-button {
-  margin-top: 18px;
-  width: 100%;
-  padding: 12px;
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-}
-
 .hidden {
   display: none;
 }
 
+input, select, textarea, button {
+  width: 100%;
+  margin: 8px 0;
+  padding: 8px;
+}
+
+button {
+  cursor: pointer;
+}
+
 .progress {
-  height: 6px;
-  background: #e5e7eb;
-  border-radius: 4px;
-  margin-bottom: 16px;
+  height: 5px;
+  background: #ddd;
+  margin-bottom: 10px;
 }
 
 #progressBar {
   height: 100%;
-  width: 0;
-  background: #2563eb;
-  border-radius: 4px;
-}
-* {
-  box-sizing: border-box;
-  font-family: system-ui, sans-serif;
+  width: 0%;
+  background: #4caf50;
 }
 
-body {
-  background: linear-gradient(135deg, #020617, #020617);
-  padding: 16px;
+ul {
+  padding-left: 20px;
 }
 
-.card {
-  max-width: 480px;
-  margin: auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 14px;
+.btn-voltar-topo {
+  background: #eee;
+  margin-bottom: 10px;
 }
-
-h2, h3 {
-  margin-top: 20px;
-  color: #1e293b;
-}
-
-label {
-  font-size: 0.8rem;
-  margin-top: 12px;
-  display: block;
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 4px;
-  border-radius: 8px;
-  border: 1px solid #cbd5f5;
-}
-
-textarea {
-  min-height: 70px;
-}
-
-button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 12px;
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-}
-
-.hidden {
-  display: none;
-}
-
-/* RESUMO */
-.resumo-card h3 {
-  border-bottom: 1px solid #e5e7eb;
-  margin-top: 18px;
-}
-
-.resumo-card p {
-  font-size: 0.85rem;
-  margin: 4px 0;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8rem;
-}
-
-td, th {
-  border: 1px solid #e5e7eb;
-  padding: 6px;
-}
-,
