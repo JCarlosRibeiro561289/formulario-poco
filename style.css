@@ -1,41 +1,21 @@
 * {
   box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: system-ui, sans-serif;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  background: #f4f6f8;
+  background: #020617;
+  padding: 16px;
 }
 
 .container {
-  max-width: 900px;
-  margin: 30px auto;
-  background: #ffffff;
-  padding: 25px 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 480px;
+  margin: auto;
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
 }
 
-/* Barra de progresso */
-.progress {
-  width: 100%;
-  height: 6px;
-  background: #e0e0e0;
-  border-radius: 3px;
-  margin-bottom: 25px;
-  overflow: hidden;
-}
-
-#progressBar {
-  height: 100%;
-  width: 0%;
-  background: #1976d2;
-  transition: width 0.3s ease;
-}
-
-/* Etapas */
 .step {
   display: none;
 }
@@ -44,125 +24,49 @@ body {
   display: block;
 }
 
-h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #333;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 8px;
-}
-
-h3 {
-  margin-top: 25px;
-  color: #444;
-}
-
-h4 {
-  margin-top: 20px;
-  color: #555;
-}
-
-/* Labels e inputs */
 label {
+  font-size: 0.8rem;
+  margin-top: 12px;
   display: block;
-  margin-top: 15px;
-  font-weight: bold;
-  color: #444;
 }
 
-input,
-select,
-textarea {
+input, select, textarea {
   width: 100%;
-  padding: 8px 10px;
-  margin-top: 6px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+  padding: 10px;
+  margin-top: 4px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
 }
 
 textarea {
-  min-height: 90px;
-  resize: vertical;
+  min-height: 80px;
 }
 
-/* Botões */
 button {
-  margin-top: 25px;
-  padding: 10px 18px;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  background: #1976d2;
+  margin-top: 18px;
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
   color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
 }
 
-button:hover {
-  background: #125ca1;
-}
-
-button + button {
-  margin-left: 10px;
-}
-
-button[type="button"] {
-  background: #555;
-}
-
-button[type="button"]:hover {
-  background: #333;
-}
-
-/* Áreas condicionais */
 .hidden {
   display: none;
 }
 
-/* Área de filtros */
-#filtrosArea {
-  margin-top: 20px;
-  padding: 15px;
-  background: #f9f9f9;
-  border: 1px dashed #ccc;
-  border-radius: 6px;
+.progress {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  margin-bottom: 16px;
 }
 
-#listaFiltros div {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-#listaFiltros input {
-  flex: 1;
-}
-
-/* Resumo */
-#resumo p {
-  margin: 6px 0;
-  line-height: 1.5;
-}
-
-#resumo h3 {
-  margin-top: 20px;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 5px;
-}
-
-/* Responsivo */
-@media (max-width: 600px) {
-  .container {
-    margin: 10px;
-    padding: 20px;
-  }
-
-  #listaFiltros div {
-    flex-direction: column;
-  }
-
-  button + button {
-    margin-left: 0;
-    margin-top: 10px;
-  }
+#progressBar {
+  height: 100%;
+  width: 0;
+  background: #2563eb;
+  border-radius: 4px;
 }
