@@ -1,23 +1,18 @@
-/* RESET BÁSICO */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* BASE */
+/* BASE – SEM RESET AGRESSIVO */
 body {
   font-family: Arial, Helvetica, sans-serif;
   background: #f2f2f2;
   color: #333;
+  margin: 0;
+  padding: 0;
 }
 
-/* CONTAINER PRINCIPAL */
+/* CONTAINER */
 .container {
   max-width: 700px;
   margin: 20px auto;
   background: #ffffff;
-  padding: 20px;
+  padding: 24px;
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
@@ -28,8 +23,7 @@ body {
   height: 6px;
   background: #e0e0e0;
   border-radius: 3px;
-  margin-bottom: 15px;
-  overflow: hidden;
+  margin-bottom: 20px;
 }
 
 #progressBar {
@@ -48,80 +42,80 @@ body {
   display: block;
 }
 
-/* FORMULÁRIOS */
+/* TÍTULOS */
+h2 {
+  margin-bottom: 18px;
+  font-size: 20px;
+}
+
+h3 {
+  margin-top: 22px;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+h4 {
+  margin-top: 16px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+/* CAMPOS */
 input,
 select,
 textarea {
   width: 100%;
   padding: 10px;
-  margin-top: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
 }
 
 textarea {
+  min-height: 90px;
   resize: vertical;
-  min-height: 80px;
-}
-
-/* TÍTULOS */
-h2 {
-  margin-bottom: 15px;
-  font-size: 20px;
-}
-
-h3 {
-  margin-top: 20px;
-  margin-bottom: 8px;
-  font-size: 16px;
-}
-
-h4 {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  font-size: 14px;
 }
 
 /* BOTÕES */
 button {
-  padding: 10px 14px;
-  margin-top: 10px;
+  padding: 10px 16px;
   border: none;
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
+  margin-top: 8px;
+}
+
+/* BOTÃO PRINCIPAL */
+button[onclick*="nextStep"],
+button[onclick*="Gerar"],
+button[onclick*="validar"],
+button[onclick*="enviar"] {
   background: #4caf50;
   color: #fff;
 }
 
-button:hover {
+button[onclick*="nextStep"]:hover {
   background: #43a047;
 }
 
-/* BOTÕES DE VOLTAR */
+/* BOTÃO SECUNDÁRIO */
 button[onclick*="prevStep"],
-button[onclick*="voltarEtapaResumo"] {
+.resumo-header button {
   background: #9e9e9e;
+  color: #fff;
 }
 
 button[onclick*="prevStep"]:hover,
-button[onclick*="voltarEtapaResumo"]:hover {
+.resumo-header button:hover {
   background: #757575;
 }
 
-/* BOTÕES FINAIS */
-button[onclick*="Editar"],
-button[onclick*="enviarEmail"],
-button[onclick*="baixarResumo"] {
-  margin-right: 10px;
-}
-
-/* FILTROS */
+/* ÁREA DE FILTROS */
 #filtrosArea {
   background: #fafafa;
-  padding: 10px;
+  padding: 14px;
   border: 1px dashed #ccc;
   border-radius: 4px;
   margin-top: 10px;
@@ -134,7 +128,6 @@ button[onclick*="baixarResumo"] {
 
 #listaFiltros li {
   margin-bottom: 6px;
-  font-size: 14px;
 }
 
 /* ESCONDIDO */
@@ -157,25 +150,15 @@ button[onclick*="baixarResumo"] {
   z-index: 20;
 }
 
-.resumo-header button {
-  width: auto;
-  background: #607d8b;
-}
-
-.resumo-header button:hover {
-  background: #546e7a;
-}
-
 /* TEXTO DO RESUMO */
 #resumoConteudo p {
   line-height: 1.6;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
-/* LISTAS NO RESUMO */
 #resumoConteudo ul {
   padding-left: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 /* RESPONSIVO */
