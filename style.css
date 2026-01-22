@@ -1,15 +1,21 @@
+* { box-sizing: border-box; }
 * {
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
-  margin: 0;
+margin: 0;
+  font-family: system-ui, sans-serif;
+  background: linear-gradient(180deg,#020617,#0f172a);
   padding: 0;
   background: #f4f6f8;
 }
 
 .container {
+  max-width: 480px;
+  margin: auto;
+  padding: 20px;
   max-width: 900px;
   margin: 30px auto;
   background: #ffffff;
@@ -18,19 +24,25 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+.progress-bar {
 /* Barra de progresso */
 .progress {
   width: 100%;
-  height: 6px;
+height: 6px;
+  background: rgba(255,255,255,.2);
+  border-radius: 10px;
+  margin-bottom: 20px;
   background: #e0e0e0;
   border-radius: 3px;
   margin-bottom: 25px;
   overflow: hidden;
 }
 
+#progress {
 #progressBar {
-  height: 100%;
-  width: 0%;
+height: 100%;
+width: 0%;
+  background: linear-gradient(90deg,#38bdf8,#2563eb);
   background: #1976d2;
   transition: width 0.3s ease;
 }
@@ -44,6 +56,8 @@ body {
   display: block;
 }
 
+.step { display: none; }
+.step.active { display: block; }
 h2 {
   margin-top: 0;
   margin-bottom: 20px;
@@ -57,6 +71,11 @@ h3 {
   color: #444;
 }
 
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 15px 30px rgba(0,0,0,.25);
 h4 {
   margin-top: 20px;
   color: #555;
@@ -64,6 +83,12 @@ h4 {
 
 /* Labels e inputs */
 label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+  font-size: .8rem;
+  color: #64748b;
   display: block;
   margin-top: 15px;
   font-weight: bold;
@@ -81,6 +106,11 @@ textarea {
   font-size: 14px;
 }
 
+input, select, textarea {
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #cbd5f5;
+  font-size: 1rem;
 textarea {
   min-height: 90px;
   resize: vertical;
@@ -88,16 +118,21 @@ textarea {
 
 /* Botões */
 button {
+  padding: 14px;
+  border-radius: 12px;
   margin-top: 25px;
   padding: 10px 18px;
-  border: none;
+border: none;
   border-radius: 4px;
   font-size: 14px;
-  cursor: pointer;
+cursor: pointer;
   background: #1976d2;
   color: #fff;
 }
 
+.primary {
+  background: linear-gradient(90deg,#2563eb,#1d4ed8);
+  color: #fff;
 button:hover {
   background: #125ca1;
 }
@@ -110,10 +145,13 @@ button[type="button"] {
   background: #555;
 }
 
+.secondary {
+  background: #e5e7eb;
 button[type="button"]:hover {
   background: #333;
 }
 
+.nav {
 /* Áreas condicionais */
 .hidden {
   display: none;
@@ -129,27 +167,40 @@ button[type="button"]:hover {
 }
 
 #listaFiltros div {
-  display: flex;
-  gap: 10px;
+display: flex;
+gap: 10px;
   margin-bottom: 10px;
 }
 
+.filtro {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
 #listaFiltros input {
   flex: 1;
 }
 
+.hidden { display: none; }
 /* Resumo */
 #resumo p {
   margin: 6px 0;
   line-height: 1.5;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
 #resumo h3 {
   margin-top: 20px;
   border-bottom: 1px solid #ddd;
   padding-bottom: 5px;
 }
 
+td, th {
+  border: 1px solid #e5e7eb;
+  padding: 8px;
+  text-align: center;
 /* Responsivo */
 @media (max-width: 600px) {
   .container {
