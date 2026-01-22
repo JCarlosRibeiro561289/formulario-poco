@@ -1,139 +1,138 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Cadastro de Poço</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Cadastro de Poço</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function(){
+      emailjs.init("SUA_PUBLIC_KEY_AQUI");
+    })();
+  </script>
 </head>
 <body>
 
-<div class="container" id="app">
+<div class="container">
 
-  <div class="progress-bar">
-    <div id="progress"></div>
+  <div class="progress">
+    <div id="progressBar"></div>
   </div>
 
-  <form id="formPoco">
+  <!-- ETAPA 1 -->
+  <section class="step active">
+    <h2>Cliente</h2>
+    <input id="cliente" placeholder="Cliente">
+    <input id="documento" placeholder="Documento">
+    <input id="endereco" placeholder="Endereço do Poço">
+    <button onclick="nextStep()">Avançar</button>
+  </section>
 
-    <!-- ETAPA 1 -->
-    <section class="step active">
-      <div class="card">
-        <h2>Cliente</h2>
+  <!-- ETAPA 2 -->
+  <section class="step">
+    <h2>Perfuração</h2>
+    <input id="empresa" placeholder="Empresa Perfuradora">
+    <input id="encarregado" placeholder="Encarregado">
+    <input type="date" id="dataInicio">
+    <input type="date" id="dataFim">
+    <select id="metodo">
+      <option>Rotativa</option>
+      <option>Pneumática</option>
+      <option>Ambos</option>
+    </select>
+    <button onclick="prevStep()">Voltar</button>
+    <button onclick="nextStep()">Avançar</button>
+  </section>
 
-        <label>Cliente
-          <input name="cliente" required>
-        </label>
+  <!-- ETAPA 3 -->
+  <section class="step">
+    <h2>Dados do Poço</h2>
+    <input type="number" id="profundidade" placeholder="Profundidade (m)">
+    <input type="number" id="polFinal" placeholder="Polegada Final">
+    <button onclick="prevStep()">Voltar</button>
+    <button onclick="nextStep()">Avançar</button>
+  </section>
 
-        <label>CNPJ / Documento
-          <input name="documento">
-        </label>
+  <!-- ETAPA 4 -->
+  <section class="step">
+    <h2>Revestimento Sanitário</h2>
+    <select id="temSanitario" onchange="toggleSanitario()">
+      <option value="nao">Não possui</option>
+      <option value="sim">Possui</option>
+    </select>
 
-        <label>Endereço do Poço
-          <input name="endereco" required>
-        </label>
+    <div id="sanitarioCampos" class="hidden">
+      <select id="sanitarioTipo">
+        <option>PVC</option>
+        <option>Aço</option>
+        <option>Inox</option>
+      </select>
+      <input type="number" id="sanitarioPol" placeholder="Polegadas">
+      <input type="number" id="sanitarioComp" placeholder="Comprimento (m)">
+    </div>
 
-        <button type="button" class="primary" onclick="nextStep()">Avançar</button>
-      </div>
-    </section>
+    <button onclick="prevStep()">Voltar</button>
+    <button onclick="nextStep()">Avançar</button>
+  </section>
 
-    <!-- ETAPA 2 -->
-    <section class="step">
-      <div class="card">
-        <h2>Perfuração</h2>
+  <!-- ETAPA 5 -->
+  <section class="step">
+    <h2>Revestimento do Poço</h2>
+    <select id="tipoRevPoco" onchange="controlarFluxoRevestimento()">
+      <option value="">Selecione</option>
+      <option value="parcial">Parcial</option>
+      <option value="total">Total</option>
+    </select>
 
-        <label>Empresa Perfuradora
-          <input name="empresa">
-        </label>
+    <select id="materialRev">
+      <option>PVC</option>
+      <option>Aço</option>
+      <option>Inox</option>
+    </select>
 
-        <label>Encarregado
-          <input name="encarregado">
-        </label>
+    <input type="number" id="polRev" placeholder="Polegadas">
 
-        <label>Data Início
-          <input type="date" name="inicio">
-        </label>
+    <div id="filtrosArea" class="hidden">
+      <h4>Lançamento de Filtros</h4>
+      <input type="number" id="filtroInicio" placeholder="Início (m)">
+      <input type="number" id="filtroFim" placeholder="Fim (m)">
+      <button type="button" onclick="lancarFiltro()">Lançar Filtro</button>
 
-        <label>Data Término
-          <input type="date" name="termino">
-        </label>
+      <ul id="listaFiltros"></ul>
+    </div>
 
-        <label>Método
-          <select name="metodo">
-            <option>Rotativa</option>
-            <option>Pneumático</option>
-            <option>Ambos</option>
-          </select>
-        </label>
+    <button onclick="prevStep()">Voltar</button>
+    <button onclick="nextStep()">Avançar</button>
+  </section>
 
-        <label>POL Final (m)
-          <input class="numero" name="polFinal">
-        </label>
+  <!-- ETAPA 6 -->
+  <section class="step">
+    <h2>Teste de Vazão</h2>
+    <input type="number" id="vazaoPoco" placeholder="Vazão do Poço (m³/h)">
+    <input type="number" id="vazaoBomba" placeholder="Vazão da Bomba (m³/h)">
+    <input type="number" id="posBomba" placeholder="Posição da Bomba (m)">
+    <input type="number" id="ne" placeholder="NE (m)">
+    <input type="number" id="nd" placeholder="ND (m)">
+    <button onclick="prevStep()">Voltar</button>
+    <button onclick="validarTesteVazao()">Avançar</button>
+  </section>
 
-        <div class="nav">
-          <button type="button" class="secondary" onclick="prevStep()">Voltar</button>
-          <button type="button" class="primary" onclick="nextStep()">Avançar</button>
-        </div>
-      </div>
-    </section>
+  <!-- ETAPA 7 -->
+  <section class="step">
+    <h2>Geologia</h2>
+    <textarea id="geologia" placeholder="Descrição geológica"></textarea>
+    <textarea id="fraturas" placeholder="Fraturas"></textarea>
+    <button onclick="prevStep()">Voltar</button>
+    <button onclick="gerarResumo()">Gerar Resumo</button>
+  </section>
 
-    <!-- ETAPA 3 -->
-    <section class="step">
-      <div class="card">
-        <h2>Revestimento Principal</h2>
+  <!-- RESUMO -->
+  <section class="step" id="resumo"></section>
 
-        <label>Tipo do Revestimento
-          <input name="tipoRev">
-        </label>
-
-        <label>Polegadas
-          <input class="numero" name="polRev">
-        </label>
-
-        <h3>Filtros</h3>
-        <div id="listaFiltros"></div>
-
-        <button type="button" class="secondary" onclick="addFiltro()">Adicionar Filtro</button>
-
-        <div class="nav">
-          <button type="button" class="secondary" onclick="prevStep()">Voltar</button>
-          <button type="button" class="primary" onclick="nextStep()">Avançar</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ETAPA 4 -->
-    <section class="step">
-      <div class="card">
-        <h2>Hidráulica / Observações</h2>
-
-        <label>Vazão do Poço
-          <input class="numero" name="vazao">
-        </label>
-
-        <label>NE (m)
-          <input class="numero" name="ne">
-        </label>
-
-        <label>ND (m)
-          <input class="numero" name="nd">
-        </label>
-
-        <label>Observações
-          <textarea name="obs"></textarea>
-        </label>
-
-        <div class="nav">
-          <button type="button" class="secondary" onclick="prevStep()">Voltar</button>
-          <button type="submit" class="primary">Ver Resumo</button>
-        </div>
-      </div>
-    </section>
-
-  </form>
 </div>
-
-<div id="resumo" class="container hidden"></div>
 
 <script src="script.js"></script>
 </body>
