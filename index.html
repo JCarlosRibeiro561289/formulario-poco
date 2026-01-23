@@ -32,24 +32,49 @@
   </section>
 
   <!-- ETAPA 2 -->
-  <section class="step">
-    <h2>Perfuração</h2>
-    <label>Empresa</label><input id="empresa">
-    <label>Encarregado</label><input id="encarregado">
-    <label>Data Início</label><input type="date" id="dataInicio">
-    <label>Data Fim</label><input type="date" id="dataFim">
+<section class="step">
+  <h2>Perfuração</h2>
+
+  <fieldset class="bloco">
+    <legend>Identificação da Perfuração</legend>
+
+    <label>Empresa</label>
+    <input id="empresa">
+
+    <label>Encarregado</label>
+    <input id="encarregado">
+
+    <label>Data Início</label>
+    <input type="date" id="dataInicio">
+
+    <label>Data Fim</label>
+    <input type="date" id="dataFim">
+
     <label>Método</label>
     <select id="metodo">
       <option>Rotativa</option>
       <option>Pneumática</option>
       <option>Ambos</option>
     </select>
-    <label>Polegada Inicial</label><input type="text" id="polInicial">
-    <label>Polegada Final</label><input type="text" id="polFinal">
-    <label>Profundidade (m)</label><input type="text" id="profundidade">
-    <button onclick="prevStep()">Voltar</button>
-    <button onclick="avancarEtapaAtual()">Avançar</button>
-  </section>
+  </fieldset>
+
+  <fieldset class="bloco">
+    <legend>Dados Técnicos da Perfuração</legend>
+
+    <label>Polegada Inicial</label>
+    <input id="polInicial">
+
+    <label>Polegada Final</label>
+    <input id="polFinal">
+
+    <label>Profundidade (m)</label>
+    <input id="profundidade">
+  </fieldset>
+
+  <button onclick="prevStep()">Voltar</button>
+  <button onclick="avancarEtapaAtual()">Avançar</button>
+</section>
+
 
   <!-- ETAPA 3 -->
   <section class="step">
