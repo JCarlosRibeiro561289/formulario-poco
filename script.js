@@ -77,25 +77,37 @@ function avancarEtapaAtual() {
 showStep();
 
 /* =========================
-   PERFURAÇÃO – CONTROLES
+PERFURAÇÃO – CONTROLE DE POLEGADAS
 ========================= */
 
+
 polInicial.onblur = polFinal.onblur = () => {
-  if (!polInicial.value || !polFinal.value) return;
+if (!polInicial.value || !polFinal.value) return;
 
-  const pi = n(polInicial.value);
-  const pf = n(polFinal.value);
 
-  if (pf > pi) {
-    alert("Polegada final não pode ser maior que a inicial");
-    polFinal.value = "";
-    metrosInicialArea.classList.add("hidden");
-    return;
-  }
+const pi = n(polInicial.value);
+const pf = n(polFinal.value);
 
-  metrosInicialArea.classList.toggle("hidden", pi === pf);
+
+if (pf > pi) {
+alert("Polegada final não pode ser maior que a inicial");
+polFinal.value = "";
+metrosInicial.value = "";
+metrosInicial.disabled = true;
+return;
+}
+
+
+/* polegadas iguais → poço reto */
+if (pi === pf) {
+metrosInicial.value = "";
+metrosInicial.disabled = true;
+}
+/* polegadas diferentes → escalonado */
+else {
+metrosInicial.disabled = false;
+}
 };
-
 /* =========================
    SANITÁRIO
 ========================= */
