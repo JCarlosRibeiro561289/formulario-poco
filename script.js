@@ -1,53 +1,107 @@
 /* =========================
+   UTIL
+========================= */
+
+function n(v) {
+  if (!v) return 0;
+  return parseFloat(v.toString().replace(",", "."));
+}
+
+/* =========================
    CONTROLE DE ETAPAS
 ========================= */
 
 const steps = document.querySelectorAll(".step");
 let step = 0;
 
-function showStep(i) {
-  steps.forEach((s, idx) => s.classList.toggle("active", idx === i));
-  updateProgress();
+function showStep() {
+  steps.forEach((s, i) => s.classList.toggle("active", i === step));
+  document.getElementById("progressBar").style.width =
+    (step / (steps.length - 1)) * 100 + "%";
 }
 
 function nextStep() {
-  if (step < steps.length - 1) {
-    step++;
-    showStep(step);
-  }
+  step++;
+  showStep();
 }
 
 function prevStep() {
-  if (step > 0) {
-    step--;
-    showStep(step);
-  }
+  step--;
+  showStep();
 }
 
 function avancarEtapaAtual() {
-  if (step < steps.length - 1) {
-    step++;
-    showStep(step);
+
+  /* ETAPA 1 */
+  if (step === 0 && !cliente.value.trim()) {
+    alert("Informe o cliente");
+    return;
   }
 
-  /* gera resumo ao entrar na última etapa */
-  if (step === steps.length - 1) {
+  /* ETAPA 2 – PERFURAÇÃO */
+  if (step === 1) {
+    const pi = n(polInicial.value);
+    const pf = n(polFinal.value);
+    const prof = n(profundidade.value);
+    const mi = n(metrosInicial.value);
+
+    if (!pi || !pf || !prof) {
+      alert("Preencha os dados de perfuração");
+      return;
+    }
+
+    if (pf > pi) {
+      alert("Polegada final não pode ser maior que a inicial");
+      return;
+    }
+
+    if (mi > prof) {
+      alert("Qtd inicial maior que profundidade total");
+      return;
+    }
+  }
+
+  /* ETAPA 4 – FILTROS */
+  if (step === 3) {
+    gerarPosicoesFiltros(); // valida tudo
+  }
+
+  /* ÚLTIMA ETAPA → RESUMO */
+  if (step === steps.length - 2) {
     gerarResumoFinal();
   }
+
+  nextStep();
 }
 
-function updateProgress() {
-  const percent = ((step + 1) / steps.length) * 100;
-  document.getElementById("progressBar").style.width = percent + "%";
-}
+showStep();
+
+/* =========================
+   PERFURAÇÃO – CONTROLES
+========================= */
+
+polInicial.onblur = polFinal.onblur = () => {
+  if (!polInicial.value || !polFinal.value) return;
+
+  const pi = n(polInicial.value);
+  const pf = n(polFinal.value);
+
+  if (pf > pi) {
+    alert("Polegada final não pode ser maior que a inicial");
+    polFinal.value = "";
+    metrosInicialArea.classList.add("hidden");
+    return;
+  }
+
+  metrosInicialArea.classList.toggle("hidden", pi === pf);
+};
 
 /* =========================
    SANITÁRIO
 ========================= */
 
 function toggleSanitario() {
-  const area = document.getElementById("sanitarioCampos");
-  area.classList.toggle("hidden", temSanitario.value !== "sim");
+  sanitarioCampos.classList.toggle("hidden", temSanitario.value !== "sim");
 }
 
 /* =========================
@@ -59,15 +113,41 @@ function addFiltro() {
   div.className = "filtro";
   div.innerHTML = `
     <label>De (m)</label>
-    <input class="de" type="number" step="0.01">
+    <input class="de">
 
     <label>Até (m)</label>
-    <input class="ate" type="number" step="0.01">
+    <input class="ate">
 
     <button type="button" onclick="this.parentNode.remove()">Remover</button>
     <hr>
   `;
-  document.getElementById("listaFiltros").appendChild(div);
+  listaFiltros.appendChild(div);
+}
+
+function gerarPosicoesFiltros() {
+  const prof = n(profundidade.value);
+  let filtros = [];
+
+  document.querySelectorAll(".filtro").forEach(f => {
+    const de = n(f.querySelector(".de").value);
+    const ate = n(f.querySelector(".ate").value);
+
+    if (!de || !ate || de >= ate)
+      throw alert("Filtro inválido (DE >= ATÉ)");
+
+    if (ate > prof)
+      throw alert("Filtro ultrapassa a profundidade do poço");
+
+    filtros.push({ de, ate });
+  });
+
+  filtros.sort((a, b) => a.de - b.de);
+
+  for (let i = 1; i < filtros.length; i++) {
+    if (filtros[i].de < filtros[i - 1].ate) {
+      throw alert("Sobreposição de filtros detectada");
+    }
+  }
 }
 
 /* =========================
@@ -75,144 +155,69 @@ function addFiltro() {
 ========================= */
 
 function gerarResumoFinal() {
-
-  /* ===== TEXTO (arquivo / email) ===== */
-
   let txt = `
-===== CADASTRO TÉCNICO DE POÇO =====
+=== CADASTRO TÉCNICO DE POÇO ===
 
---- CLIENTE ---
-Cliente: ${cliente.value}
-Documento: ${documento.value}
-Endereço: ${endereco.value}
-Cidade: ${cidade.value} - ${estado.value}
+CLIENTE
+${cliente.value}
 
---- PERFURAÇÃO ---
-Polegada Inicial: ${polInicial.value}
-Polegada Final: ${polFinal.value}
-Qtd Inicial: ${metrosInicial?.value || "-"}
-Profundidade Total: ${profundidade.value} m
-`;
+PERFURAÇÃO
+Ø Inicial: ${polInicial.value}
+Ø Final: ${polFinal.value}
+Qtd Inicial: ${metrosInicial.value}
+Profundidade: ${profundidade.value} m
 
-  if (temSanitario.value === "sim") {
-    txt += `
---- SANITÁRIO ---
-Polegada: ${sanitarioPol.value}
-Comprimento: ${sanitarioComp.value} m
-`;
-  }
+SANITÁRIO
+${temSanitario.value === "sim"
+    ? sanitarioPol.value + " / " + sanitarioComp.value + " m"
+    : "Não possui"}
 
-  txt += `
---- REVESTIMENTO ---
-Material: ${tipoRevestimento.value}
-Classe: ${classeRevestimento.value}
+REVESTIMENTO
+${tipoRevestimento.value} - ${classeRevestimento.value}
 
---- FILTROS ---
+FILTROS
 `;
 
   document.querySelectorAll(".filtro").forEach((f, i) => {
-    txt += `Filtro ${i + 1}: ${f.querySelector(".de").value} – ${f.querySelector(".ate").value} m\n`;
+    txt += `Filtro ${i + 1}: ${f.querySelector(".de").value} - ${f.querySelector(".ate").value} m\n`;
   });
 
   txt += `
---- HIDRÁULICA ---
-Vazão do Poço: ${vazaoPoco.value}
-Vazão da Bomba: ${vazaoBomba.value}
-Posição da Bomba: ${posBomba.value}
+HIDRÁULICA
+Vazão Poço: ${vazaoPoco.value}
+Vazão Bomba: ${vazaoBomba.value}
+Posição Bomba: ${posBomba.value}
 NE: ${ne.value}
 ND: ${nd.value}
 
---- GEOLOGIA ---
+GEOLOGIA
 ${geologia.value}
 
---- FRATURAS ---
-${fraturas.value || "-"}
+FRATURAS
+${fraturas.value}
 
---- OBSERVAÇÕES ---
-${observacoes.value || "-"}
+OBS
+${observacoes.value}
 `;
 
-  /* ===== HTML VISUAL ===== */
-
-  const html = `
-    <h3>Cliente</h3>
-    <p><b>${cliente.value}</b><br>${cidade.value} / ${estado.value}</p>
-
-    <h3>Perfuração</h3>
-    <ul>
-      <li>Polegada inicial: ${polInicial.value}</li>
-      <li>Polegada final: ${polFinal.value}</li>
-      <li>Qtd inicial: ${metrosInicial?.value || "-"}</li>
-      <li>Profundidade total: ${profundidade.value} m</li>
-    </ul>
-
-    ${temSanitario.value === "sim" ? `
-    <h3>Sanitário</h3>
-    <ul>
-      <li>Polegada: ${sanitarioPol.value}</li>
-      <li>Comprimento: ${sanitarioComp.value} m</li>
-    </ul>` : ""}
-
-    <h3>Revestimento</h3>
-    <ul>
-      <li>Material: ${tipoRevestimento.value}</li>
-      <li>Classe: ${classeRevestimento.value}</li>
-    </ul>
-
-    <h3>Filtros</h3>
-    <ul>
-      ${[...document.querySelectorAll(".filtro")].map((f,i)=>`
-        <li>Filtro ${i+1}: ${f.querySelector(".de").value} – ${f.querySelector(".ate").value} m</li>
-      `).join("")}
-    </ul>
-
-    <h3>Hidráulica</h3>
-    <ul>
-      <li>Vazão do poço: ${vazaoPoco.value}</li>
-      <li>Vazão da bomba: ${vazaoBomba.value}</li>
-      <li>Posição da bomba: ${posBomba.value}</li>
-      <li>NE: ${ne.value}</li>
-      <li>ND: ${nd.value}</li>
-    </ul>
-
-    <h3>Geologia</h3>
-    <p>${geologia.value}</p>
-
-    <h3>Fraturas</h3>
-    <p>${fraturas.value || "-"}</p>
-
-    <h3>Observações</h3>
-    <p>${observacoes.value || "-"}</p>
-  `;
-
-  document.getElementById("resumoConteudo").innerHTML = html;
+  resumoConteudo.innerHTML = `<pre>${txt}</pre>`;
   window.__resumoTXT = txt;
 }
 
 /* =========================
-   DOWNLOAD
+   DOWNLOAD / EMAIL
 ========================= */
 
 function baixarResumo() {
   const blob = new Blob([window.__resumoTXT], { type: "text/plain" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "cadastro_poco.txt";
-  link.click();
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "cadastro_poco.txt";
+  a.click();
 }
-
-/* =========================
-   EMAIL
-========================= */
 
 function enviarEmail() {
-  const assunto = encodeURIComponent("Cadastro Técnico de Poço");
-  const corpo = encodeURIComponent(window.__resumoTXT);
-  window.location.href = `mailto:?subject=${assunto}&body=${corpo}`;
+  location.href =
+    "mailto:?subject=Cadastro de Poço&body=" +
+    encodeURIComponent(window.__resumoTXT);
 }
-
-/* =========================
-   INIT
-========================= */
-
-showStep(step);
