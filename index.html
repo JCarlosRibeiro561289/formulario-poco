@@ -74,8 +74,6 @@
 <section class="step">
 <h2>Revestimento / Filtros</h2>
 
-
-<!-- CONFIGURAÇÃO GLOBAL -->
 <label>Revestimento</label>
 <select id="tipoRevestimento">
 <option value="">Selecione</option>
@@ -94,7 +92,7 @@
 <option>Reforçado</option>
 </select>
 
-
+<input id="sanitarioPol">
 <h4>Filtros</h4>
 <div id="listaFiltros"></div>
 <button type="button" onclick="addFiltro()">+ Adicionar Filtro</button>
@@ -105,7 +103,7 @@
 
   <!-- ETAPA 5 -->
   <section class="step">
-    <h2>Hidráulica</h2>
+    <h2>Dados de Vazão</h2>
     <label>Vazão do Poço</label><input id="vazaoPoco">
     <label>Vazão da Bomba</label><input id="vazaoBomba">
     <button onclick="prevStep()">Voltar</button>
