@@ -7,14 +7,14 @@ function showStep() {
   progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
 }
 
-function nextStep() { 
+function nextStep() {
   if (step < steps.length - 1) step++;
-  showStep(); 
+  showStep();
 }
 
-function prevStep() { 
+function prevStep() {
   if (step > 0) step--;
-  showStep(); 
+  showStep();
 }
 
 showStep();
@@ -24,13 +24,12 @@ showStep();
    ============================== */
 function formatarDecimalTexto(campo) {
   if (!campo.value) return;
-  let valor = campo.value.replace(/[^\d.,]/g, "");  // remove tudo que não é número, ponto ou vírgula
+  let valor = campo.value.replace(/[^\d.,]/g, "");
   valor = parseFloat(valor.replace(",", "."));
   if (isNaN(valor)) return;
-  campo.value = valor.toFixed(2).replace(".", ",");  // formata com vírgula
+  campo.value = valor.toFixed(2).replace(".", ",");
 }
 
-// Lista de campos numéricos
 const camposNumericos = [
   profundidade, polInicial, polFinal,
   polRevInicial, polRev,
@@ -58,21 +57,25 @@ function validarPerfuracao() {
   if (!encarregado.value.trim()) { alert("Informe o encarregado."); return false; }
   if (!dataInicio.value) { alert("Informe a data de início."); return false; }
   if (!dataFim.value) { alert("Informe a data de término."); return false; }
-  if (dataFim.value < dataInicio.value) { alert("Data de término não pode ser anterior à data de início."); return false; }
+  if (dataFim.value < dataInicio.value) { alert("Data de término inválida."); return false; }
+
   if (!polInicial.value || !polFinal.value || !profundidade.value) {
-    alert("Informe polegada inicial, final e profundidade."); return false;
+    alert("Informe polegadas e profundidade."); return false;
   }
+
   const pi = parseFloat(polInicial.value.replace(",", "."));
   const pf = parseFloat(polFinal.value.replace(",", "."));
   const prof = parseFloat(profundidade.value.replace(",", "."));
-  if (pi > pf) { alert("Polegada inicial não pode ser maior que final."); return false; }
-  if (pf > prof) { alert("Polegada final não pode ser maior que profundidade."); return false; }
+
+  if (pi > pf) { alert("Polegada inicial maior que final."); return false; }
+  if (pf > prof) { alert("Polegada final maior que profundidade."); return false; }
+
   return true;
 }
 
 function validarVazao() {
   if (!vazaoPoco.value || !vazaoBomba.value || !posBomba.value || !ne.value || !nd.value) {
-    alert("Preencha todos os dados de hidráulica."); return false;
+    alert("Preencha todos os dados hidráulicos."); return false;
   }
   return true;
 }
@@ -88,15 +91,23 @@ function avancarEtapaAtual() {
 }
 
 /* ==============================
-   SANITÁRIO
+   SANITÁRIO (REGRA 1)
    ============================== */
 function toggleSanitario() {
   const campos = document.getElementById("sanitarioCampos");
+  const tipoRev = document.getElementById("tipoRevPoco");
+
   campos.classList.toggle("hidden", temSanitario.value !== "sim");
-  // Se sanitário ativo, parcial desativa
+
   if (temSanitario.value === "sim") {
-    document.getElementById("parcialCampos").classList.add("hidden");
-    document.getElementById("tipoRevPoco").value = "";
+    tipoRev.value = "total";
+    controlarFluxoRevestimento();
+
+    [...tipoRev.options].forEach(o => {
+      if (o.value === "parcial") o.disabled = true;
+    });
+  } else {
+    [...tipoRev.options].forEach(o => o.disabled = false);
   }
 }
 
@@ -105,9 +116,10 @@ function avancarSanitario() {
     const pi = parseFloat(sanitarioPolInicial.value.replace(",", "."));
     const pf = parseFloat(sanitarioPol.value.replace(",", "."));
     const prof = parseFloat(profundidade.value.replace(",", "."));
-    if (!pi || !pf) { alert("Informe polegadas inicial e final do sanitário."); return; }
-    if (pi > pf) { alert("Polegada inicial do sanitário não pode ser maior que a final."); return; }
-    if (pf > prof) { alert("Polegada final do sanitário não pode ser maior que a profundidade."); return; }
+
+    if (!pi || !pf) { alert("Informe polegadas do sanitário."); return; }
+    if (pi > pf) { alert("Sanitário: polegada inicial maior."); return; }
+    if (pf > prof) { alert("Sanitário maior que profundidade."); return; }
   }
   nextStep();
 }
@@ -117,79 +129,85 @@ function avancarSanitario() {
    ============================== */
 function controlarFluxoRevestimento() {
   const tipo = tipoRevPoco.value;
-  document.getElementById("parcialCampos").classList.toggle("hidden", tipo !== "parcial");
-  document.getElementById("filtrosArea").classList.toggle("hidden", tipo !== "total");
+  parcialCampos.classList.toggle("hidden", tipo !== "parcial");
+  filtrosArea.classList.toggle("hidden", tipo !== "total");
 }
 
 function addFiltro() {
   const div = document.createElement("div");
-  div.innerHTML = `<input type="text" placeholder="Início (m)"> <input type="text" placeholder="Fim (m)">`;
-  document.getElementById("listaFiltros").appendChild(div);
+  div.innerHTML = `
+    <select>
+      <option>Ranhurado</option>
+      <option>Johnson</option>
+      <option>Padrão</option>
+    </select>
+    <input type="text" placeholder="De (m)">
+    <input type="text" placeholder="Até (m)">
+  `;
+  listaFiltros.appendChild(div);
+}
+
+/* ==============================
+   GERAR POSIÇÕES (REGRA 2)
+   ============================== */
+function gerarPosicoesFiltros() {
+  const filtros = [];
+  const prof = parseFloat(profundidade.value.replace(",", "."));
+
+  document.querySelectorAll("#listaFiltros div").forEach(f => {
+    const s = f.querySelector("select");
+    const i = f.querySelectorAll("input");
+
+    const tipo = s.value;
+    const de = parseFloat(i[0].value.replace(",", "."));
+    const ate = parseFloat(i[1].value.replace(",", "."));
+
+    if (!isNaN(de) && !isNaN(ate)) filtros.push({ tipo, de, ate });
+  });
+
+  filtros.sort((a, b) => a.de - b.de);
+
+  let html = "<h4>Posições Geradas</h4><ul>";
+  let atual = 0;
+
+  filtros.forEach(f => {
+    if (atual < f.de) {
+      html += `<li>Tubo liso: ${atual.toFixed(2)} m até ${f.de.toFixed(2)} m</li>`;
+    }
+    html += `<li>Filtro (${f.tipo}): ${f.de.toFixed(2)} m até ${f.ate.toFixed(2)} m</li>`;
+    atual = f.ate;
+  });
+
+  if (atual < prof) {
+    html += `<li>Tubo liso: ${atual.toFixed(2)} m até ${prof.toFixed(2)} m</li>`;
+  }
+
+  html += "</ul>";
+
+  filtrosArea.querySelector("h4")?.remove();
+  filtrosArea.querySelector("ul")?.remove();
+  filtrosArea.insertAdjacentHTML("beforeend", html);
 }
 
 /* ==============================
    RESUMO FINAL
    ============================== */
 function gerarResumo() {
+  gerarPosicoesFiltros();
+
   let resumoHTML = `<h2>Resumo do Poço</h2>
     <h3>Cliente</h3>
-    <p>${cliente.value} | ${endereco.value} | ${cidade.value} | ${estado.value}</p>
-    <h3>Perfuração</h3>
-    <p>Empresa: ${empresa.value} | Encarregado: ${encarregado.value}</p>
-    <p>Data: ${dataInicio.value} → ${dataFim.value}</p>
-    <p>Método: ${metodo.value}</p>
-    <p>Polegada Inicial: ${polInicial.value} | Polegada Final: ${polFinal.value}</p>
-    <p>Profundidade: ${profundidade.value} m</p>`;
-
-  if (temSanitario.value === "sim") {
-    resumoHTML += `<h3>Sanitário</h3>
-      <p>Material: ${sanitarioTipo.value}</p>
-      <p>Polegada Inicial: ${sanitarioPolInicial.value} | Polegada Final: ${sanitarioPol.value}</p>
-      <p>Comprimento: ${sanitarioComp.value} m</p>
-      <p>Modelo: ${sanitarioModelo.value}</p>`;
-  }
-
-  if (tipoRevPoco.value) {
-    resumoHTML += `<h3>Revestimento do Poço</h3>
-      <p>Pré-filtro: ${preFiltro.value}</p>
-      <p>Tipo: ${tipoRevPoco.value}</p>
-      <p>Material: ${materialRev.value}</p>
-      <p>Polegada Inicial: ${polRevInicial.value} | Polegada Final: ${polRev.value}</p>`;
-
-    if (tipoRevPoco.value === "parcial") {
-      resumoHTML += `<p>Modelo: ${parcialModelo.value}</p>`;
-    } else if (tipoRevPoco.value === "total") {
-      resumoHTML += `<p>Modelo: ${totalModelo.value}</p>`;
-      const filtros = document.querySelectorAll("#listaFiltros div");
-      if (filtros.length > 0) {
-        resumoHTML += "<p>Filtros:</p><ul>";
-        filtros.forEach(f => {
-          const inputs = f.querySelectorAll("input");
-          resumoHTML += `<li>Início: ${inputs[0].value} m | Fim: ${inputs[1].value} m</li>`;
-        });
-        resumoHTML += "</ul>";
-      }
-    }
-  }
-
-  resumoHTML += `<h3>Hidráulica</h3>
-    <p>Vazão do Poço: ${vazaoPoco.value}</p>
-    <p>Vazão da Bomba: ${vazaoBomba.value}</p>
-    <p>Posição da Bomba: ${posBomba.value}</p>
-    <p>NE: ${ne.value} | ND: ${nd.value}</p>
-    <h3>Geologia</h3>
-    <p>Geologia: ${geologia.value}</p>
-    <p>Fraturas: ${fraturas.value}</p>
-    <p>Observação: ${observacao.value}</p>
-    <button onclick="editarResumo()">Editar</button>
-    <button onclick="enviarEmail()">Enviar por Email</button>`;
+    <p>${cliente.value} | ${endereco.value} | ${cidade.value} | ${estado.value}</p>`;
 
   resumo.innerHTML = resumoHTML;
   step = steps.length - 1;
   showStep();
 }
 
-function editarResumo() { step = 0; showStep(); }
+function editarResumo() {
+  step = 0;
+  showStep();
+}
 
 function enviarEmail() {
   emailjs.send("SEU_SERVICE_ID", "SEU_TEMPLATE_ID", {
