@@ -1,22 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Cadastro de Poço</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-  <script>
-    (function(){
-      emailjs.init("YOUR_PUBLIC_KEY");
-    })();
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <div class="container">
-
   <div class="progress"><div id="progressBar"></div></div>
 
   <!-- ETAPA 1 -->
@@ -35,23 +27,20 @@
     <h2>Perfuração</h2>
 
     <fieldset class="bloco">
-      <legend>Identificação</legend>
-      <label>Empresa</label><input id="empresa">
-      <label>Encarregado</label><input id="encarregado">
-      <label>Data Início</label><input type="date" id="dataInicio">
-      <label>Data Fim</label><input type="date" id="dataFim">
-      <label>Método</label>
-      <select id="metodo">
-        <option>Rotativa</option>
-        <option>Pneumática</option>
-        <option>Ambos</option>
-      </select>
-    </fieldset>
+      <label>Polegada Inicial</label>
+      <input id="polInicial" placeholder="Ex: 12,25">
+      <small class="hint">Ex: 12 ¼" → 12,25</small>
 
-    <fieldset class="bloco">
-      <legend>Dados Técnicos</legend>
-      <label>Polegada</label><input id="polInicial">
-      <label>Profundidade (m)</label><input id="profundidade">
+      <label>Polegada Final</label>
+      <input id="polFinal" placeholder="Ex: 6,00">
+
+      <div id="metrosInicialArea" class="hidden">
+        <label>Qtd inicial (m)</label>
+        <input id="metrosInicial">
+      </div>
+
+      <label>Profundidade total (m)</label>
+      <input id="profundidade">
     </fieldset>
 
     <button onclick="prevStep()">Voltar</button>
@@ -60,23 +49,37 @@
 
   <!-- ETAPA 3 -->
   <section class="step">
-    <h2>Sanitário</h2>
-    <label>Polegada do Sanitário</label>
-    <input type="text" id="sanitarioPol">
+    <h2>Sanitário / Tubulão</h2>
+
+    <label>Possui Sanitário?</label>
+    <select id="temSanitario" onchange="toggleSanitario()">
+      <option value="nao">Não</option>
+      <option value="sim">Sim</option>
+    </select>
+
+    <div id="sanitarioCampos" class="hidden">
+      <label>Polegada do Sanitário</label>
+      <input id="sanitarioPol">
+      <small class="hint">Ex: 6 ¹/6" → 6,00</small>
+
+      <label>Comprimento (m)</label>
+      <input id="sanitarioComp">
+    </div>
+
     <button onclick="prevStep()">Voltar</button>
     <button onclick="nextStep()">Avançar</button>
   </section>
 
   <!-- ETAPA 4 -->
   <section class="step">
-    <h2>Revestimento do Poço</h2>
+    <h2>Revestimento / Filtros</h2>
 
     <label>Polegada do Revestimento</label>
-    <input type="text" id="polRev">
+    <input id="polRev">
 
     <h4>Filtros</h4>
     <div id="listaFiltros"></div>
-    <button type="button" onclick="addFiltro()">+ Adicionar Filtro</button>
+    <button onclick="addFiltro()">+ Adicionar Filtro</button>
 
     <div id="filtrosArea"></div>
 
@@ -89,25 +92,11 @@
     <h2>Hidráulica</h2>
     <label>Vazão do Poço</label><input id="vazaoPoco">
     <label>Vazão da Bomba</label><input id="vazaoBomba">
-    <label>Posição da Bomba</label><input id="posBomba">
-    <label>NE</label><input id="ne">
-    <label>ND</label><input id="nd">
     <button onclick="prevStep()">Voltar</button>
     <button onclick="avancarEtapaAtual()">Avançar</button>
   </section>
 
-  <!-- ETAPA 6 -->
-  <section class="step">
-    <h2>Geologia</h2>
-    <textarea id="geologia"></textarea>
-    <textarea id="fraturas"></textarea>
-    <textarea id="observacao"></textarea>
-    <button onclick="prevStep()">Voltar</button>
-    <button onclick="gerarResumo()">Resumo</button>
-  </section>
-
   <section class="step" id="resumo"></section>
-
 </div>
 
 <script src="script.js"></script>
