@@ -39,27 +39,37 @@ function avancarEtapaAtual() {
   }
 
   /* ETAPA 2 – PERFURAÇÃO */
-  if (step === 1) {
-    const pi = n(polInicial.value);
-    const pf = n(polFinal.value);
-    const prof = n(profundidade.value);
-    const mi = n(metrosInicial.value);
+if (step === 1) {
+  const pi = n(polInicial.value);
+  const pf = n(polFinal.value);
+  const prof = n(profundidade.value);
+  const mi = n(metrosInicial.value);
 
-    if (!pi || !pf || !prof) {
-      alert("Preencha os dados de perfuração");
-      return;
-    }
 
-    if (pf > pi) {
-      alert("Polegada final não pode ser maior que a inicial");
-      return;
-    }
-
-    if (mi > prof) {
-      alert("Qtd inicial maior que profundidade total");
-      return;
-    }
+  if (!pi || !pf || !prof) {
+    alert("Preencha os dados de perfuração");
+    return;
   }
+
+
+  if (pf > pi) {
+    alert("Polegada final não pode ser maior que a inicial");
+    return;
+  }
+
+
+  /* só valida qtd inicial se for poço escalonado */
+  if (pi !== pf && mi <= 0) {
+    alert("Informe a quantidade inicial em metros");
+    return;
+  }
+
+
+  if (pi !== pf && mi > prof) {
+    alert("Qtd inicial maior que profundidade total");
+    return;
+  }
+}
 
   /* ETAPA 4 – FILTROS */
   if (step === 3) {
