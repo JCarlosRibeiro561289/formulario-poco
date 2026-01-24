@@ -9,7 +9,9 @@
 <body>
 
 <div class="container">
-  <div class="progress"><div id="progressBar"></div></div>
+  <div class="progress">
+    <div id="progressBar"></div>
+  </div>
 
   <!-- ETAPA 1 -->
   <section class="step active">
@@ -25,6 +27,7 @@
   <!-- ETAPA 2 -->
   <section class="step">
     <h2>Perfuração</h2>
+
     <fieldset class="bloco">
       <label>Polegada Inicial</label>
       <input id="polInicial">
@@ -32,10 +35,8 @@
       <label>Polegada Final</label>
       <input id="polFinal">
 
-      <div id="metrosInicialArea" class="hidden">
-        <label>Qtd inicial (m)</label>
-        <input id="metrosInicial">
-      </div>
+      <label>Qtd inicial (m)</label>
+      <input id="metrosInicial">
 
       <label>Profundidade total (m)</label>
       <input id="profundidade">
@@ -47,7 +48,7 @@
 
   <!-- ETAPA 3 -->
   <section class="step">
-    <h2>Sanitário</h2>
+    <h2>Sanitário / Tubulão</h2>
 
     <label>Possui Sanitário?</label>
     <select id="temSanitario" onchange="toggleSanitario()">
@@ -58,13 +59,12 @@
     <div id="sanitarioCampos" class="hidden">
       <label>Polegada</label>
       <input id="sanitarioPol">
-
       <label>Comprimento (m)</label>
       <input id="sanitarioComp">
     </div>
 
     <button onclick="prevStep()">Voltar</button>
-    <button onclick="nextStep()">Avançar</button>
+    <button onclick="avancarEtapaAtual()">Avançar</button>
   </section>
 
   <!-- ETAPA 4 -->
@@ -90,8 +90,7 @@
 
     <h4>Filtros</h4>
     <div id="listaFiltros"></div>
-    <button type="button" onclick="addFiltro()">Adicionar Filtro</button>
-    <div id="filtrosArea"></div>
+    <button type="button" onclick="addFiltro()">+ Adicionar Filtro</button>
 
     <button onclick="prevStep()">Voltar</button>
     <button onclick="avancarEtapaAtual()">Avançar</button>
@@ -99,10 +98,10 @@
 
   <!-- ETAPA 5 -->
   <section class="step">
-    <h2>Dados de Vazão</h2>
+    <h2>Dados Hidráulicos</h2>
     <label>Vazão do Poço</label><input id="vazaoPoco">
-    <label>Vazão indicada bomba</label><input id="vazaoBomba">
-    <label>Posição da bomba (m)</label><input id="posBomba">
+    <label>Vazão da Bomba</label><input id="vazaoBomba">
+    <label>Posição da Bomba</label><input id="posBomba">
     <label>NE</label><input id="ne">
     <label>ND</label><input id="nd">
 
@@ -113,7 +112,8 @@
   <!-- ETAPA 6 -->
   <section class="step">
     <h2>Geologia</h2>
-    <label>Geologia</label>
+
+    <label>Descrição Geológica</label>
     <textarea id="geologia"></textarea>
 
     <label>Fraturas</label>
@@ -123,11 +123,19 @@
     <textarea id="observacoes"></textarea>
 
     <button onclick="prevStep()">Voltar</button>
-    <button onclick="avancarEtapaAtual()">Avançar</button>
+    <button onclick="avancarEtapaAtual()">Gerar Resumo</button>
   </section>
 
-  <!-- RESUMO -->
-  <section class="step" id="resumo"></section>
+  <!-- ETAPA 7 -->
+  <section class="step" id="resumo">
+    <h2>Resumo do Poço</h2>
+
+    <div id="resumoConteudo"></div>
+
+    <button type="button" onclick="baixarResumo()">📥 Baixar Arquivo</button>
+    <button type="button" onclick="enviarEmail()">📧 Enviar por Email</button>
+    <button type="button" onclick="prevStep()">Voltar</button>
+  </section>
 
 </div>
 
