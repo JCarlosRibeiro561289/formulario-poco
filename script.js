@@ -1,155 +1,218 @@
-let step = 0;
-const steps = document.querySelectorAll(".step");
-const progressBar = document.getElementById("progressBar");
+/* =========================
+   CONTROLE DE ETAPAS
+========================= */
 
-function showStep() {
-  steps.forEach((s, i) => s.classList.toggle("active", i === step));
-  progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
+const steps = document.querySelectorAll(".step");
+let step = 0;
+
+function showStep(i) {
+  steps.forEach((s, idx) => s.classList.toggle("active", idx === i));
+  updateProgress();
 }
 
 function nextStep() {
   if (step < steps.length - 1) {
     step++;
-    showStep();
+    showStep(step);
   }
 }
 
 function prevStep() {
   if (step > 0) {
     step--;
-    showStep();
+    showStep(step);
   }
 }
 
-showStep();
-
-/* util */
-function n(v) {
-  const num = parseFloat((v || "").toString().replace(",", "."));
-  return isNaN(num) ? NaN : num;
-}
-
-/* perfuração */
-const polInicial = document.getElementById("polInicial");
-const polFinal = document.getElementById("polFinal");
-const metrosInicial = document.getElementById("metrosInicial");
-const metrosInicialArea = document.getElementById("metrosInicialArea");
-const profundidade = document.getElementById("profundidade");
-
-function validarPerfuração() {
-  if (!polInicial.value || !polFinal.value) return;
-
-  const pi = n(polInicial.value);
-  const pf = n(polFinal.value);
-
-  if (pf > pi) {
-    alert("Polegada final não pode ser maior que a inicial");
-    polFinal.value = "";
-    metrosInicialArea.classList.add("hidden");
-    return;
+function avancarEtapaAtual() {
+  if (step < steps.length - 1) {
+    step++;
+    showStep(step);
   }
 
-  metrosInicialArea.classList.toggle("hidden", pi === pf);
+  /* gera resumo ao entrar na última etapa */
+  if (step === steps.length - 1) {
+    gerarResumoFinal();
+  }
 }
 
-polInicial.addEventListener("input", validarPerfuração);
-polFinal.addEventListener("input", validarPerfuração);
+function updateProgress() {
+  const percent = ((step + 1) / steps.length) * 100;
+  document.getElementById("progressBar").style.width = percent + "%";
+}
 
-/* sanitário */
-const temSanitario = document.getElementById("temSanitario");
-const sanitarioCampos = document.getElementById("sanitarioCampos");
+/* =========================
+   SANITÁRIO
+========================= */
 
 function toggleSanitario() {
-  sanitarioCampos.classList.toggle("hidden", temSanitario.value !== "sim");
+  const area = document.getElementById("sanitarioCampos");
+  area.classList.toggle("hidden", temSanitario.value !== "sim");
 }
 
-/* filtros */
-const tipoRevestimento = document.getElementById("tipoRevestimento");
-const classeRevestimento = document.getElementById("classeRevestimento");
-const listaFiltros = document.getElementById("listaFiltros");
-const filtrosArea = document.getElementById("filtrosArea");
+/* =========================
+   FILTROS
+========================= */
 
 function addFiltro() {
   const div = document.createElement("div");
   div.className = "filtro";
   div.innerHTML = `
     <label>De (m)</label>
-    <input class="de">
+    <input class="de" type="number" step="0.01">
+
     <label>Até (m)</label>
-    <input class="ate">
-    <button type="button" onclick="this.parentElement.remove()">Remover</button>
+    <input class="ate" type="number" step="0.01">
+
+    <button type="button" onclick="this.parentNode.remove()">Remover</button>
+    <hr>
   `;
-  listaFiltros.appendChild(div);
+  document.getElementById("listaFiltros").appendChild(div);
 }
 
-function gerarPosicoesFiltros() {
-  const prof = n(profundidade.value);
-  if (isNaN(prof)) throw new Error("Profundidade inválida");
+/* =========================
+   RESUMO FINAL
+========================= */
 
-  if (!tipoRevestimento.value || !classeRevestimento.value)
-    throw new Error("Informe revestimento e tipo");
+function gerarResumoFinal() {
 
-  const filtros = [];
+  /* ===== TEXTO (arquivo / email) ===== */
+
+  let txt = `
+===== CADASTRO TÉCNICO DE POÇO =====
+
+--- CLIENTE ---
+Cliente: ${cliente.value}
+Documento: ${documento.value}
+Endereço: ${endereco.value}
+Cidade: ${cidade.value} - ${estado.value}
+
+--- PERFURAÇÃO ---
+Polegada Inicial: ${polInicial.value}
+Polegada Final: ${polFinal.value}
+Qtd Inicial: ${metrosInicial?.value || "-"}
+Profundidade Total: ${profundidade.value} m
+`;
+
+  if (temSanitario.value === "sim") {
+    txt += `
+--- SANITÁRIO ---
+Polegada: ${sanitarioPol.value}
+Comprimento: ${sanitarioComp.value} m
+`;
+  }
+
+  txt += `
+--- REVESTIMENTO ---
+Material: ${tipoRevestimento.value}
+Classe: ${classeRevestimento.value}
+
+--- FILTROS ---
+`;
 
   document.querySelectorAll(".filtro").forEach((f, i) => {
-    const de = n(f.querySelector(".de").value);
-    const ate = n(f.querySelector(".ate").value);
-
-    if (isNaN(de) || isNaN(ate))
-      throw new Error(`Filtro ${i + 1} inválido`);
-
-    if (de >= ate)
-      throw new Error(`Filtro ${i + 1}: intervalo inválido`);
-
-    if (ate > prof)
-      throw new Error(`Filtro ${i + 1} ultrapassa profundidade`);
-
-    filtros.push({ de, ate });
+    txt += `Filtro ${i + 1}: ${f.querySelector(".de").value} – ${f.querySelector(".ate").value} m\n`;
   });
 
-  filtros.sort((a, b) => a.de - b.de);
+  txt += `
+--- HIDRÁULICA ---
+Vazão do Poço: ${vazaoPoco.value}
+Vazão da Bomba: ${vazaoBomba.value}
+Posição da Bomba: ${posBomba.value}
+NE: ${ne.value}
+ND: ${nd.value}
 
-  for (let i = 1; i < filtros.length; i++) {
-    if (filtros[i].de < filtros[i - 1].ate)
-      throw new Error("Sobreposição de filtros");
-  }
+--- GEOLOGIA ---
+${geologia.value}
 
-  let html = "<ul>";
-  let atual = 0;
+--- FRATURAS ---
+${fraturas.value || "-"}
 
-  filtros.forEach(f => {
-    if (atual < f.de) html += `<li>Tubo liso ${atual} – ${f.de} m</li>`;
-    html += `<li>Filtro ${f.de} – ${f.ate} m</li>`;
-    atual = f.ate;
-  });
+--- OBSERVAÇÕES ---
+${observacoes.value || "-"}
+`;
 
-  if (atual < prof) html += `<li>Tubo liso ${atual} – ${prof} m</li>`;
-  html += "</ul>";
+  /* ===== HTML VISUAL ===== */
 
-  filtrosArea.innerHTML = html;
+  const html = `
+    <h3>Cliente</h3>
+    <p><b>${cliente.value}</b><br>${cidade.value} / ${estado.value}</p>
+
+    <h3>Perfuração</h3>
+    <ul>
+      <li>Polegada inicial: ${polInicial.value}</li>
+      <li>Polegada final: ${polFinal.value}</li>
+      <li>Qtd inicial: ${metrosInicial?.value || "-"}</li>
+      <li>Profundidade total: ${profundidade.value} m</li>
+    </ul>
+
+    ${temSanitario.value === "sim" ? `
+    <h3>Sanitário</h3>
+    <ul>
+      <li>Polegada: ${sanitarioPol.value}</li>
+      <li>Comprimento: ${sanitarioComp.value} m</li>
+    </ul>` : ""}
+
+    <h3>Revestimento</h3>
+    <ul>
+      <li>Material: ${tipoRevestimento.value}</li>
+      <li>Classe: ${classeRevestimento.value}</li>
+    </ul>
+
+    <h3>Filtros</h3>
+    <ul>
+      ${[...document.querySelectorAll(".filtro")].map((f,i)=>`
+        <li>Filtro ${i+1}: ${f.querySelector(".de").value} – ${f.querySelector(".ate").value} m</li>
+      `).join("")}
+    </ul>
+
+    <h3>Hidráulica</h3>
+    <ul>
+      <li>Vazão do poço: ${vazaoPoco.value}</li>
+      <li>Vazão da bomba: ${vazaoBomba.value}</li>
+      <li>Posição da bomba: ${posBomba.value}</li>
+      <li>NE: ${ne.value}</li>
+      <li>ND: ${nd.value}</li>
+    </ul>
+
+    <h3>Geologia</h3>
+    <p>${geologia.value}</p>
+
+    <h3>Fraturas</h3>
+    <p>${fraturas.value || "-"}</p>
+
+    <h3>Observações</h3>
+    <p>${observacoes.value || "-"}</p>
+  `;
+
+  document.getElementById("resumoConteudo").innerHTML = html;
+  window.__resumoTXT = txt;
 }
 
-/* geologia */
-const geologia = document.getElementById("geologia");
+/* =========================
+   DOWNLOAD
+========================= */
 
-/* avançar */
-const cliente = document.getElementById("cliente");
-
-function avancarEtapaAtual() {
-  try {
-    if (step === 0 && !cliente.value.trim())
-      throw new Error("Informe o cliente");
-
-    if (step === 1 && n(metrosInicial.value || 0) > n(profundidade.value))
-      throw new Error("Qtd inicial maior que profundidade");
-
-    if (step === 3) gerarPosicoesFiltros();
-
-    if (step === 5 && !geologia.value.trim())
-      throw new Error("Informe a geologia");
-
-    nextStep();
-  } catch (e) {
-    alert(e.message);
-  }
+function baixarResumo() {
+  const blob = new Blob([window.__resumoTXT], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "cadastro_poco.txt";
+  link.click();
 }
+
+/* =========================
+   EMAIL
+========================= */
+
+function enviarEmail() {
+  const assunto = encodeURIComponent("Cadastro Técnico de Poço");
+  const corpo = encodeURIComponent(window.__resumoTXT);
+  window.location.href = `mailto:?subject=${assunto}&body=${corpo}`;
+}
+
+/* =========================
+   INIT
+========================= */
+
+showStep(step);
