@@ -72,11 +72,25 @@
 
   <!-- ETAPA 4 -->
   <section class="step">
-    <h2>Revestimento / Filtros</h2>
+<h2>Revestimento / Filtros</h2>
 
-    <label>Polegada do Revestimento</label>
-    <input id="polRev">
 
+<label>Revestimento</label>
+<select id="tipoRevestimento">
+<option value="">Selecione</option>
+<option>Geomecânico PVC</option>
+<option>Tubo de Aço</option>
+<option>Tubo Inox</option>
+</select>
+
+    <label>Tipo</label>
+<select id="classeRevestimento">
+<option value="">Selecione</option>
+<option>Padrão</option>
+<option>Leve</option>
+<option>STD</option>
+<option>Reforçado</option>
+</select>
     <h4>Filtros</h4>
     <div id="listaFiltros"></div>
     <button onclick="addFiltro()">+ Adicionar Filtro</button>
