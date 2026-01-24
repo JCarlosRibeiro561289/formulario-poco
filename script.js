@@ -1,13 +1,10 @@
-/**********************
- * CONTROLE DE ETAPAS
- **********************/
 let step = 0;
 const steps = document.querySelectorAll(".step");
 const progressBar = document.getElementById("progressBar");
 
 function showStep() {
   steps.forEach((s, i) => s.classList.toggle("active", i === step));
-  progressBar.style.width = (step / (steps.length - 2)) * 100 + "%";
+  progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
 }
 
 function nextStep() {
@@ -26,34 +23,24 @@ function prevStep() {
 
 showStep();
 
-/**********************
- * UTIL
- **********************/
+/* util */
 function n(v) {
-  if (v === undefined || v === null) return NaN;
-  const num = parseFloat(v.toString().replace(",", "."));
+  const num = parseFloat((v || "").toString().replace(",", "."));
   return isNaN(num) ? NaN : num;
 }
 
-/**********************
- * PERFURAÇÃO
- **********************/
+/* perfuração */
 const polInicial = document.getElementById("polInicial");
 const polFinal = document.getElementById("polFinal");
 const metrosInicial = document.getElementById("metrosInicial");
 const metrosInicialArea = document.getElementById("metrosInicialArea");
 const profundidade = document.getElementById("profundidade");
 
-polInicial.addEventListener("input", validarPerfuração);
-polFinal.addEventListener("input", validarPerfuração);
-
 function validarPerfuração() {
   if (!polInicial.value || !polFinal.value) return;
 
   const pi = n(polInicial.value);
   const pf = n(polFinal.value);
-
-  if (isNaN(pi) || isNaN(pf)) return;
 
   if (pf > pi) {
     alert("Polegada final não pode ser maior que a inicial");
@@ -65,9 +52,10 @@ function validarPerfuração() {
   metrosInicialArea.classList.toggle("hidden", pi === pf);
 }
 
-/**********************
- * SANITÁRIO
- **********************/
+polInicial.addEventListener("input", validarPerfuração);
+polFinal.addEventListener("input", validarPerfuração);
+
+/* sanitário */
 const temSanitario = document.getElementById("temSanitario");
 const sanitarioCampos = document.getElementById("sanitarioCampos");
 
@@ -75,9 +63,7 @@ function toggleSanitario() {
   sanitarioCampos.classList.toggle("hidden", temSanitario.value !== "sim");
 }
 
-/**********************
- * FILTROS / REVESTIMENTO
- **********************/
+/* filtros */
 const tipoRevestimento = document.getElementById("tipoRevestimento");
 const classeRevestimento = document.getElementById("classeRevestimento");
 const listaFiltros = document.getElementById("listaFiltros");
@@ -86,17 +72,13 @@ const filtrosArea = document.getElementById("filtrosArea");
 function addFiltro() {
   const div = document.createElement("div");
   div.className = "filtro";
-
   div.innerHTML = `
     <label>De (m)</label>
     <input class="de">
-
     <label>Até (m)</label>
     <input class="ate">
-
     <button type="button" onclick="this.parentElement.remove()">Remover</button>
   `;
-
   listaFiltros.appendChild(div);
 }
 
@@ -104,9 +86,8 @@ function gerarPosicoesFiltros() {
   const prof = n(profundidade.value);
   if (isNaN(prof)) throw new Error("Profundidade inválida");
 
-  if (!tipoRevestimento.value || !classeRevestimento.value) {
-    throw new Error("Informe o revestimento e o tipo");
-  }
+  if (!tipoRevestimento.value || !classeRevestimento.value)
+    throw new Error("Informe revestimento e tipo");
 
   const filtros = [];
 
@@ -115,16 +96,13 @@ function gerarPosicoesFiltros() {
     const ate = n(f.querySelector(".ate").value);
 
     if (isNaN(de) || isNaN(ate))
-      throw new Error(`Filtro ${i + 1}: valores inválidos`);
-
-    if (de < 0)
-      throw new Error(`Filtro ${i + 1}: início negativo`);
+      throw new Error(`Filtro ${i + 1} inválido`);
 
     if (de >= ate)
-      throw new Error(`Filtro ${i + 1}: "De" deve ser menor que "Até"`);
+      throw new Error(`Filtro ${i + 1}: intervalo inválido`);
 
     if (ate > prof)
-      throw new Error(`Filtro ${i + 1}: ultrapassa profundidade do poço`);
+      throw new Error(`Filtro ${i + 1} ultrapassa profundidade`);
 
     filtros.push({ de, ate });
   });
@@ -132,55 +110,43 @@ function gerarPosicoesFiltros() {
   filtros.sort((a, b) => a.de - b.de);
 
   for (let i = 1; i < filtros.length; i++) {
-    if (filtros[i].de < filtros[i - 1].ate) {
-      throw new Error("Sobreposição de filtros detectada");
-    }
+    if (filtros[i].de < filtros[i - 1].ate)
+      throw new Error("Sobreposição de filtros");
   }
 
-  montarResumoFiltros(filtros, prof);
-}
-
-function montarResumoFiltros(filtros, prof) {
   let html = "<ul>";
   let atual = 0;
 
   filtros.forEach(f => {
-    if (atual < f.de) {
-      html += `<li>Tubo liso: ${atual} – ${f.de} m</li>`;
-    }
-
-    html += `<li>Filtro (${tipoRevestimento.value} / ${classeRevestimento.value}): ${f.de} – ${f.ate} m</li>`;
+    if (atual < f.de) html += `<li>Tubo liso ${atual} – ${f.de} m</li>`;
+    html += `<li>Filtro ${f.de} – ${f.ate} m</li>`;
     atual = f.ate;
   });
 
-  if (atual < prof) {
-    html += `<li>Tubo liso: ${atual} – ${prof} m</li>`;
-  }
-
+  if (atual < prof) html += `<li>Tubo liso ${atual} – ${prof} m</li>`;
   html += "</ul>";
+
   filtrosArea.innerHTML = html;
 }
 
-/**********************
- * AVANÇAR ETAPA
- **********************/
+/* geologia */
+const geologia = document.getElementById("geologia");
+
+/* avançar */
 const cliente = document.getElementById("cliente");
 
 function avancarEtapaAtual() {
   try {
-    if (step === 0 && !cliente.value.trim()) {
+    if (step === 0 && !cliente.value.trim())
       throw new Error("Informe o cliente");
-    }
 
-    if (step === 1) {
-      if (n(metrosInicial.value || 0) > n(profundidade.value)) {
-        throw new Error("Qtd inicial maior que profundidade");
-      }
-    }
+    if (step === 1 && n(metrosInicial.value || 0) > n(profundidade.value))
+      throw new Error("Qtd inicial maior que profundidade");
 
-    if (step === 3) {
-      gerarPosicoesFiltros();
-    }
+    if (step === 3) gerarPosicoesFiltros();
+
+    if (step === 5 && !geologia.value.trim())
+      throw new Error("Informe a geologia");
 
     nextStep();
   } catch (e) {
