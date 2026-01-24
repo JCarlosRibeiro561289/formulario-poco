@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 
-  <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     (function(){
@@ -32,122 +31,54 @@
   </section>
 
   <!-- ETAPA 2 -->
-<section class="step">
-  <h2>Perfuração</h2>
+  <section class="step">
+    <h2>Perfuração</h2>
 
-  <fieldset class="bloco">
-    <legend>Identificação da Perfuração</legend>
+    <fieldset class="bloco">
+      <legend>Identificação</legend>
+      <label>Empresa</label><input id="empresa">
+      <label>Encarregado</label><input id="encarregado">
+      <label>Data Início</label><input type="date" id="dataInicio">
+      <label>Data Fim</label><input type="date" id="dataFim">
+      <label>Método</label>
+      <select id="metodo">
+        <option>Rotativa</option>
+        <option>Pneumática</option>
+        <option>Ambos</option>
+      </select>
+    </fieldset>
 
-    <label>Empresa</label>
-    <input id="empresa">
+    <fieldset class="bloco">
+      <legend>Dados Técnicos</legend>
+      <label>Polegada</label><input id="polInicial">
+      <label>Profundidade (m)</label><input id="profundidade">
+    </fieldset>
 
-    <label>Encarregado</label>
-    <input id="encarregado">
-
-    <label>Data Início</label>
-    <input type="date" id="dataInicio">
-
-    <label>Data Fim</label>
-    <input type="date" id="dataFim">
-
-    <label>Método</label>
-    <select id="metodo">
-      <option>Rotativa</option>
-      <option>Pneumática</option>
-      <option>Ambos</option>
-    </select>
-  </fieldset>
-
-  <fieldset class="bloco">
-    <legend>Dados Técnicos da Perfuração</legend>
-
-    <label>Polegada Inicial</label>
-    <input id="polInicial">
-
-    <label>Polegada Final</label>
-    <input id="polFinal">
-
-    <label>Profundidade (m)</label>
-    <input id="profundidade">
-  </fieldset>
-
-  <button onclick="prevStep()">Voltar</button>
-  <button onclick="avancarEtapaAtual()">Avançar</button>
-</section>
-
+    <button onclick="prevStep()">Voltar</button>
+    <button onclick="avancarEtapaAtual()">Avançar</button>
+  </section>
 
   <!-- ETAPA 3 -->
   <section class="step">
-    <h2>Revestimento Sanitário</h2>
-    <label>Possui Sanitário?</label>
-    <select id="temSanitario" onchange="toggleSanitario()">
-      <option value="nao">Não</option>
-      <option value="sim">Sim</option>
-    </select>
-
-    <div id="sanitarioCampos" class="hidden">
-      <label>Material</label>
-      <select id="sanitarioTipo">
-        <option>PVC</option><option>Aço</option><option>Inox</option>
-      </select>
-      <label>Polegada Inicial</label><input type="text" id="sanitarioPolInicial">
-      <label>Polegada Final</label><input type="text" id="sanitarioPol">
-      <label>Comprimento (m)</label><input type="text" id="sanitarioComp">
-      <label>Modelo</label>
-      <select id="sanitarioModelo">
-        <option>Padrão</option>
-        <option>Leve</option>
-        <option>STD</option>
-        <option>Reforçado</option>
-      </select>
-    </div>
+    <h2>Sanitário</h2>
+    <label>Polegada do Sanitário</label>
+    <input type="text" id="sanitarioPol">
     <button onclick="prevStep()">Voltar</button>
-    <button onclick="avancarSanitario()">Avançar</button>
+    <button onclick="nextStep()">Avançar</button>
   </section>
 
   <!-- ETAPA 4 -->
   <section class="step">
     <h2>Revestimento do Poço</h2>
-    <label>Pré-filtro?</label>
-    <select id="preFiltro">
-      <option>Não</option>
-      <option>Sim</option>
-    </select>
-    <label>Tipo</label>
-    <select id="tipoRevPoco" onchange="controlarFluxoRevestimento()">
-      <option value="">Selecione</option>
-      <option value="parcial">Parcial</option>
-      <option value="total">Total</option>
-    </select>
-    <label>Material</label>
-    <select id="materialRev">
-      <option>PVC</option><option>Aço</option><option>Inox</option>
-    </select>
-    <label>Polegada Inicial</label><input type="text" id="polRevInicial">
-    <label>Polegada Final</label><input type="text" id="polRev">
 
-    <div id="parcialCampos" class="hidden">
-      <label>Modelo</label>
-      <select id="parcialModelo">
-        <option>Padrão</option>
-        <option>Leve</option>
-        <option>STD</option>
-        <option>Reforçado</option>
-      </select>
-    </div>
+    <label>Polegada do Revestimento</label>
+    <input type="text" id="polRev">
 
-    <div id="filtrosArea" class="hidden">
-      <h4>Filtros (somente posições)</h4>
-      <div id="listaFiltros"></div>
-      <button type="button" onclick="addFiltro()">+ Adicionar Filtro</button>
-      <label>Modelo</label>
-      <select id="totalModelo">
-        <option>Padrão</option>
-        <option>Leve</option>
-        <option>STD</option>
-        <option>Reforçado</option>
-      </select>
-    </div>
+    <h4>Filtros</h4>
+    <div id="listaFiltros"></div>
+    <button type="button" onclick="addFiltro()">+ Adicionar Filtro</button>
+
+    <div id="filtrosArea"></div>
 
     <button onclick="prevStep()">Voltar</button>
     <button onclick="nextStep()">Avançar</button>
@@ -156,12 +87,11 @@
   <!-- ETAPA 5 -->
   <section class="step">
     <h2>Hidráulica</h2>
-    <label>Vazão do Poço (m³/h)</label><input type="text" id="vazaoPoco">
-    <label>Vazão da Bomba (m³/h)</label><input type="text" id="vazaoBomba">
-    <label>Posição da Bomba (m)</label><input type="text" id="posBomba">
-    <label>NE (m)</label><input type="text" id="ne">
-    <label>ND (m)</label><input type="text" id="nd">
-
+    <label>Vazão do Poço</label><input id="vazaoPoco">
+    <label>Vazão da Bomba</label><input id="vazaoBomba">
+    <label>Posição da Bomba</label><input id="posBomba">
+    <label>NE</label><input id="ne">
+    <label>ND</label><input id="nd">
     <button onclick="prevStep()">Voltar</button>
     <button onclick="avancarEtapaAtual()">Avançar</button>
   </section>
@@ -169,14 +99,13 @@
   <!-- ETAPA 6 -->
   <section class="step">
     <h2>Geologia</h2>
-    <label>Geologia</label><textarea id="geologia"></textarea>
-    <label>Fraturas</label><textarea id="fraturas"></textarea>
-    <label>Observação</label><textarea id="observacao"></textarea>
+    <textarea id="geologia"></textarea>
+    <textarea id="fraturas"></textarea>
+    <textarea id="observacao"></textarea>
     <button onclick="prevStep()">Voltar</button>
     <button onclick="gerarResumo()">Resumo</button>
   </section>
 
-  <!-- RESUMO -->
   <section class="step" id="resumo"></section>
 
 </div>
