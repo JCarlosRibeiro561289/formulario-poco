@@ -7,93 +7,94 @@ function showStep() {
   progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
 }
 
-function nextStep() {
-  step++;
-  showStep();
-}
-
-function prevStep() {
-  step--;
-  showStep();
-}
-
+function nextStep(){ step++; showStep(); }
+function prevStep(){ step--; showStep(); }
 showStep();
 
-/* FORMATAR */
-function formatar(c) {
-  if (!c.value) return;
-  let v = parseFloat(c.value.replace(",", "."));
-  if (!isNaN(v)) c.value = v.toFixed(2).replace(".", ",");
-}
+function n(v){ return parseFloat(v.replace(",", ".")); }
 
-[profundidade, sanitarioPol, polRev, vazaoPoco, vazaoBomba, posBomba, ne, nd]
-  .forEach(c => c?.addEventListener("blur", () => formatar(c)));
+/* PERFURAÇÃO */
+polInicial.onblur = polFinal.onblur = () => {
+  if (!polInicial.value || !polFinal.value) return;
+  const pi = n(polInicial.value);
+  const pf = n(polFinal.value);
 
-/* VALIDAÇÕES */
-function avancarEtapaAtual() {
-  if (step === 0 && !cliente.value) return alert("Informe o cliente");
-  if (step === 1 && !profundidade.value) return alert("Informe profundidade");
-  if (step === 4 && (!vazaoPoco.value || !vazaoBomba.value)) return alert("Hidráulica incompleta");
-  nextStep();
+  if (pf > pi) {
+    alert("Polegada final não pode ser maior que a inicial");
+    polFinal.value = "";
+    metrosInicialArea.classList.add("hidden");
+    return;
+  }
+
+  metrosInicialArea.classList.toggle("hidden", pi === pf);
+};
+
+/* SANITÁRIO */
+function toggleSanitario(){
+  sanitarioCampos.classList.toggle("hidden", temSanitario.value !== "sim");
 }
 
 /* FILTROS */
-function addFiltro() {
-  const div = document.createElement("div");
-  div.innerHTML = `
+function addFiltro(){
+  const d = document.createElement("div");
+  d.innerHTML = `
     <select>
-      <option>Ranhurado</option>
-      <option>Johnson</option>
+      <option>Geomecânico PVC</option>
+      <option>Tubo Aço Carbono</option>
+      <option>Tubo Inox</option>
     </select>
+    <input placeholder="Polegada">
     <input placeholder="De (m)">
     <input placeholder="Até (m)">
   `;
-  listaFiltros.appendChild(div);
+  listaFiltros.appendChild(d);
 }
 
-function gerarPosicoesFiltros() {
-  const filtros = [];
-  const prof = parseFloat(profundidade.value.replace(",", "."));
+function gerarPosicoesFiltros(){
+  const prof = n(profundidade.value);
+  let filtros = [];
 
-  document.querySelectorAll("#listaFiltros div").forEach(f => {
-    const de = parseFloat(f.children[1].value.replace(",", "."));
-    const ate = parseFloat(f.children[2].value.replace(",", "."));
+  document.querySelectorAll("#listaFiltros div").forEach(f=>{
     const tipo = f.children[0].value;
+    const pol = n(f.children[1].value);
+    const de = n(f.children[2].value);
+    const ate = n(f.children[3].value);
 
     if (de >= ate) throw alert("Filtro inválido");
     if (ate > prof) throw alert("Filtro ultrapassa profundidade");
 
-    filtros.push({ tipo, de, ate });
+    filtros.push({tipo, pol, de, ate});
   });
 
-  filtros.sort((a, b) => a.de - b.de);
-
-  for (let i = 1; i < filtros.length; i++) {
-    if (filtros[i].de < filtros[i - 1].ate)
+  filtros.sort((a,b)=>a.de-b.de);
+  for(let i=1;i<filtros.length;i++){
+    if(filtros[i].de < filtros[i-1].ate)
       throw alert("Sobreposição de filtros");
   }
 
-  let html = "<ul>";
-  let atual = 0;
-
-  filtros.forEach(f => {
-    if (atual < f.de)
-      html += `<li>Tubo liso ${atual}–${f.de} m</li>`;
-    html += `<li>Filtro (${f.tipo}) ${f.de}–${f.ate} m</li>`;
-    atual = f.ate;
+  let html="<ul>", atual=0;
+  filtros.forEach(f=>{
+    if(atual < f.de) html+=`<li>Tubo liso ${atual} - ${f.de}</li>`;
+    html+=`<li>Filtro ${f.tipo} ${f.de} - ${f.ate}</li>`;
+    atual=f.ate;
   });
-
-  if (atual < prof)
-    html += `<li>Tubo liso ${atual}–${prof} m</li>`;
-
-  html += "</ul>";
-  filtrosArea.innerHTML = html;
+  if(atual<prof) html+=`<li>Tubo liso ${atual} - ${prof}</li>`;
+  html+="</ul>";
+  filtrosArea.innerHTML=html;
 }
 
-/* RESUMO */
-function gerarResumo() {
-  gerarPosicoesFiltros();
-  resumo.innerHTML = `<h2>Resumo do Poço</h2><pre>${document.body.innerText}</pre>`;
-  step = steps.length - 1;
-  showStep();
+/* AVANÇAR */
+function avancarEtapaAtual(){
+  if(step===0 && !cliente.value) return alert("Informe o cliente");
+
+  if(step===1){
+    if(n(metrosInicial.value||0) > n(profundidade.value))
+      return alert("Qtd inicial maior que profundidade");
+  }
+
+  if(step===3){
+    gerarPosicoesFiltros();
+  }
+
+  nextStep();
 }
