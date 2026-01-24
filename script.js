@@ -91,33 +91,36 @@ PERFURAÇÃO – CONTROLE DE POLEGADAS
 ========================= */
 
 
-polInicial.onblur = polFinal.onblur = () => {
-if (!polInicial.value || !polFinal.value) return;
+function atualizarEstadoPerfuração() {
+  const pi = n(polInicial.value);
+  const pf = n(polFinal.value);
 
+  if (!pi || !pf) return;
 
-const pi = n(polInicial.value);
-const pf = n(polFinal.value);
+  if (pf > pi) {
+    alert("Polegada final não pode ser maior que a inicial");
+    polFinal.value = "";
+    metrosInicial.value = "";
+    metrosInicial.disabled = true;
+    return;
+  }
 
-
-if (pf > pi) {
-alert("Polegada final não pode ser maior que a inicial");
-polFinal.value = "";
-metrosInicial.value = "";
-metrosInicial.disabled = true;
-return;
+  /* poço reto */
+  if (pi === pf) {
+    metrosInicial.value = "0";
+    metrosInicial.disabled = true;
+  }
+  /* poço escalonado */
+  else {
+    metrosInicial.disabled = false;
+    metrosInicial.value = "";
+  }
 }
 
+/* reage a QUALQUER mudança */
+polInicial.addEventListener("input", atualizarEstadoPerfuração);
+polFinal.addEventListener("input", atualizarEstadoPerfuração);
 
-/* polegadas iguais → poço reto */
-if (pi === pf) {
-metrosInicial.value = "";
-metrosInicial.disabled = true;
-}
-/* polegadas diferentes → escalonado */
-else {
-metrosInicial.disabled = false;
-}
-};
 /* =========================
    SANITÁRIO
 ========================= */
