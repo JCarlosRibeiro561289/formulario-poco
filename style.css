@@ -293,55 +293,31 @@ gap: 12px;
 
 /* Área do resumo */
 .resumo-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 28px;
 }
 
-
-/* Base */
 .resumo-actions button {
-  border: none;
-  padding: 10px 16px;
-  font-weight: 600;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* Botões específicos */
-button {
-  padding: 12px 18px;
-  border-radius: 10px;
-  font-weight: 600;
+  height: 52px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-}
-
-/* Ações */
-.btn-novo {
-  background: var(--danger);
-  color: #fff;
-}
-
+/* Editar – ação secundária */
 .btn-editar {
-  background: var(--warning);
-  color: #000;
+  background: #111827;
+  color: #e5e7eb;
+  border: 1px solid #374151;
 }
 
-.btn-pdf {
-  background: var(--primary);
-  color: #fff;
-}
-
+/* WhatsApp – ação principal */
 .btn-whatsapp {
-  background: #25d366;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
   color: #000;
 }
 
