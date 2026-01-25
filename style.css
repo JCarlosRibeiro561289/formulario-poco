@@ -198,6 +198,76 @@ fieldset.bloco legend {
   display: none;
 }
 
+.btn-voltar-topo {
+  background: transparent;
+  color: #475569;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 8px 0;
+  margin-bottom: 12px;
+  cursor: pointer;
+  width: auto;
+}
+
+.btn-voltar-topo:active {
+  transform: none;
+}
+
+
+.linha-filtro {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+}
+
+
+/* BLOCO DE FILTRO */
+.filtro {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+  background: #ffffff;
+}
+
+/* CABEÇALHO DO FILTRO */
+.filtro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.filtro-numero {
+  font-weight: 600;
+  color: #020617;
+}
+
+/* CAMPOS */
+.linha-filtro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* BOTÃO REMOVER DISCRETO */
+.btn-remover {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+/* TOTAL FILTRADO */
+.total-filtros {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #020617;
+}
 /* =========================
    AJUSTE PARA TELAS MAIORES
 ========================= */
