@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Perfil Técnico do Poço</title>
 <!doctype html>
 <html lang="pt-BR">
   <head>
@@ -14,706 +8,176 @@
   </head>
 
   <body>
-    <form onsubmit="return false;">
-      <div class="container">
-        <div class="progress">
-          <div id="progressBar"></div>
-        </div>
-
-        <!-- ETAPA 0 -->
-        <section class="step active">
-          <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
-          <h2>Perfil Cliente</h2>
-
-          <label>Nome cliente</label>
-          <input type="text" id="cliente" />
-
-          <label>CNPJ/CPF</label>
-          <input type="text" id="documento" />
-
-          <label>Endereço</label>
-          <input type="text" id="endereco" />
-
-          <label>Cidade</label>
-          <input type="text" id="cidade" />
-
-          <label>Estado</label>
-          <input type="text" id="estado" />
-
-          <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
-        </section>
-
-        <!-- ETAPA 1 -->
-        <section class="step">
-          <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
-          <h2>Perfuração</h2>
-
-          <label>Empresa Perfuradora</label>
-          <input type="text" id="empresaPerfuracao" />
-
-          <label>Encarregado</label>
-          <input type="text" id="encarregadoPerfuracao" />
-
-          <label>Data Início</label>
-          <input type="date" id="dataInicio" />
-
-          <label>Data Fim</label>
-          <input type="date" id="dataFim" />
-
-          <label>Método</label>
-          <select id="metodo">
-            <option>Rotativa</option>
-            <option>Pneumática</option>
-            <option>Rotativa e Pneumática</option>
-            <option>Ambos</option>
-          </select>
-
-          <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
-        </section>
-
-        <!-- ETAPA 2 -->
-        <section class="step">
-          <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
-          <h2>Perfuração</h2>
-
-          <fieldset class="bloco">
-            <label>Polegada Inicial</label>
-            <input type="text" id="polInicial" />
-
-            <label>Polegada Final</label>
-            <input type="text" id="polFinal" />
-
-            <label>Qtd Inicial (m)</label>
-            <input type="text" id="metrosInicial" disabled />
-
-            <label>Profundidade Total (m)</label>
-            <input type="text" id="profundidade" />
-          </fieldset>
-
-          <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
-        </section>
-
-        <!-- ETAPA 3 -->
-        <section class="step">
-          <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
-          <h2>Sanitário</h2>
-
-          <label>Possui Sanitário?</label>
-          <select id="temSanitario" onchange="toggleSanitario()">
-            <option value="nao">Não</option>
-            <option value="sim">Sim</option>
-          </select>
-
-          <label>Tipo de Revestimento Sanitário</label>
-          <select id="tipoRevestimentoSanitario">
-            <option>Tubo de Aço</option>
-            <option>Geomecânico PVC</option>
-            <option>PVC DEFOFO</option>
-            <option>Tubo Inox</option>
-          </select>
-
-          <div id="sanitarioCampos" class="hidden">
-            <label>Polegada Sanitário</label>
-            <input type="text" id="sanitarioPol" />
-
-            <label>Comprimento Sanitário (m)</label>
-            <input type="text" id="sanitarioComp" />
-          </div>
-
-          <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
-        </section>
-
-        <!-- ETAPA 4 -->
-        <section class="step">
-          <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
-          <h2>Revestimento / Filtros</h2>
-
-          <label>Revestimento</label>
-          <select id="tipoRevestimento">
-            <option>Geomecânico PVC</option>
-            <option>Tubo de Aço</option>
-            <option>Tubo Inox</option>
-          </select>
-
-          <label>Tipo</label>
-          <select id="classeRevestimento">
-            <option>Padrão</option>
-            <option>Leve</option>
-            <option>STD</option>
-            <option>Reforçado</option>
-          </select>
-
-          <h4>Filtros</h4>
-          <div id="listaFiltros"></div>
-          <div id="totalFiltros" class="total-filtros">
-            Total filtrado: 0 m
-          </div>
-
-          <button type="button" onclick="addFiltro()">Adicionar Filtro</button>
-          <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
-        </section>
-
-        <!-- ETAPA 5 -->
-        <section class="step">
-          <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
-          <h2>Dados Hidráulicos</h2>
-
-          <label>Vazão do Poço</label>
-          <input type="text" id="vazaoPoco" />
-
-          <label>Vazão da Bomba</label>
-          <input type="text" id="vazaoBomba" />
-
-          <label>Posição da Bomba</label>
-          <input type="text" id="posBomba" />
-
-          <label>NE</label>
-          <input type="text" id="ne" />
-
-          <label>ND</label>
-          <input type="text" id="nd" />
-
-          <button type="button" onclick="prevStep()">Voltar</button>
-          <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
-        </section>
-
-        <!-- ETAPA 6 -->
-        <section class="step">
-          <h2>Resumo</h2>
-
-          <div id="resumoConteudo"></div>
-
-          <button type="button" onclick="novoFormulario()">Novo</button>
-          <button type="button" onclick="editarFormulario()">Editar</button>
-          <button type="button" onclick="exportarPDF()">Baixar</button>
-        </section>
+    <div class="container">
+      <div class="progress">
+        <div id="progressBar"></div>
       </div>
-    </form>
+
+      <!-- ETAPA 0 -->
+      <section class="step active">
+        <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
+        <h2>Perfil Cliente</h2>
+
+        <label>Nome cliente</label>
+        <input id="cliente" />
+
+        <label>CNPJ/CPF</label>
+        <input id="documento" />
+
+        <label>Endereço</label>
+        <input id="endereco" />
+
+        <label>Cidade</label>
+        <input id="cidade" />
+
+        <label>Estado</label>
+        <input id="estado" />
+<button type="button" onclick="avancarEtapaAtual()">Avançar</button>
+      </section>
+
+      <!-- ETAPA 1 -->
+      <section class="step">
+        <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
+        <h2>Perfuração</h2>
+
+        <label>Empresa Perfuradora</label>
+        <input id="empresaPerfuracao" />
+
+        <label>Encarregado</label>
+        <input id="encarregadoPerfuracao" />
+
+        <label>Data Início</label>
+        <input type="date" id="dataInicio" />
+
+        <label>Data Fim</label>
+        <input type="date" id="dataFim" />
+
+        <label>Método</label>
+        <select id="metodo">
+          <option>Rotativa</option>
+          <option>Pneumática</option>
+          <option>Rotativa e Pneumática</option>
+          <option>Ambos</option>
+        </select>
+        <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
+      </section>
+
+      <!-- ETAPA 2 -->
+      <section class="step">
+        <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
+        <h2>Perfuração</h2>
+
+        <fieldset class="bloco">
+          <label>Polegada Inicial</label>
+          <input id="polInicial" />
+
+          <label>Polegada Final</label>
+          <input id="polFinal" />
+
+          <label>Qtd Inicial (m)</label>
+          <input id="metrosInicial" disabled />
+
+          <label>Profundidade Total (m)</label>
+          <input id="profundidade" />
+        </fieldset>
+
+        <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
+      </section>
+
+      <!-- ETAPA 3 -->
+      <section class="step">
+        <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
+        <h2>Sanitário</h2>
+
+        <label>Possui Sanitário?</label>
+        <select id="temSanitario" onchange="toggleSanitario()">
+          <option value="nao">Não</option>
+          <option value="sim">Sim</option>
+        </select>
+        <label>Tipo de Revestimento Sanitário</label>
+        <select id="tipoRevestimentoSanitario">
+          <option>Tubo de Aço</option>
+          <option>Geomecânico PVC</option>
+          <option>PVC DEFOFO</option>
+          <option>Tubo Inox</option>
+        </select>
+        <div id="sanitarioCampos" class="hidden">
+          <label>Polegada Sanitário</label>
+          <input id="sanitarioPol" />
+
+          <label>Comprimento Sanitário (m)</label>
+          <input id="sanitarioComp" />
+        </div>
+        <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
+      </section>
+
+      <!-- ETAPA 4 -->
+      <section class="step">
+        <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
+        <h2>Revestimento / Filtros</h2>
+
+        <label>Revestimento</label>
+        <select id="tipoRevestimento">
+          <option>Geomecânico PVC</option>
+          <option>Tubo de Aço</option>
+          <option>Tubo Inox</option>
+        </select>
+
+        <label>Tipo</label>
+        <select id="classeRevestimento">
+          <option>Padrão</option>
+          <option>Leve</option>
+          <option>STD</option>
+          <option>Reforçado</option>
+        </select>
+
+        <h4>Filtros</h4>
+        <div id="listaFiltros"></div>
+        <div id="totalFiltros" class="total-filtros">
+Total filtrado: 0 m
+</div>
+
+        <button type="button" onclick="addFiltro()">Adicionar Filtro</button>
+        <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
+      </section>
+
+      <!-- ETAPA 5 -->
+      <section class="step">
+        <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
+        <h2>Dados Hidráulicos</h2>
+
+        <label>Vazão do Poço</label>
+        <input id="vazaoPoco" />
+
+        <label>Vazão da Bomba</label>
+        <input id="vazaoBomba" />
+
+        <label>Posição da Bomba</label>
+        <input id="posBomba" />
+
+        <label>NE</label>
+        <input id="ne" />
+
+        <label>ND</label>
+        <input id="nd" />
+
+        <button type="button" onclick="prevStep()">Voltar</button>
+        <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
+      </section>
+
+      <!-- ETAPA 6 - RESUMO -->
+      <section class="step">
+        <h2>Resumo</h2>
+
+        <div id="resumoConteudo"></div>
+
+        <button type="button" onclick="novoFormulario()">Novo</button>
+        <button type="button" onclick="editarFormulario()">Editar</button>
+        <button type="button">Baixar</button>
+        <button type="button" onclick="enviarWhatsApp()">Enviar no WhatsApp</button>
+      </section>
+    </div>
 
     <script src="script.js"></script>
   </body>
-</html>
-
-<style>
-/* =========================
-   RESET E BASE
-========================= */
-* {
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-body {
-  background: #020617;
-  color: #020617;
-  padding: 12px;
-  margin: 0;
-}
-
-/* =========================
-   CONTAINER PRINCIPAL
-========================= */
-.container {
-  max-width: 100%;
-  margin: auto;
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 18px 16px 24px;
-}
-
-/* =========================
-   ETAPAS
-========================= */
-.step {
-  display: none;
-}
-
-.step.active {
-  display: block;
-}
-
-/* =========================
-   TIPOGRAFIA
-========================= */
-h2 {
-  font-size: 1.2rem;
-  margin-bottom: 18px;
-  line-height: 1.3;
-}
-
-label {
-  font-size: 0.95rem;
-  font-weight: 500;
-  margin-top: 16px;
-  display: block;
-}
-
-/* =========================
-   INPUTS – MOBILE FRIENDLY
-========================= */
-input,
-select,
-textarea {
-  width: 100%;
-  padding: 14px 12px;
-  margin-top: 6px;
-  border-radius: 12px;
-  border: 1px solid #cbd5e1;
-  font-size: 1rem;
-  background: #fff;
-}
-
-input:disabled {
-  background: #f1f5f9;
-  color: #64748b;
-}
-
-textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-/* melhora clique no iOS/Android */
-input,
-select,
-textarea,
-button {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* =========================
-   BOTÕES
-========================= */
-button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 16px;
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 14px;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-button:active {
-  transform: scale(0.98);
-}
-
-button + button {
-  margin-top: 12px;
-}
-
-/* =========================
-   BARRA DE PROGRESSO
-========================= */
-.progress {
-  height: 8px;
-  background: #e5e7eb;
-  border-radius: 6px;
-  margin-bottom: 20px;
-  overflow: hidden;
-}
-
-#progressBar {
-  height: 100%;
-  width: 0%;
-  background: #2563eb;
-  border-radius: 6px;
-  transition: width 0.3s ease;
-}
-
-/* =========================
-   FIELDSETS / BLOCOS
-========================= */
-fieldset.bloco {
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 20px;
-}
-
-fieldset.bloco legend {
-  font-weight: 600;
-  padding: 0 8px;
-  color: #334155;
-  font-size: 0.95rem;
-}
-
-/* =========================
-   FILTROS (LISTA DINÂMICA)
-========================= */
-.filtro {
-  padding: 12px 0;
-}
-
-.filtro hr {
-  margin-top: 16px;
-  border: none;
-  border-top: 1px solid #e5e7eb;
-}
-
-/* =========================
-   TEXTO AUXILIAR
-========================= */
-.hint {
-  display: block;
-  font-size: 0.8rem;
-  color: #64748b;
-  margin-top: 6px;
-}
-
-/* =========================
-   RESUMO
-========================= */
-#resumoConteudo pre {
-  white-space: pre-wrap;
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-/* =========================
-   AÇÕES DO RESUMO
-========================= */
-.acoes-resumo {
-  margin-top: 20px;
-}
-
-.acoes-resumo button {
-  background: #0f172a;
-}
-
-.acoes-resumo button + button {
-  background: #2563eb;
-}
-
-/* =========================
-   OCULTAR
-========================= */
-.hidden {
-  display: none;
-}
-
-.btn-voltar-topo {
-  background: transparent;
-  color: #475569;
-  border: none;
-  font-size: 0.95rem;
-  font-weight: 600;
-  padding: 8px 0;
-  margin-bottom: 12px;
-  cursor: pointer;
-  width: auto;
-}
-
-.btn-voltar-topo:active {
-  transform: none;
-}
-
-
-.linha-filtro {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 12px;
-}
-
-
-/* BLOCO DE FILTRO */
-.filtro {
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 16px;
-  background: #ffffff;
-}
-
-/* CABEÇALHO DO FILTRO */
-.filtro-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.filtro-numero {
-  font-weight: 600;
-  color: #020617;
-}
-
-/* CAMPOS */
-.linha-filtro {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-/* BOTÃO REMOVER DISCRETO */
-.btn-remover {
-  background: #fee2e2;
-  color: #991b1b;
-  padding: 6px 10px;
-  font-size: 0.8rem;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
-/* TOTAL FILTRADO */
-.total-filtros {
-  margin-top: 10px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #020617;
-}
-/* =========================
-   AJUSTE PARA TELAS MAIORES
-========================= */
-@media (min-width: 768px) {
-  .container {
-    max-width: 520px;
-    padding: 24px;
-  }
-
-  h2 {
-    font-size: 1.4rem;
-  }
-}
-
-</style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-</head>
-
-<body>
-
-<!-- ================== ETAPA 0 ================== -->
-<div class="step active">
-  <h3>Cliente</h3>
-  <input id="cliente" placeholder="Nome do cliente" />
-  <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
-</div>
-
-<!-- ================== ETAPA 1 ================== -->
-<div class="step">
-  <h3>Perfuração</h3>
-
-  <input id="polInicial" placeholder="Ø Inicial" />
-  <input id="polFinal" placeholder="Ø Final" />
-  <input id="metrosInicial" placeholder="Metros iniciais" />
-  <input id="profundidade" placeholder="Profundidade total" />
-
-  <button type="button" onclick="prevStep()">Voltar</button>
-  <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
-</div>
-
-<!-- ================== ETAPA 2 ================== -->
-<div class="step">
-  <h3>Filtros</h3>
-
-  <div id="listaFiltros"></div>
-
-  <button type="button" onclick="addFiltro()">Adicionar Filtro</button>
-  <div id="totalFiltros"></div>
-
-  <button type="button" onclick="prevStep()">Voltar</button>
-  <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
-</div>
-
-<!-- ================== ETAPA 3 ================== -->
-<div class="step">
-  <h3>Resumo</h3>
-  <div id="resumoConteudo"></div>
-
-  <button type="button" onclick="exportarPDF()">Baixar PDF</button>
-  <button type="button" onclick="enviarWhatsApp()">Enviar WhatsApp</button>
-  <button type="button" onclick="prevStep()">Voltar</button>
-</div>
-
-<script>
-let step = 0;
-const steps = document.querySelectorAll(".step");
-
-/* ================== ELEMENTOS ================== */
-const cliente = document.getElementById("cliente");
-const polInicial = document.getElementById("polInicial");
-const polFinal = document.getElementById("polFinal");
-const metrosInicial = document.getElementById("metrosInicial");
-const profundidade = document.getElementById("profundidade");
-const listaFiltros = document.getElementById("listaFiltros");
-const resumoConteudo = document.getElementById("resumoConteudo");
-
-/* ================== UTIL ================== */
-function n(v) {
-  if (!v) return 0;
-  return parseFloat(v.toString().replace(",", ".")) || 0;
-}
-
-function f(v) {
-  return n(v).toFixed(2).replace(".", ",");
-}
-
-/* ================== ERROS ================== */
-function marcarErro(input, msg) {
-  limparErros();
-  input.classList.add("erro-campo");
-  const span = document.createElement("span");
-  span.className = "erro-msg";
-  span.innerText = msg;
-  input.parentNode.appendChild(span);
-}
-
-function limparErros() {
-  document.querySelectorAll(".erro-msg").forEach(e => e.remove());
-  document.querySelectorAll(".erro-campo").forEach(e => e.classList.remove("erro-campo"));
-}
-
-/* ================== STEPS ================== */
-function showStep() {
-  steps.forEach((s, i) => s.classList.toggle("active", i === step));
-  if (step === 3) gerarResumoFinal();
-}
-
-function nextStep() {
-  if (step < steps.length - 1) step++;
-  showStep();
-}
-
-function prevStep() {
-  if (step > 0) step--;
-  showStep();
-}
-
-function avancarEtapaAtual() {
-  limparErros();
-
-  if (step === 0) {
-    if (!cliente.value.trim()) {
-      marcarErro(cliente, "Informe o cliente");
-      return;
-    }
-  }
-
-  if (step === 1) {
-    const pi = n(polInicial.value);
-    const pf = n(polFinal.value);
-    const prof = n(profundidade.value);
-
-    if (!pi || !pf || !prof) {
-      marcarErro(polInicial, "Preencha a perfuração");
-      return;
-    }
-
-    if (pf > pi) {
-      marcarErro(polFinal, "Ø final maior que inicial");
-      return;
-    }
-  }
-
-  nextStep();
-}
-
-/* ================== FILTROS ================== */
-function addFiltro() {
-  const div = document.createElement("div");
-  div.className = "filtro";
-
-  div.innerHTML = `
-    <div class="filtro-header">
-      <span></span>
-      <button type="button" onclick="this.closest('.filtro').remove(); atualizarTotalFiltros()">X</button>
-    </div>
-    <input class="de" placeholder="De (m)" onblur="this.value=f(this.value)" oninput="atualizarTotalFiltros()">
-    <input class="ate" placeholder="Até (m)" onblur="this.value=f(this.value)" oninput="atualizarTotalFiltros()">
-  `;
-
-  listaFiltros.appendChild(div);
-  atualizarTotalFiltros();
-}
-
-function atualizarTotalFiltros() {
-  let total = 0;
-  document.querySelectorAll(".filtro").forEach(f => {
-    const de = n(f.querySelector(".de").value);
-    const ate = n(f.querySelector(".ate").value);
-    if (ate > de) total += (ate - de);
-  });
-  document.getElementById("totalFiltros").innerText =
-    "Total filtrado: " + total.toFixed(2) + " m";
-}
-
-/* ================== LISOS ================== */
-function gerarTrechosLisos() {
-  const prof = n(profundidade.value);
-  const filtros = [];
-
-  document.querySelectorAll(".filtro").forEach(f => {
-    filtros.push({
-      de: n(f.querySelector(".de").value),
-      ate: n(f.querySelector(".ate").value)
-    });
-  });
-
-  filtros.sort((a, b) => a.de - b.de);
-
-  const lisos = [];
-  let inicio = 0;
-
-  filtros.forEach(f => {
-    if (f.de > inicio) lisos.push({ de: inicio, ate: f.de });
-    inicio = f.ate;
-  });
-
-  if (inicio < prof) lisos.push({ de: inicio, ate: prof });
-
-  return lisos;
-}
-
-/* ================== RESUMO ================== */
-function gerarResumoFinal() {
-  let txt = `PERFIL TÉCNICO DO POÇO\n\n`;
-  txt += `Cliente: ${cliente.value}\n\n`;
-
-  txt += `PERFURAÇÃO\n`;
-  txt += `Ø Inicial: ${f(polInicial.value)}\n`;
-  txt += `Ø Final: ${f(polFinal.value)}\n`;
-  txt += `Profundidade: ${f(profundidade.value)} m\n\n`;
-
-  txt += `FILTROS\n`;
-  let total = 0;
-  document.querySelectorAll(".filtro").forEach((filtro, i) => {
-    const de = n(filtro.querySelector(".de").value);
-    const ate = n(filtro.querySelector(".ate").value);
-    total += Math.max(0, ate - de);
-    txt += `Filtro ${i + 1}: ${f(de)} – ${f(ate)} m\n`;
-  });
-
-  txt += `\nTotal filtrado: ${total.toFixed(2)} m\n\n`;
-  txt += `TRECHOS LISOS\n`;
-
-  gerarTrechosLisos().forEach((l, i) => {
-    txt += `Liso ${i + 1}: ${f(l.de)} – ${f(l.ate)} m\n`;
-  });
-
-  resumoConteudo.innerHTML = `<pre>${txt}</pre>`;
-}
-
-/* ================== PDF ================== */
-function exportarPDF() {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
-  const linhas = pdf.splitTextToSize(resumoConteudo.innerText, 180);
-  pdf.setFont("courier");
-  pdf.setFontSize(10);
-  pdf.text(linhas, 10, 10);
-  pdf.save("perfil-tecnico-poco.pdf");
-}
-
-/* ================== WHATSAPP ================== */
-function enviarWhatsApp() {
-  const texto = encodeURIComponent(resumoConteudo.innerText);
-  window.open(`https://wa.me/?text=${texto}`, "_blank");
-}
-</script>
-
-</body>
 </html>
