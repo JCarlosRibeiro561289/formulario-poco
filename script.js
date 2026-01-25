@@ -51,6 +51,11 @@ function showStep() {
   progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
 
   if (step === 1) atualizarEstadoPerfuracao();
+
+  // ✅ GERAR RESUMO AO ENTRAR NA ETAPA FINAL
+  if (step === steps.length - 1) {
+    gerarResumoFinal();
+  }
 }
 
 function nextStep() {
