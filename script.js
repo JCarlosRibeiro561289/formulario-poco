@@ -2,6 +2,7 @@
    ESTADO GLOBAL
 ========================= */
 let modo = "novo";
+let step = 0;
 
 /* =========================
    REFERÊNCIAS DOM
@@ -19,39 +20,32 @@ const profundidade = document.getElementById("profundidade");
 
 const temSanitario = document.getElementById("temSanitario");
 const sanitarioCampos = document.getElementById("sanitarioCampos");
-const sanitarioPol = document.getElementById("sanitarioPol");
-const sanitarioComp = document.getElementById("sanitarioComp");
 
 const listaFiltros = document.getElementById("listaFiltros");
 
-const vazaoPoco = document.getElementById("vazaoPoco");
-const vazaoBomba = document.getElementById("vazaoBomba");
-const posBomba = document.getElementById("posBomba");
-const ne = document.getElementById("ne");
-const nd = document.getElementById("nd");
-
 const resumoConteudo = document.getElementById("resumoConteudo");
+const steps = document.querySelectorAll(".step");
+const progressBar = document.getElementById("progressBar");
 
 /* =========================
    UTIL
 ========================= */
 function n(v) {
-  if (!v && v !== 0) return 0;
-  return parseFloat(v.toString().replace(",", "."));
+  if (v === "" || v === null || v === undefined) return 0;
+  return parseFloat(v.toString().replace(",", ".")) || 0;
 }
 
 /* =========================
    CONTROLE DE ETAPAS
 ========================= */
-const steps = document.querySelectorAll(".step");
-let step = 0;
-
 function showStep() {
-  steps.forEach((s, i) => s.classList.toggle("active", i === step));
-  document.getElementById("progressBar").style.width =
+  steps.forEach((s, i) => {
+    s.classList.toggle("active", i === step);
+  });
+
+  progressBar.style.width =
     (step / (steps.length - 1)) * 100 + "%";
 
-  // sincroniza estado da perfuração ao entrar na etapa 2
   if (step === 1) {
     atualizarEstadoPerfuracao();
   }
@@ -72,15 +66,21 @@ function prevStep() {
 }
 
 function avancarEtapaAtual() {
+
+  /* =========================
+     VALIDAÇÕES – SOMENTE EM NOVO
+  ========================= */
   if (modo === "novo") {
 
-    // etapa 1
-    if (step === 0 && !cliente.value.trim()) {
-      alert("Informe o cliente");
-      return;
+    // ETAPA 1 – CLIENTE
+    if (step === 0) {
+      if (!cliente.value.trim()) {
+        alert("Informe o cliente");
+        return;
+      }
     }
 
-    // etapa 2 – perfuração
+    // ETAPA 2 – PERFURAÇÃO
     if (step === 1) {
       const pi = n(polInicial.value);
       const pf = n(polFinal.value);
@@ -103,12 +103,12 @@ function avancarEtapaAtual() {
       }
     }
 
-    // etapa filtros
+    // ETAPA FILTROS
     if (step === 3) {
       if (!gerarPosicoesFiltros()) return;
     }
 
-    // antes do resumo
+    // ANTES DO RESUMO
     if (step === steps.length - 2) {
       gerarResumoFinal();
     }
@@ -117,10 +117,8 @@ function avancarEtapaAtual() {
   nextStep();
 }
 
-showStep();
-
 /* =========================
-   PERFURAÇÃO (LÓGICA CORRETA)
+   PERFURAÇÃO – LÓGICA CORRETA
 ========================= */
 function atualizarEstadoPerfuracao() {
   const pi = n(polInicial.value);
@@ -178,7 +176,7 @@ function addFiltro() {
 
 function gerarPosicoesFiltros() {
   const prof = n(profundidade.value);
-  let filtros = [];
+  const filtros = [];
 
   for (const f of document.querySelectorAll(".filtro")) {
     const de = n(f.querySelector(".de").value);
@@ -219,9 +217,6 @@ function gerarResumoFinal() {
 /* =========================
    AÇÕES
 ========================= */
-function baixarResumo() {}
-function enviarEmail() {}
-
 function novoFormulario() {
   if (!confirm("Deseja iniciar um novo cadastro?")) return;
 
@@ -243,3 +238,8 @@ function editarFormulario() {
   step = 0;
   showStep();
 }
+
+/* =========================
+   INIT
+========================= */
+showStep();
