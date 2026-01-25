@@ -303,6 +303,19 @@ ${resumoConteudo.innerText}
 }
 
 showStep();
+/* ================== AÇÕES RESUMO ================== */
+
+function novoFormulario() {
+  // limpa a página inteira sem mexer em lógica
+  window.location.reload();
+}
+
+function editarFormulario() {
+  // volta para a primeira etapa mantendo os dados
+  step = 0;
+  showStep();
+}
+
 
 window.onerror = function (msg, src, line) {
 alert("Erro no sistema:\n" + msg + "\nLinha: " + line);
