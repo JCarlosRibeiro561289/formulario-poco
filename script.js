@@ -1,12 +1,6 @@
-/* =========================
-   ESTADO GLOBAL
-========================= */
 let modo = "novo";
 let step = 0;
 
-/* =========================
-   REFERÊNCIAS DOM
-========================= */
 const cliente = document.getElementById("cliente");
 const documento = document.getElementById("documento");
 const endereco = document.getElementById("endereco");
@@ -30,29 +24,22 @@ const ne = document.getElementById("ne");
 const nd = document.getElementById("nd");
 
 const listaFiltros = document.getElementById("listaFiltros");
-
 const resumoConteudo = document.getElementById("resumoConteudo");
+
 const steps = document.querySelectorAll(".step");
 const progressBar = document.getElementById("progressBar");
 
-/* =========================
-   UTIL
-========================= */
 function n(v) {
   if (v === "" || v === null || v === undefined) return 0;
   return parseFloat(v.toString().replace(",", ".")) || 0;
 }
 
-/* =========================
-   CONTROLE DE ETAPAS
-========================= */
 function showStep() {
   steps.forEach((s, i) => s.classList.toggle("active", i === step));
   progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
 
-  if (step === 1) atualizarEstadoPerfuracao();
+  if (step === 2) atualizarEstadoPerfuracao();
 
-  // ✅ GERAR RESUMO AO ENTRAR NA ETAPA FINAL
   if (step === steps.length - 1) {
     gerarResumoFinal();
   }
@@ -74,13 +61,12 @@ function prevStep() {
 
 function avancarEtapaAtual() {
   if (modo === "novo") {
-
     if (step === 0 && !cliente.value.trim()) {
       alert("Informe o cliente");
       return;
     }
 
-    if (step === 1) {
+    if (step === 2) {
       const pi = n(polInicial.value);
       const pf = n(polFinal.value);
       const prof = n(profundidade.value);
@@ -102,17 +88,12 @@ function avancarEtapaAtual() {
       }
     }
 
-    if (step === 3 && !gerarPosicoesFiltros()) return;
-
-    if (step === steps.length - 2) gerarResumoFinal();
+    if (step === 4 && !gerarPosicoesFiltros()) return;
   }
 
   nextStep();
 }
 
-/* =========================
-   PERFURAÇÃO
-========================= */
 function atualizarEstadoPerfuracao() {
   const pi = n(polInicial.value);
   const pf = n(polFinal.value);
@@ -130,7 +111,6 @@ function atualizarEstadoPerfuracao() {
 
   if (pi === pf) {
     metrosInicial.value = "0";
-    metrosInicial.disabled = true;
   } else {
     metrosInicial.disabled = false;
   }
@@ -139,16 +119,10 @@ function atualizarEstadoPerfuracao() {
 polInicial.addEventListener("input", atualizarEstadoPerfuracao);
 polFinal.addEventListener("input", atualizarEstadoPerfuracao);
 
-/* =========================
-   SANITÁRIO
-========================= */
 function toggleSanitario() {
   sanitarioCampos.classList.toggle("hidden", temSanitario.value !== "sim");
 }
 
-/* =========================
-   FILTROS
-========================= */
 function addFiltro() {
   const div = document.createElement("div");
   div.className = "filtro";
@@ -172,7 +146,7 @@ function gerarPosicoesFiltros() {
     const ate = n(f.querySelector(".ate").value);
 
     if (!de || !ate || de >= ate) {
-      alert("Filtro inválido (DE >= ATÉ)");
+      alert("Filtro inválido");
       return false;
     }
 
@@ -196,42 +170,60 @@ function gerarPosicoesFiltros() {
   return true;
 }
 
-/* =========================
-   RESUMO (RESTAURADO)
-========================= */
 function gerarResumoFinal() {
+
   let html = `
-<strong>CLIENTE</strong>
+<strong>PERFIL TÉCNICO DO POÇO</strong>
+
+<strong>DADOS CLIENTE</strong>
 Cliente: ${cliente.value}
-Documento: ${documento.value}
+CNPJ/CPF: ${documento.value}
 Endereço: ${endereco.value}
 Cidade/UF: ${cidade.value} - ${estado.value}
 
 <strong>PERFURAÇÃO</strong>
-Polegada inicial: ${polInicial.value}
-Polegada final: ${polFinal.value}
-Metros iniciais: ${metrosInicial.value}
-Profundidade: ${profundidade.value}
+Ø Inicial: ${polInicial.value} (0 – ${metrosInicial.value} m)
+Ø Final COontínua: ${polFinal.value} (${metrosInicial.value} – ${profundidade.value} m)
+Profundidade: ${profundidade.value} m
 
-<strong>SANITÁRIO</strong>
-Possui: ${temSanitario.value}
-${temSanitario.value === "sim"
-    ? `Polegada: ${sanitarioPol.value}
-Comprimento: ${sanitarioComp.value}`
-    : ""}
+<strong>PROTEÇÃO SANITÁRIA</strong>
+`;
+
+
+if (temSanitario.value === "sim") {
+html += `
+Ø Inicial: ${sanitarioPol.value} (0 – ${sanitarioComp.value} m)
+Tipo de Revestimento: ${tipoRevestimentoSanitario.value}
+`;
+} else {
+html += `Não possui sanitário\n`;
+}
+
+  html += `
+<strong>REVESTIMENTO FILTROS</strong>
+Tipo: ${tipoRevestimento.value}
+Classe: ${classeRevestimento.value}
 
 <strong>FILTROS</strong>
 `;
+let totalFiltros = 0;
+document.querySelectorAll(".filtro").forEach((f, i) => {
+const de = n(f.querySelector(".de").value);
+const ate = n(f.querySelector(".ate").value);
 
-  document.querySelectorAll(".filtro").forEach((f, i) => {
-    html += `Filtro ${i + 1}: ${f.querySelector(".de").value} até ${f.querySelector(".ate").value} m\n`;
-  });
+
+totalFiltros += (ate - de);
+
+
+html += `Filtro ${i + 1}: ${de} – ${ate} m\n`;
+});
 
   html += `
-<strong>BOMBA</strong>
-Vazão do poço: ${vazaoPoco.value}
-Vazão da bomba: ${vazaoBomba.value}
-Posição da bomba: ${posBomba.value}
+
+<strong>DADOS DE PRODUÇÃO</strong>
+Vazão do Poço: ${vazaoPoco.value}
+Vazão da Bomba: ${vazaoBomba.value}
+Posição da Bomba: ${posBomba.value}
 NE: ${ne.value}
 ND: ${nd.value}
 `;
@@ -239,9 +231,6 @@ ND: ${nd.value}
   resumoConteudo.innerHTML = `<pre>${html}</pre>`;
 }
 
-/* =========================
-   AÇÕES
-========================= */
 function novoFormulario() {
   if (!confirm("Deseja iniciar um novo cadastro?")) return;
 
@@ -264,7 +253,4 @@ function editarFormulario() {
   showStep();
 }
 
-/* =========================
-   INIT
-========================= */
 showStep();
