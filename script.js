@@ -16,6 +16,10 @@ const temSanitario = document.getElementById("temSanitario");
 const sanitarioCampos = document.getElementById("sanitarioCampos");
 const sanitarioPol = document.getElementById("sanitarioPol");
 const sanitarioComp = document.getElementById("sanitarioComp");
+const tipoRevestimentoSanitario = document.getElementById("tipoRevestimentoSanitario");
+
+const tipoRevestimento = document.getElementById("tipoRevestimento");
+const classeRevestimento = document.getElementById("classeRevestimento");
 
 const vazaoPoco = document.getElementById("vazaoPoco");
 const vazaoBomba = document.getElementById("vazaoBomba");
@@ -29,11 +33,26 @@ const resumoConteudo = document.getElementById("resumoConteudo");
 const steps = document.querySelectorAll(".step");
 const progressBar = document.getElementById("progressBar");
 
+/* ================= UTIL ================= */
 function n(v) {
   if (v === "" || v === null || v === undefined) return 0;
   return parseFloat(v.toString().replace(",", ".")) || 0;
 }
 
+function f(v) {
+  return n(v).toFixed(2).replace(".", ",");
+}
+
+function formatarDecimal(campo) {
+  const valor = n(campo.value);
+  if (!valor) {
+    campo.value = "";
+    return;
+  }
+  campo.value = valor.toFixed(2).replace(".", ",");
+}
+
+/* ================= ETAPAS ================= */
 function showStep() {
   steps.forEach((s, i) => s.classList.toggle("active", i === step));
   progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
@@ -58,6 +77,7 @@ function prevStep() {
 
 function avancarEtapaAtual() {
   if (modo === "novo") {
+
     if (step === 0 && !cliente.value.trim()) {
       alert("Informe o cliente");
       return;
@@ -85,12 +105,29 @@ function avancarEtapaAtual() {
       }
     }
 
+    // ✅ Sanitário não pode ser maior que a perfuração
+    if (step === 3 && temSanitario.value === "sim") {
+      const polPerf = n(polInicial.value);
+      const polSan = n(sanitarioPol.value);
+
+      if (!polSan) {
+        alert("Informe a polegada do sanitário");
+        return;
+      }
+
+      if (polSan > polPerf) {
+        alert("A polegada do sanitário não pode ser maior que a perfuração inicial");
+        return;
+      }
+    }
+
     if (step === 4 && !gerarPosicoesFiltros()) return;
   }
 
   nextStep();
 }
 
+/* ================= PERFURAÇÃO ================= */
 function atualizarEstadoPerfuracao() {
   const pi = n(polInicial.value);
   const pf = n(polFinal.value);
@@ -116,10 +153,12 @@ function atualizarEstadoPerfuracao() {
 polInicial.addEventListener("input", atualizarEstadoPerfuracao);
 polFinal.addEventListener("input", atualizarEstadoPerfuracao);
 
+/* ================= SANITÁRIO ================= */
 function toggleSanitario() {
   sanitarioCampos.classList.toggle("hidden", temSanitario.value !== "sim");
 }
 
+/* ================= FILTROS ================= */
 function addFiltro() {
   const div = document.createElement("div");
   div.className = "filtro";
@@ -136,25 +175,25 @@ function addFiltro() {
 <div class="linha-filtro">
   <div>
     <label>De (m)</label>
-    <input class="de" oninput="atualizarTotalFiltros()">
+    <input class="de" oninput="atualizarTotalFiltros()" onblur="formatarDecimal(this)">
   </div>
 
   <div>
     <label>Até (m)</label>
-    <input class="ate" oninput="atualizarTotalFiltros()">
+    <input class="ate" oninput="atualizarTotalFiltros()" onblur="formatarDecimal(this)">
   </div>
 </div>
 `;
 
   listaFiltros.appendChild(div);
   atualizarNumeracaoFiltros();
-  atualizarTotalFiltros(); // ✅ correção
+  atualizarTotalFiltros();
 }
 
 function atualizarNumeracaoFiltros() {
   document.querySelectorAll(".filtro").forEach((f, i) => {
-    const n = f.querySelector(".filtro-numero");
-    if (n) n.textContent = `Filtro ${i + 1}`;
+    const nEl = f.querySelector(".filtro-numero");
+    if (nEl) nEl.textContent = `Filtro ${i + 1}`;
   });
 }
 
@@ -164,21 +203,20 @@ function atualizarTotalFiltros() {
   document.querySelectorAll(".filtro").forEach(f => {
     const de = n(f.querySelector(".de")?.value);
     const ate = n(f.querySelector(".ate")?.value);
-
     if (ate > de) total += Math.max(0, ate - de);
   });
 
   const el = document.getElementById("totalFiltros");
-  if (el) el.textContent = `Total filtrado: ${total.toFixed(2)} m`;
+  if (el) el.textContent = `Total filtrado: ${f(total)} m`;
 }
 
 function gerarPosicoesFiltros() {
   const prof = n(profundidade.value);
   const filtros = [];
 
-  for (const f of document.querySelectorAll(".filtro")) {
-    const de = n(f.querySelector(".de").value);
-    const ate = n(f.querySelector(".ate").value);
+  for (const fEl of document.querySelectorAll(".filtro")) {
+    const de = n(fEl.querySelector(".de").value);
+    const ate = n(fEl.querySelector(".ate").value);
 
     if (!de || !ate || de >= ate) {
       alert("Filtro inválido");
@@ -205,6 +243,7 @@ function gerarPosicoesFiltros() {
   return true;
 }
 
+/* ================= RESUMO ================= */
 function gerarResumoFinal() {
   let html = `
 <strong>PERFIL TÉCNICO DO POÇO</strong>
@@ -216,20 +255,22 @@ Endereço: ${endereco.value}
 Cidade/UF: ${cidade.value} - ${estado.value}
 
 <strong>PERFURAÇÃO</strong>
-Ø Inicial: ${polInicial.value} (0 – ${metrosInicial.value} m)
-Ø Final Contínua: ${polFinal.value} (${metrosInicial.value} – ${profundidade.value} m)
-Profundidade: ${profundidade.value} m
+Ø Inicial: ${f(polInicial.value)} (0 – ${f(metrosInicial.value)} m)
+Ø Final Contínua: ${f(polFinal.value)} (${f(metrosInicial.value)} – ${f(profundidade.value)} m)
+Profundidade: ${f(profundidade.value)} m
 
 <strong>PROTEÇÃO SANITÁRIA</strong>
 `;
+
   if (temSanitario.value === "sim") {
     html += `
-Ø Inicial: ${sanitarioPol.value} (0 – ${sanitarioComp.value} m)
+Ø Inicial: ${f(sanitarioPol.value)} (0 – ${f(sanitarioComp.value)} m)
 Tipo de Revestimento: ${tipoRevestimentoSanitario.value}
 `;
   } else {
     html += `Não possui sanitário\n`;
   }
+
   html += `
 <strong>REVESTIMENTO FILTROS</strong>
 Tipo: ${tipoRevestimento.value}
@@ -240,16 +281,16 @@ Classe: ${classeRevestimento.value}
 
   let totalFiltros = 0;
 
-  document.querySelectorAll(".filtro").forEach((f, i) => {
-    const de = n(f.querySelector(".de").value);
-    const ate = n(f.querySelector(".ate").value);
+  document.querySelectorAll(".filtro").forEach((fEl, i) => {
+    const de = n(fEl.querySelector(".de").value);
+    const ate = n(fEl.querySelector(".ate").value);
 
     totalFiltros += Math.max(0, ate - de);
-    html += `Filtro ${i + 1}: ${de} – ${ate} m\n`;
+    html += `Filtro ${i + 1}: ${f(de)} – ${f(ate)} m\n`;
   });
 
   html += `
-Total filtrado: ${totalFiltros.toFixed(2)} m
+Total filtrado: ${f(totalFiltros)} m
 
 <strong>DADOS HIDRÁULICOS</strong>
 Vazão do Poço: ${vazaoPoco.value}
@@ -262,6 +303,7 @@ ND: ${nd.value}
   resumoConteudo.innerHTML = `<pre>${html}</pre>`;
 }
 
+/* ================= AÇÕES ================= */
 function novoFormulario() {
   if (!confirm("Deseja iniciar um novo cadastro?")) return;
 
@@ -283,5 +325,11 @@ function editarFormulario() {
   step = 0;
   showStep();
 }
+
+/* ================= FORMATAÇÃO BLUR ================= */
+polInicial.addEventListener("blur", () => formatarDecimal(polInicial));
+polFinal.addEventListener("blur", () => formatarDecimal(polFinal));
+sanitarioPol.addEventListener("blur", () => formatarDecimal(sanitarioPol));
+profundidade.addEventListener("blur", () => formatarDecimal(profundidade));
 
 showStep();
