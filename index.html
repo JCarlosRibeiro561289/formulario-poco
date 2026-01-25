@@ -4,6 +4,195 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Perfil Técnico do Poço</title>
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cadastro de Poço</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <form onsubmit="return false;">
+      <div class="container">
+        <div class="progress">
+          <div id="progressBar"></div>
+        </div>
+
+        <!-- ETAPA 0 -->
+        <section class="step active">
+          <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
+          <h2>Perfil Cliente</h2>
+
+          <label>Nome cliente</label>
+          <input type="text" id="cliente" />
+
+          <label>CNPJ/CPF</label>
+          <input type="text" id="documento" />
+
+          <label>Endereço</label>
+          <input type="text" id="endereco" />
+
+          <label>Cidade</label>
+          <input type="text" id="cidade" />
+
+          <label>Estado</label>
+          <input type="text" id="estado" />
+
+          <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
+        </section>
+
+        <!-- ETAPA 1 -->
+        <section class="step">
+          <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
+          <h2>Perfuração</h2>
+
+          <label>Empresa Perfuradora</label>
+          <input type="text" id="empresaPerfuracao" />
+
+          <label>Encarregado</label>
+          <input type="text" id="encarregadoPerfuracao" />
+
+          <label>Data Início</label>
+          <input type="date" id="dataInicio" />
+
+          <label>Data Fim</label>
+          <input type="date" id="dataFim" />
+
+          <label>Método</label>
+          <select id="metodo">
+            <option>Rotativa</option>
+            <option>Pneumática</option>
+            <option>Rotativa e Pneumática</option>
+            <option>Ambos</option>
+          </select>
+
+          <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
+        </section>
+
+        <!-- ETAPA 2 -->
+        <section class="step">
+          <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
+          <h2>Perfuração</h2>
+
+          <fieldset class="bloco">
+            <label>Polegada Inicial</label>
+            <input type="text" id="polInicial" />
+
+            <label>Polegada Final</label>
+            <input type="text" id="polFinal" />
+
+            <label>Qtd Inicial (m)</label>
+            <input type="text" id="metrosInicial" disabled />
+
+            <label>Profundidade Total (m)</label>
+            <input type="text" id="profundidade" />
+          </fieldset>
+
+          <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
+        </section>
+
+        <!-- ETAPA 3 -->
+        <section class="step">
+          <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
+          <h2>Sanitário</h2>
+
+          <label>Possui Sanitário?</label>
+          <select id="temSanitario" onchange="toggleSanitario()">
+            <option value="nao">Não</option>
+            <option value="sim">Sim</option>
+          </select>
+
+          <label>Tipo de Revestimento Sanitário</label>
+          <select id="tipoRevestimentoSanitario">
+            <option>Tubo de Aço</option>
+            <option>Geomecânico PVC</option>
+            <option>PVC DEFOFO</option>
+            <option>Tubo Inox</option>
+          </select>
+
+          <div id="sanitarioCampos" class="hidden">
+            <label>Polegada Sanitário</label>
+            <input type="text" id="sanitarioPol" />
+
+            <label>Comprimento Sanitário (m)</label>
+            <input type="text" id="sanitarioComp" />
+          </div>
+
+          <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
+        </section>
+
+        <!-- ETAPA 4 -->
+        <section class="step">
+          <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
+          <h2>Revestimento / Filtros</h2>
+
+          <label>Revestimento</label>
+          <select id="tipoRevestimento">
+            <option>Geomecânico PVC</option>
+            <option>Tubo de Aço</option>
+            <option>Tubo Inox</option>
+          </select>
+
+          <label>Tipo</label>
+          <select id="classeRevestimento">
+            <option>Padrão</option>
+            <option>Leve</option>
+            <option>STD</option>
+            <option>Reforçado</option>
+          </select>
+
+          <h4>Filtros</h4>
+          <div id="listaFiltros"></div>
+          <div id="totalFiltros" class="total-filtros">
+            Total filtrado: 0 m
+          </div>
+
+          <button type="button" onclick="addFiltro()">Adicionar Filtro</button>
+          <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
+        </section>
+
+        <!-- ETAPA 5 -->
+        <section class="step">
+          <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
+          <h2>Dados Hidráulicos</h2>
+
+          <label>Vazão do Poço</label>
+          <input type="text" id="vazaoPoco" />
+
+          <label>Vazão da Bomba</label>
+          <input type="text" id="vazaoBomba" />
+
+          <label>Posição da Bomba</label>
+          <input type="text" id="posBomba" />
+
+          <label>NE</label>
+          <input type="text" id="ne" />
+
+          <label>ND</label>
+          <input type="text" id="nd" />
+
+          <button type="button" onclick="prevStep()">Voltar</button>
+          <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
+        </section>
+
+        <!-- ETAPA 6 -->
+        <section class="step">
+          <h2>Resumo</h2>
+
+          <div id="resumoConteudo"></div>
+
+          <button type="button" onclick="novoFormulario()">Novo</button>
+          <button type="button" onclick="editarFormulario()">Editar</button>
+          <button type="button" onclick="exportarPDF()">Baixar</button>
+        </section>
+      </div>
+    </form>
+
+    <script src="script.js"></script>
+  </body>
+</html>
 
 <style>
 /* =========================
