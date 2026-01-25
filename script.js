@@ -217,9 +217,8 @@ PERFURAÇÃO
     txt += `
 --------------------------------
 SANITÁRIO
-Ø: ${sanitarioPol.value}"
-Comprimento: ${sanitarioComp.value} m
-Tipo: ${tipoRevestimento.value} - ${classeRevestimento.value}
+Ø: ${sanitarioPol.value}" (0 – ${sanitarioComp.value} m)
+Tipo: ${tipoRevestimento.value}
 `;
   }
 
@@ -241,14 +240,14 @@ FILTROS E REVESTIMENTOS
   let atual = 0;
   filtros.forEach(f => {
     if (atual < f.de) {
-      txt += `${atual} – ${f.de} m  | REVESTIMENTO LISO\n`;
+      txt += `${atual} – ${f.de} m  LISOS\n`;
     }
-    txt += `${f.de} – ${f.ate} m  | FILTRO\n`;
+    txt += `${f.de} – ${f.ate} m  FILTROS\n`;
     atual = f.ate;
   });
 
   if (atual < prof) {
-    txt += `${atual} – ${prof} m  | REVESTIMENTO LISO\n`;
+    txt += `${atual} – ${prof} m  LISOS\n`;
   }
 
   txt += `
@@ -262,15 +261,15 @@ ND: ${nd.value}
 
 --------------------------------
 GEOLOGIA
-${geologia?.value || ""}
+${geologia.value}
 
 --------------------------------
 FRATURAS
-${fraturas?.value || ""}
+${fraturas.value}
 
 --------------------------------
 OBSERVAÇÕES
-${observacoes?.value || ""}
+${observacoes.value}
 `;
 
   resumoConteudo.innerHTML = `<pre>${txt}</pre>`;
