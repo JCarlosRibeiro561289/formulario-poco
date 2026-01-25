@@ -171,9 +171,12 @@ fieldset.bloco legend {
    RESUMO
 ========================= */
 #resumoConteudo pre {
+  background: #020617;
+  padding: 18px;
+  border-radius: 12px;
   white-space: pre-wrap;
-  font-size: 0.9rem;
-  line-height: 1.4;
+  color: #d1d5db;
+  font-size: 14px;
 }
 
 /* =========================
@@ -271,7 +274,7 @@ gap: 12px;
 
 .step {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(8px);
   pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
@@ -282,7 +285,6 @@ gap: 12px;
   pointer-events: auto;
 }
 
-
 /* Área do resumo */
 .resumo-actions {
   display: flex;
@@ -290,6 +292,7 @@ gap: 12px;
   gap: 10px;
   margin-top: 20px;
 }
+
 
 /* Base */
 .resumo-actions button {
@@ -301,24 +304,39 @@ gap: 12px;
 }
 
 /* Botões específicos */
+button {
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Ações */
 .btn-novo {
-  background: #dc3545; /* vermelho */
+  background: var(--danger);
   color: #fff;
 }
 
 .btn-editar {
-  background: #ffc107; /* amarelo */
+  background: var(--warning);
   color: #000;
 }
 
 .btn-pdf {
-  background: #0d6efd; /* azul */
+  background: var(--primary);
   color: #fff;
 }
 
 .btn-whatsapp {
-  background: #25d366; /* verde WhatsApp */
-  color: #fff;
+  background: #25d366;
+  color: #000;
 }
 
 
