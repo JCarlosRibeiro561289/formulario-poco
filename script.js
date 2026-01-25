@@ -30,12 +30,15 @@ function prevStep() {
 
 function avancarEtapaAtual() {
 
-  /* ETAPA 1 */
-  if (step === 0 && !cliente.value.trim()) {
-    alert("Informe o cliente");
-    return;
-  }
+// 🔐 validações só quando for NOVO
+if (modo === "novo") {
 
+
+/* ETAPA 1 */
+if (step === 0 && !cliente.value.trim()) {
+alert("Informe o cliente");
+return;
+}
   /* ETAPA 2 – PERFURAÇÃO */
   if (step === 1) {
     const pi = n(polInicial.value);
@@ -290,4 +293,36 @@ function enviarEmail() {
   location.href =
     "mailto:?subject=Cadastro Técnico de Poço&body=" +
     encodeURIComponent(window.__resumoTXT);
+}
+
+function novoFormulario() {
+if (!confirm("Deseja iniciar um novo cadastro? Os dados atuais serão apagados.")) {
+return;
+}
+
+
+modo = "novo";
+
+
+// limpa inputs
+document.querySelectorAll("input, textarea, select").forEach(el => {
+if (el.type !== "button" && el.type !== "submit") {
+el.value = "";
+el.disabled = false;
+}
+});
+
+
+// remove filtros
+document.querySelectorAll(".filtro").forEach(f => f.remove());
+
+
+// limpa resumo
+resumoConteudo.innerHTML = "";
+window.__resumoTXT = "";
+
+
+// volta para primeira etapa
+step = 0;
+mostrarStep(step);
 }
