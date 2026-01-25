@@ -39,6 +39,10 @@ const resumoConteudo = document.getElementById("resumoConteudo");
 const steps = document.querySelectorAll(".step");
 const progressBar = document.getElementById("progressBar");
 
+const tipoRevestimentoSanitario = document.getElementById("tipoRevestimentoSanitario");
+const tipoRevestimento = document.getElementById("tipoRevestimento");
+const classeRevestimento = document.getElementById("classeRevestimento");
+
 /* ================== UTIL ================== */
 function n(v) {
   if (!v) return 0;
