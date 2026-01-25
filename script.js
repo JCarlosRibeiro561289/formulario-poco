@@ -50,6 +50,11 @@ function showStep() {
   steps.forEach((s, i) => s.classList.toggle("active", i === step));
   document.getElementById("progressBar").style.width =
     (step / (steps.length - 1)) * 100 + "%";
+
+  // 🔁 sincroniza estado da perfuração ao entrar na etapa 2
+  if (step === 1) {
+    atualizarEstadoPerfuração();
+  }
 }
 
 function nextStep() {
