@@ -269,6 +269,17 @@ Posição da Bomba: ${f(posBomba.value)}
 NE: ${f(ne.value)}
 ND: ${f(nd.value)}
 `;
+  html += `
+
+GEOLOGIA DO POÇO
+${geologia?.value || "Não informado"}
+
+FRATURAS
+${fraturas?.value || "Não informado"}
+
+OBSERVAÇÕES
+${observacoes?.value || "Não informado"}
+`;
 
   resumoConteudo.innerHTML = `<pre>${html}</pre>`;
 }
