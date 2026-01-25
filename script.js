@@ -193,27 +193,38 @@ function gerarResumoFinal() {
   let txt = `
 === CADASTRO TÉCNICO DE POÇO ===
 
+DADOS DO CLIENTE
+Cliente: ${cliente.value}
+Documento: ${documento.value}
+Endereço: ${endereco.value}
+Cidade/Estado: ${cidade.value} - ${estado.value}
+
+--------------------------------
+
 PERFURAÇÃO
 `;
 
   if (pi === pf) {
-    txt += `Ø Poço: ${pi} (0 – ${prof} m)\n`;
+    txt += `Ø Poço: ${pi}" (0 – ${prof} m)\n`;
   } else {
-    txt += `Ø Inicial: ${pi} (0 – ${mi} m)\n`;
-    txt += `Ø Final: ${pf} (${mi} – ${prof} m)\n`;
+    txt += `Ø Inicial: ${pi}" (0 – ${mi} m)\n`;
+    txt += `Ø Final: ${pf}" (${mi} – ${prof} m)\n`;
   }
 
-  txt += `Profundidade: ${prof} m\n\n`;
+  txt += `Profundidade Total: ${prof} m\n`;
 
   if (temSanitario.value === "sim") {
     txt += `
+--------------------------------
 SANITÁRIO
-Ø Inicial: ${sanitarioPol.value} (0 – ${sanitarioComp.value} m)
-TIPO: ${tipoRevestimento.value}
+Ø: ${sanitarioPol.value}"
+Comprimento: ${sanitarioComp.value} m
+Tipo: ${tipoRevestimento.value} - ${classeRevestimento.value}
 `;
   }
 
   txt += `
+--------------------------------
 FILTROS E REVESTIMENTOS
 `;
 
@@ -230,20 +241,41 @@ FILTROS E REVESTIMENTOS
   let atual = 0;
   filtros.forEach(f => {
     if (atual < f.de) {
-      txt += `${atual} – ${f.de} m  LISOS\n`;
+      txt += `${atual} – ${f.de} m  | REVESTIMENTO LISO\n`;
     }
-    txt += `${f.de} – ${f.ate} m  FILTROS\n`;
+    txt += `${f.de} – ${f.ate} m  | FILTRO\n`;
     atual = f.ate;
   });
 
   if (atual < prof) {
-    txt += `${atual} – ${prof} m  LISOS\n`;
+    txt += `${atual} – ${prof} m  | REVESTIMENTO LISO\n`;
   }
+
+  txt += `
+--------------------------------
+DADOS HIDRÁULICOS
+Vazão do Poço: ${vazaoPoco.value}
+Vazão da Bomba: ${vazaoBomba.value}
+Posição da Bomba: ${posBomba.value}
+NE: ${ne.value}
+ND: ${nd.value}
+
+--------------------------------
+GEOLOGIA
+${geologia?.value || ""}
+
+--------------------------------
+FRATURAS
+${fraturas?.value || ""}
+
+--------------------------------
+OBSERVAÇÕES
+${observacoes?.value || ""}
+`;
 
   resumoConteudo.innerHTML = `<pre>${txt}</pre>`;
   window.__resumoTXT = txt;
 }
-
 /* =========================
    DOWNLOAD / EMAIL
 ========================= */
