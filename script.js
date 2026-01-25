@@ -20,6 +20,14 @@ const profundidade = document.getElementById("profundidade");
 
 const temSanitario = document.getElementById("temSanitario");
 const sanitarioCampos = document.getElementById("sanitarioCampos");
+const sanitarioPol = document.getElementById("sanitarioPol");
+const sanitarioComp = document.getElementById("sanitarioComp");
+
+const vazaoPoco = document.getElementById("vazaoPoco");
+const vazaoBomba = document.getElementById("vazaoBomba");
+const posBomba = document.getElementById("posBomba");
+const ne = document.getElementById("ne");
+const nd = document.getElementById("nd");
 
 const listaFiltros = document.getElementById("listaFiltros");
 
@@ -39,16 +47,10 @@ function n(v) {
    CONTROLE DE ETAPAS
 ========================= */
 function showStep() {
-  steps.forEach((s, i) => {
-    s.classList.toggle("active", i === step);
-  });
+  steps.forEach((s, i) => s.classList.toggle("active", i === step));
+  progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
 
-  progressBar.style.width =
-    (step / (steps.length - 1)) * 100 + "%";
-
-  if (step === 1) {
-    atualizarEstadoPerfuracao();
-  }
+  if (step === 1) atualizarEstadoPerfuracao();
 }
 
 function nextStep() {
@@ -66,21 +68,13 @@ function prevStep() {
 }
 
 function avancarEtapaAtual() {
-
-  /* =========================
-     VALIDAÇÕES – SOMENTE EM NOVO
-  ========================= */
   if (modo === "novo") {
 
-    // ETAPA 1 – CLIENTE
-    if (step === 0) {
-      if (!cliente.value.trim()) {
-        alert("Informe o cliente");
-        return;
-      }
+    if (step === 0 && !cliente.value.trim()) {
+      alert("Informe o cliente");
+      return;
     }
 
-    // ETAPA 2 – PERFURAÇÃO
     if (step === 1) {
       const pi = n(polInicial.value);
       const pf = n(polFinal.value);
@@ -103,28 +97,21 @@ function avancarEtapaAtual() {
       }
     }
 
-    // ETAPA FILTROS
-    if (step === 3) {
-      if (!gerarPosicoesFiltros()) return;
-    }
+    if (step === 3 && !gerarPosicoesFiltros()) return;
 
-    // ANTES DO RESUMO
-    if (step === steps.length - 2) {
-      gerarResumoFinal();
-    }
+    if (step === steps.length - 2) gerarResumoFinal();
   }
 
   nextStep();
 }
 
 /* =========================
-   PERFURAÇÃO – LÓGICA CORRETA
+   PERFURAÇÃO
 ========================= */
 function atualizarEstadoPerfuracao() {
   const pi = n(polInicial.value);
   const pf = n(polFinal.value);
 
-  // estado padrão
   metrosInicial.value = "";
   metrosInicial.disabled = true;
 
@@ -136,13 +123,10 @@ function atualizarEstadoPerfuracao() {
     return;
   }
 
-  // poço reto
   if (pi === pf) {
     metrosInicial.value = "0";
     metrosInicial.disabled = true;
-  }
-  // poço escalonado
-  else {
+  } else {
     metrosInicial.disabled = false;
   }
 }
@@ -188,7 +172,7 @@ function gerarPosicoesFiltros() {
     }
 
     if (ate > prof) {
-      alert("Filtro ultrapassa a profundidade do poço");
+      alert("Filtro ultrapassa a profundidade");
       return false;
     }
 
@@ -199,7 +183,7 @@ function gerarPosicoesFiltros() {
 
   for (let i = 1; i < filtros.length; i++) {
     if (filtros[i].de < filtros[i - 1].ate) {
-      alert("Sobreposição de filtros detectada");
+      alert("Sobreposição de filtros");
       return false;
     }
   }
@@ -208,10 +192,46 @@ function gerarPosicoesFiltros() {
 }
 
 /* =========================
-   RESUMO
+   RESUMO (RESTAURADO)
 ========================= */
 function gerarResumoFinal() {
-  resumoConteudo.innerHTML = "<pre>Resumo gerado com sucesso.</pre>";
+  let html = `
+<strong>CLIENTE</strong>
+Cliente: ${cliente.value}
+Documento: ${documento.value}
+Endereço: ${endereco.value}
+Cidade/UF: ${cidade.value} - ${estado.value}
+
+<strong>PERFURAÇÃO</strong>
+Polegada inicial: ${polInicial.value}
+Polegada final: ${polFinal.value}
+Metros iniciais: ${metrosInicial.value}
+Profundidade: ${profundidade.value}
+
+<strong>SANITÁRIO</strong>
+Possui: ${temSanitario.value}
+${temSanitario.value === "sim"
+    ? `Polegada: ${sanitarioPol.value}
+Comprimento: ${sanitarioComp.value}`
+    : ""}
+
+<strong>FILTROS</strong>
+`;
+
+  document.querySelectorAll(".filtro").forEach((f, i) => {
+    html += `Filtro ${i + 1}: ${f.querySelector(".de").value} até ${f.querySelector(".ate").value} m\n`;
+  });
+
+  html += `
+<strong>BOMBA</strong>
+Vazão do poço: ${vazaoPoco.value}
+Vazão da bomba: ${vazaoBomba.value}
+Posição da bomba: ${posBomba.value}
+NE: ${ne.value}
+ND: ${nd.value}
+`;
+
+  resumoConteudo.innerHTML = `<pre>${html}</pre>`;
 }
 
 /* =========================
