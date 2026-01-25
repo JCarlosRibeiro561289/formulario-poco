@@ -180,55 +180,94 @@ function gerarPosicoesFiltros() {
 ========================= */
 
 function gerarResumoFinal() {
+
+  const pi = n(polInicial.value);
+  const pf = n(polFinal.value);
+  const prof = n(profundidade.value);
+  const mi = n(metrosInicial.value);
+
   let txt = `
 === CADASTRO TÉCNICO DE POÇO ===
 
-CLIENTE
-${cliente.value}
-
 PERFURAÇÃO
-Ø Inicial: ${polInicial.value}
-Ø Final: ${polFinal.value}
-Qtd Inicial: ${metrosInicial.value}
-Profundidade: ${profundidade.value} m
-
-SANITÁRIO
-${temSanitario.value === "sim"
-    ? sanitarioPol.value + " / " + sanitarioComp.value + " m"
-    : "Não possui"}
-
-REVESTIMENTO
-${tipoRevestimento.value} - ${classeRevestimento.value}
-
-FILTROS
 `;
 
-  document.querySelectorAll(".filtro").forEach((f, i) => {
-    txt += `Filtro ${i + 1}: ${f.querySelector(".de").value} - ${f.querySelector(".ate").value} m\n`;
-  });
+  /* ===== PERFURAÇÃO ===== */
+
+  if (pi === pf) {
+    txt += `Ø Poço: ${pi} (0 – ${prof} m)\n`;
+  } else {
+    txt += `Ø Inicial: ${pi} (0 – ${mi} m)\n`;
+    txt += `Ø Final: ${pf} (${mi} – ${prof} m)\n`;
+  }
+
+  txt += `Profundidade: ${prof} m\n\n`;
+
+  /* ===== SANITÁRIO ===== */
+
+  if (temSanitario.value === "sim") {
+    txt += `
+SANITÁRIO
+Ø Inicial: ${sanitarioPol.value} (0 – ${sanitarioComp.value} m)
+TIPO: ${tipoRevestimento.value}
+`;
+  }
+
+  /* ===== FILTROS / REVESTIMENTOS ===== */
 
   txt += `
-HIDRÁULICA
-Vazão Poço: ${vazaoPoco.value}
-Vazão Bomba: ${vazaoBomba.value}
-Posição Bomba: ${posBomba.value}
-NE: ${ne.value}
-ND: ${nd.value}
-
-GEOLOGIA
-${geologia.value}
-
-FRATURAS
-${fraturas.value}
-
-OBS
-${observacoes.value}
+FILTROS E REVESTIMENTOS
 `;
+
+  let trechos = [];
+  let filtros = [];
+
+  document.querySelectorAll(".filtro").forEach(f => {
+    filtros.push({
+      de: n(f.querySelector(".de").value),
+      ate: n(f.querySelector(".ate").value)
+    });
+  });
+
+  filtros.sort((a, b) => a.de - b.de);
+
+  let atual = 0;
+
+  filtros.forEach(f => {
+    if (atual < f.de) {
+      trechos.push({
+        de: atual,
+        ate: f.de,
+        tipo: "LISOS"
+      });
+    }
+
+    trechos.push({
+      de: f.de,
+      ate: f.ate,
+      tipo: "FILTROS"
+    });
+
+    atual = f.ate;
+  });
+
+  if (atual < prof) {
+    trechos.push({
+      de: atual,
+      ate: prof,
+      tipo: "LISOS"
+    });
+  }
+
+  trechos.forEach(t => {
+    txt += `${t.de} – ${t.ate} m  ${t.tipo}\n`;
+  });
+
+  /* ===== EXIBIÇÃO ===== */
 
   resumoConteudo.innerHTML = `<pre>${txt}</pre>`;
   window.__resumoTXT = txt;
 }
-
 /* =========================
    DOWNLOAD / EMAIL
 ========================= */
