@@ -33,6 +33,10 @@ const tipoRevestimentoSanitario = document.getElementById("tipoRevestimentoSanit
 const tipoRevestimento = document.getElementById("tipoRevestimento");
 const classeRevestimento = document.getElementById("classeRevestimento");
 
+const geologia = document.getElementById("geologia");
+const fraturas = document.getElementById("fraturas");
+const observacoes = document.getElementById("observacoes");
+
 /* ================== UTIL ================== */
 function n(v) {
   if (!v) return 0;
