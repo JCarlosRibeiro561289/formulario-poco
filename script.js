@@ -4,6 +4,35 @@
 let modo = "novo";
 
 /* =========================
+   REFERÊNCIAS DOM
+========================= */
+const cliente = document.getElementById("cliente");
+const documento = document.getElementById("documento");
+const endereco = document.getElementById("endereco");
+const cidade = document.getElementById("cidade");
+const estado = document.getElementById("estado");
+
+const polInicial = document.getElementById("polInicial");
+const polFinal = document.getElementById("polFinal");
+const metrosInicial = document.getElementById("metrosInicial");
+const profundidade = document.getElementById("profundidade");
+
+const temSanitario = document.getElementById("temSanitario");
+const sanitarioCampos = document.getElementById("sanitarioCampos");
+const sanitarioPol = document.getElementById("sanitarioPol");
+const sanitarioComp = document.getElementById("sanitarioComp");
+
+const listaFiltros = document.getElementById("listaFiltros");
+
+const vazaoPoco = document.getElementById("vazaoPoco");
+const vazaoBomba = document.getElementById("vazaoBomba");
+const posBomba = document.getElementById("posBomba");
+const ne = document.getElementById("ne");
+const nd = document.getElementById("nd");
+
+const resumoConteudo = document.getElementById("resumoConteudo");
+
+/* =========================
    UTIL
 ========================= */
 function n(v) {
