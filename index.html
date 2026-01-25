@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Cadastro Técnico de Poço</title>
+  <title>Cadastro de Poço</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -18,10 +18,10 @@
   <section class="step active">
     <h2>Cliente</h2>
 
-    <label>Nome</label>
+    <label>Cliente</label>
     <input id="cliente">
 
-    <label>CNPJ/CPF</label>
+    <label>Documento</label>
     <input id="documento">
 
     <label>Endereço</label>
@@ -33,7 +33,7 @@
     <label>Estado</label>
     <input id="estado">
 
-    <button onclick="avancarEtapaAtual()">Avançar</button>
+    <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
   </section>
 
   <!-- ETAPA 2 -->
@@ -42,10 +42,10 @@
 
     <fieldset class="bloco">
       <label>Polegada Inicial</label>
-      <input id="polInicial" placeholder="Ex: 8,00">
+      <input id="polInicial">
 
       <label>Polegada Final</label>
-      <input id="polFinal" placeholder="Ex: 6,00">
+      <input id="polFinal">
 
       <label>Qtd Inicial (m)</label>
       <input id="metrosInicial" disabled>
@@ -54,13 +54,13 @@
       <input id="profundidade">
     </fieldset>
 
-    <button onclick="prevStep()">Voltar</button>
-    <button onclick="avancarEtapaAtual()">Avançar</button>
+    <button type="button" onclick="prevStep()">Voltar</button>
+    <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
   </section>
 
   <!-- ETAPA 3 -->
   <section class="step">
-    <h2>Sanitário / Tubulão</h2>
+    <h2>Sanitário</h2>
 
     <label>Possui Sanitário?</label>
     <select id="temSanitario" onchange="toggleSanitario()">
@@ -69,32 +69,30 @@
     </select>
 
     <div id="sanitarioCampos" class="hidden">
-      <label>Polegada do Sanitário</label>
+      <label>Polegada Sanitário</label>
       <input id="sanitarioPol">
 
-      <label>Comprimento (m)</label>
+      <label>Comprimento Sanitário (m)</label>
       <input id="sanitarioComp">
     </div>
 
-    <button onclick="prevStep()">Voltar</button>
-    <button onclick="avancarEtapaAtual()">Avançar</button>
+    <button type="button" onclick="prevStep()">Voltar</button>
+    <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
   </section>
 
   <!-- ETAPA 4 -->
   <section class="step">
     <h2>Revestimento / Filtros</h2>
 
-    <label>Tipo de Revestimento</label>
+    <label>Revestimento</label>
     <select id="tipoRevestimento">
-      <option value="">Selecione</option>
-      <option>Aço Carbono</option>
       <option>Geomecânico PVC</option>
-      <option>Inox</option>
+      <option>Tubo de Aço</option>
+      <option>Tubo Inox</option>
     </select>
 
-    <label>Classe</label>
+    <label>Tipo</label>
     <select id="classeRevestimento">
-      <option value="">Selecione</option>
       <option>Padrão</option>
       <option>Leve</option>
       <option>STD</option>
@@ -104,10 +102,10 @@
     <h4>Filtros</h4>
     <div id="listaFiltros"></div>
 
-    <button type="button" onclick="addFiltro()">+ Adicionar Filtro</button>
+    <button type="button" onclick="addFiltro()">Adicionar Filtro</button>
 
-    <button onclick="prevStep()">Voltar</button>
-    <button onclick="avancarEtapaAtual()">Avançar</button>
+    <button type="button" onclick="prevStep()">Voltar</button>
+    <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
   </section>
 
   <!-- ETAPA 5 -->
@@ -129,40 +127,20 @@
     <label>ND</label>
     <input id="nd">
 
-    <button onclick="prevStep()">Voltar</button>
-    <button onclick="avancarEtapaAtual()">Avançar</button>
+    <button type="button" onclick="prevStep()">Voltar</button>
+    <button type="button" onclick="avancarEtapaAtual()">Avançar</button>
   </section>
 
-  <!-- ETAPA 6 -->
+  <!-- ETAPA RESUMO -->
   <section class="step">
-    <h2>Geologia</h2>
-
-    <label>Geologia</label>
-    <textarea id="geologia"></textarea>
-
-    <label>Fraturas</label>
-    <textarea id="fraturas"></textarea>
-
-    <label>Observações</label>
-    <textarea id="observacoes"></textarea>
-
-    <button onclick="prevStep()">Voltar</button>
-    <button onclick="avancarEtapaAtual()">Avançar</button>
-  </section>
-
-  <!-- RESUMO -->
-  <section class="step" id="resumo">
-    <h2>Resumo Final</h2>
+    <h2>Resumo do Poço</h2>
 
     <div id="resumoConteudo"></div>
-<div class="acoes-resumo">
-<button type="button" onclick="novoFormulario()">Novo</button>
-<button type="button" onclick="editarFormulario()">Editar</button>
-  <hr>
-</div>
-    <button onclick="prevStep()">Voltar</button>
-    <button onclick="baixarResumo()">Baixar TXT</button>
-   <!--  <button onclick="enviarEmail()">Enviar por E-mail</button>-->
+
+    <button type="button" onclick="novoFormulario()">Novo</button>
+    <button type="button" onclick="editarFormulario()">Editar</button>
+    <button type="button" onclick="baixarResumo()">Baixar</button>
+    <button type="button" onclick="enviarEmail()">Enviar por Email</button>
   </section>
 
 </div>
