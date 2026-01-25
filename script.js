@@ -51,9 +51,9 @@ function showStep() {
   document.getElementById("progressBar").style.width =
     (step / (steps.length - 1)) * 100 + "%";
 
-  // 🔁 sincroniza estado da perfuração ao entrar na etapa 2
+  // sincroniza estado da perfuração ao entrar na etapa 2
   if (step === 1) {
-    atualizarEstadoPerfuração();
+    atualizarEstadoPerfuracao();
   }
 }
 
@@ -72,14 +72,15 @@ function prevStep() {
 }
 
 function avancarEtapaAtual() {
-
   if (modo === "novo") {
 
+    // etapa 1
     if (step === 0 && !cliente.value.trim()) {
       alert("Informe o cliente");
       return;
     }
 
+    // etapa 2 – perfuração
     if (step === 1) {
       const pi = n(polInicial.value);
       const pf = n(polFinal.value);
@@ -102,10 +103,12 @@ function avancarEtapaAtual() {
       }
     }
 
+    // etapa filtros
     if (step === 3) {
       if (!gerarPosicoesFiltros()) return;
     }
 
+    // antes do resumo
     if (step === steps.length - 2) {
       gerarResumoFinal();
     }
@@ -115,6 +118,39 @@ function avancarEtapaAtual() {
 }
 
 showStep();
+
+/* =========================
+   PERFURAÇÃO (LÓGICA CORRETA)
+========================= */
+function atualizarEstadoPerfuracao() {
+  const pi = n(polInicial.value);
+  const pf = n(polFinal.value);
+
+  // estado padrão
+  metrosInicial.value = "";
+  metrosInicial.disabled = true;
+
+  if (!pi || !pf) return;
+
+  if (pf > pi) {
+    alert("Polegada final não pode ser maior que a inicial");
+    polFinal.value = "";
+    return;
+  }
+
+  // poço reto
+  if (pi === pf) {
+    metrosInicial.value = "0";
+    metrosInicial.disabled = true;
+  }
+  // poço escalonado
+  else {
+    metrosInicial.disabled = false;
+  }
+}
+
+polInicial.addEventListener("input", atualizarEstadoPerfuracao);
+polFinal.addEventListener("input", atualizarEstadoPerfuracao);
 
 /* =========================
    SANITÁRIO
@@ -188,10 +224,17 @@ function enviarEmail() {}
 
 function novoFormulario() {
   if (!confirm("Deseja iniciar um novo cadastro?")) return;
+
   modo = "novo";
   step = 0;
-  document.querySelectorAll("input, select").forEach(e => e.value = "");
+
+  document.querySelectorAll("input, select").forEach(e => {
+    e.value = "";
+    e.disabled = false;
+  });
+
   document.querySelectorAll(".filtro").forEach(f => f.remove());
+
   showStep();
 }
 
