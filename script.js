@@ -39,10 +39,7 @@ function showStep() {
   progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
 
   if (step === 2) atualizarEstadoPerfuracao();
-
-  if (step === steps.length - 1) {
-    gerarResumoFinal();
-  }
+  if (step === steps.length - 1) gerarResumoFinal();
 }
 
 function nextStep() {
@@ -126,15 +123,53 @@ function toggleSanitario() {
 function addFiltro() {
   const div = document.createElement("div");
   div.className = "filtro";
+
   div.innerHTML = `
+<div class="filtro-header">
+  <span class="filtro-numero"></span>
+  <button type="button" class="btn-remover"
+    onclick="this.closest('.filtro').remove(); atualizarNumeracaoFiltros(); atualizarTotalFiltros();">
+    Remover
+  </button>
+</div>
+
+<div class="linha-filtro">
+  <div>
     <label>De (m)</label>
-    <input class="de">
+    <input class="de" oninput="atualizarTotalFiltros()">
+  </div>
+
+  <div>
     <label>Até (m)</label>
-    <input class="ate">
-    <button type="button" onclick="this.parentNode.remove()">Remover</button>
-    <hr>
-  `;
+    <input class="ate" oninput="atualizarTotalFiltros()">
+  </div>
+</div>
+`;
+
   listaFiltros.appendChild(div);
+  atualizarNumeracaoFiltros();
+  atualizarTotalFiltros(); // ✅ correção
+}
+
+function atualizarNumeracaoFiltros() {
+  document.querySelectorAll(".filtro").forEach((f, i) => {
+    const n = f.querySelector(".filtro-numero");
+    if (n) n.textContent = `Filtro ${i + 1}`;
+  });
+}
+
+function atualizarTotalFiltros() {
+  let total = 0;
+
+  document.querySelectorAll(".filtro").forEach(f => {
+    const de = n(f.querySelector(".de")?.value);
+    const ate = n(f.querySelector(".ate")?.value);
+
+    if (ate > de) total += Math.max(0, ate - de);
+  });
+
+  const el = document.getElementById("totalFiltros");
+  if (el) el.textContent = `Total filtrado: ${total.toFixed(2)} m`;
 }
 
 function gerarPosicoesFiltros() {
@@ -171,7 +206,6 @@ function gerarPosicoesFiltros() {
 }
 
 function gerarResumoFinal() {
-
   let html = `
 <strong>PERFIL TÉCNICO DO POÇO</strong>
 
@@ -183,22 +217,19 @@ Cidade/UF: ${cidade.value} - ${estado.value}
 
 <strong>PERFURAÇÃO</strong>
 Ø Inicial: ${polInicial.value} (0 – ${metrosInicial.value} m)
-Ø Final COontínua: ${polFinal.value} (${metrosInicial.value} – ${profundidade.value} m)
+Ø Final Contínua: ${polFinal.value} (${metrosInicial.value} – ${profundidade.value} m)
 Profundidade: ${profundidade.value} m
 
 <strong>PROTEÇÃO SANITÁRIA</strong>
 `;
-
-
-if (temSanitario.value === "sim") {
-html += `
+  if (temSanitario.value === "sim") {
+    html += `
 Ø Inicial: ${sanitarioPol.value} (0 – ${sanitarioComp.value} m)
 Tipo de Revestimento: ${tipoRevestimentoSanitario.value}
 `;
-} else {
-html += `Não possui sanitário\n`;
-}
-
+  } else {
+    html += `Não possui sanitário\n`;
+  }
   html += `
 <strong>REVESTIMENTO FILTROS</strong>
 Tipo: ${tipoRevestimento.value}
@@ -206,21 +237,21 @@ Classe: ${classeRevestimento.value}
 
 <strong>FILTROS</strong>
 `;
-let totalFiltros = 0;
-document.querySelectorAll(".filtro").forEach((f, i) => {
-const de = n(f.querySelector(".de").value);
-const ate = n(f.querySelector(".ate").value);
 
+  let totalFiltros = 0;
 
-totalFiltros += (ate - de);
+  document.querySelectorAll(".filtro").forEach((f, i) => {
+    const de = n(f.querySelector(".de").value);
+    const ate = n(f.querySelector(".ate").value);
 
-
-html += `Filtro ${i + 1}: ${de} – ${ate} m\n`;
-});
+    totalFiltros += Math.max(0, ate - de);
+    html += `Filtro ${i + 1}: ${de} – ${ate} m\n`;
+  });
 
   html += `
+Total filtrado: ${totalFiltros.toFixed(2)} m
 
-<strong>DADOS DE PRODUÇÃO</strong>
+<strong>DADOS HIDRÁULICOS</strong>
 Vazão do Poço: ${vazaoPoco.value}
 Vazão da Bomba: ${vazaoBomba.value}
 Posição da Bomba: ${posBomba.value}
