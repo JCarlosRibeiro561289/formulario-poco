@@ -2,13 +2,14 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Cadastro de Poço</title>
+  <title>Cadastro Técnico de Poço</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <div class="container">
+
   <div class="progress">
     <div id="progressBar"></div>
   </div>
@@ -16,11 +17,22 @@
   <!-- ETAPA 1 -->
   <section class="step active">
     <h2>Cliente</h2>
-    <label>Cliente</label><input id="cliente">
-    <label>Documento</label><input id="documento">
-    <label>Endereço</label><input id="endereco">
-    <label>Cidade</label><input id="cidade">
-    <label>Estado</label><input id="estado">
+
+    <label>Cliente</label>
+    <input id="cliente">
+
+    <label>Documento</label>
+    <input id="documento">
+
+    <label>Endereço</label>
+    <input id="endereco">
+
+    <label>Cidade</label>
+    <input id="cidade">
+
+    <label>Estado</label>
+    <input id="estado">
+
     <button onclick="avancarEtapaAtual()">Avançar</button>
   </section>
 
@@ -30,15 +42,15 @@
 
     <fieldset class="bloco">
       <label>Polegada Inicial</label>
-      <input id="polInicial">
+      <input id="polInicial" placeholder="Ex: 8,00">
 
       <label>Polegada Final</label>
-      <input id="polFinal">
+      <input id="polFinal" placeholder="Ex: 6,00">
 
-      <label>Qtd inicial (m)</label>
-      <input id="metrosInicial">
+      <label>Qtd Inicial (m)</label>
+      <input id="metrosInicial" disabled>
 
-      <label>Profundidade total (m)</label>
+      <label>Profundidade Total (m)</label>
       <input id="profundidade">
     </fieldset>
 
@@ -57,8 +69,9 @@
     </select>
 
     <div id="sanitarioCampos" class="hidden">
-      <label>Polegada</label>
+      <label>Polegada do Sanitário</label>
       <input id="sanitarioPol">
+
       <label>Comprimento (m)</label>
       <input id="sanitarioComp">
     </div>
@@ -71,15 +84,15 @@
   <section class="step">
     <h2>Revestimento / Filtros</h2>
 
-    <label>Revestimento</label>
+    <label>Tipo de Revestimento</label>
     <select id="tipoRevestimento">
       <option value="">Selecione</option>
+      <option>Aço Carbono</option>
       <option>Geomecânico PVC</option>
-      <option>Tubo de Aço</option>
-      <option>Tubo Inox</option>
+      <option>Inox</option>
     </select>
 
-    <label>Tipo</label>
+    <label>Classe</label>
     <select id="classeRevestimento">
       <option value="">Selecione</option>
       <option>Padrão</option>
@@ -90,6 +103,7 @@
 
     <h4>Filtros</h4>
     <div id="listaFiltros"></div>
+
     <button type="button" onclick="addFiltro()">+ Adicionar Filtro</button>
 
     <button onclick="prevStep()">Voltar</button>
@@ -99,11 +113,21 @@
   <!-- ETAPA 5 -->
   <section class="step">
     <h2>Dados Hidráulicos</h2>
-    <label>Vazão do Poço</label><input id="vazaoPoco">
-    <label>Vazão da Bomba</label><input id="vazaoBomba">
-    <label>Posição da Bomba</label><input id="posBomba">
-    <label>NE</label><input id="ne">
-    <label>ND</label><input id="nd">
+
+    <label>Vazão do Poço</label>
+    <input id="vazaoPoco">
+
+    <label>Vazão da Bomba</label>
+    <input id="vazaoBomba">
+
+    <label>Posição da Bomba</label>
+    <input id="posBomba">
+
+    <label>NE</label>
+    <input id="ne">
+
+    <label>ND</label>
+    <input id="nd">
 
     <button onclick="prevStep()">Voltar</button>
     <button onclick="avancarEtapaAtual()">Avançar</button>
@@ -113,7 +137,7 @@
   <section class="step">
     <h2>Geologia</h2>
 
-    <label>Descrição Geológica</label>
+    <label>Geologia</label>
     <textarea id="geologia"></textarea>
 
     <label>Fraturas</label>
@@ -123,18 +147,18 @@
     <textarea id="observacoes"></textarea>
 
     <button onclick="prevStep()">Voltar</button>
-    <button onclick="avancarEtapaAtual()">Gerar Resumo</button>
+    <button onclick="avancarEtapaAtual()">Avançar</button>
   </section>
 
-  <!-- ETAPA 7 -->
+  <!-- RESUMO -->
   <section class="step" id="resumo">
-    <h2>Resumo do Poço</h2>
+    <h2>Resumo Final</h2>
 
     <div id="resumoConteudo"></div>
 
-    <button type="button" onclick="baixarResumo()">📥 Baixar Arquivo</button>
-    <button type="button" onclick="enviarEmail()">📧 Enviar por Email</button>
-    <button type="button" onclick="prevStep()">Voltar</button>
+    <button onclick="prevStep()">Voltar</button>
+    <button onclick="baixarResumo()">Baixar TXT</button>
+    <button onclick="enviarEmail()">Enviar por E-mail</button>
   </section>
 
 </div>
