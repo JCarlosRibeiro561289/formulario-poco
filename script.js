@@ -326,3 +326,9 @@ window.__resumoTXT = "";
 step = 0;
 mostrarStep(step);
 }
+
+   function editarFormulario() {
+  modo = "editar";
+  step = 0;
+  showStep();
+}
