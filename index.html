@@ -6,54 +6,290 @@
 <title>Perfil Técnico do Poço</title>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 16px;
+/* =========================
+   RESET E BASE
+========================= */
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+body {
+  background: #020617;
+  color: #020617;
+  padding: 12px;
+  margin: 0;
+}
+
+/* =========================
+   CONTAINER PRINCIPAL
+========================= */
+.container {
+  max-width: 100%;
+  margin: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px 16px 24px;
+}
+
+/* =========================
+   ETAPAS
+========================= */
 .step {
   display: none;
 }
+
 .step.active {
   display: block;
 }
 
-button {
-  padding: 10px 16px;
+/* =========================
+   TIPOGRAFIA
+========================= */
+h2 {
+  font-size: 1.2rem;
+  margin-bottom: 18px;
+  line-height: 1.3;
+}
+
+label {
+  font-size: 0.95rem;
+  font-weight: 500;
   margin-top: 16px;
-}
-
-.erro-campo {
-  border: 2px solid #e74c3c;
-}
-
-.erro-msg {
-  color: #e74c3c;
-  font-size: 12px;
-  margin-top: 4px;
   display: block;
 }
 
+/* =========================
+   INPUTS – MOBILE FRIENDLY
+========================= */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 14px 12px;
+  margin-top: 6px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+  background: #fff;
+}
+
+input:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* melhora clique no iOS/Android */
+input,
+select,
+textarea,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================
+   BOTÕES
+========================= */
+button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 16px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button + button {
+  margin-top: 12px;
+}
+
+/* =========================
+   BARRA DE PROGRESSO
+========================= */
+.progress {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+#progressBar {
+  height: 100%;
+  width: 0%;
+  background: #2563eb;
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+/* =========================
+   FIELDSETS / BLOCOS
+========================= */
+fieldset.bloco {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 20px;
+}
+
+fieldset.bloco legend {
+  font-weight: 600;
+  padding: 0 8px;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+/* =========================
+   FILTROS (LISTA DINÂMICA)
+========================= */
 .filtro {
-  border: 1px solid #ccc;
-  padding: 8px;
-  margin-top: 8px;
+  padding: 12px 0;
 }
 
-.filtro-header {
-  display: flex;
-  justify-content: space-between;
-  font-weight: bold;
+.filtro hr {
+  margin-top: 16px;
+  border: none;
+  border-top: 1px solid #e5e7eb;
 }
 
+/* =========================
+   TEXTO AUXILIAR
+========================= */
+.hint {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 6px;
+}
+
+/* =========================
+   RESUMO
+========================= */
+#resumoConteudo pre {
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* =========================
+   AÇÕES DO RESUMO
+========================= */
+.acoes-resumo {
+  margin-top: 20px;
+}
+
+.acoes-resumo button {
+  background: #0f172a;
+}
+
+.acoes-resumo button + button {
+  background: #2563eb;
+}
+
+/* =========================
+   OCULTAR
+========================= */
 .hidden {
   display: none;
 }
 
-pre {
-  white-space: pre-wrap;
+.btn-voltar-topo {
+  background: transparent;
+  color: #475569;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 8px 0;
+  margin-bottom: 12px;
+  cursor: pointer;
+  width: auto;
 }
+
+.btn-voltar-topo:active {
+  transform: none;
+}
+
+
+.linha-filtro {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+}
+
+
+/* BLOCO DE FILTRO */
+.filtro {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+  background: #ffffff;
+}
+
+/* CABEÇALHO DO FILTRO */
+.filtro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.filtro-numero {
+  font-weight: 600;
+  color: #020617;
+}
+
+/* CAMPOS */
+.linha-filtro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* BOTÃO REMOVER DISCRETO */
+.btn-remover {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+/* TOTAL FILTRADO */
+.total-filtros {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #020617;
+}
+/* =========================
+   AJUSTE PARA TELAS MAIORES
+========================= */
+@media (min-width: 768px) {
+  .container {
+    max-width: 520px;
+    padding: 24px;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+}
+
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
