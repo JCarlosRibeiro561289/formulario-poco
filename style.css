@@ -62,7 +62,7 @@ textarea {
   padding: 14px 12px;
   margin-top: 6px;
   border-radius: 12px;
-  border: 2x solid #cbd5e1;
+  border: 1x solid #cbd5e1;
   font-size: 1rem;
   background: #fff;
 }
@@ -172,7 +172,7 @@ fieldset.bloco legend {
    RESUMO
 ========================= */
 #resumoConteudo pre {
-  background: #020617;
+
   padding: 18px;
   border-radius: 12px;
   white-space: pre-wrap;
