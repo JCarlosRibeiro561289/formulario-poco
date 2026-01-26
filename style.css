@@ -6,14 +6,6 @@
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* =========================
-   RESET E BASE
-========================= */
-* {
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
 /* FUNDO GERAL */
 body {
   background: radial-gradient(circle at top, #35458f, #000000);
