@@ -20,8 +20,6 @@ body {
 .container {
   max-width: 100%;
   margin: auto;
-  background: #ffffff;
-  border-radius: 16px;
   padding: 18px 16px 24px;
 }
 
@@ -64,7 +62,7 @@ textarea {
   padding: 14px 12px;
   margin-top: 6px;
   border-radius: 12px;
-  border: 1px solid #cbd5e1;
+  border: 2x solid #cbd5e1;
   font-size: 1rem;
   background: #fff;
 }
