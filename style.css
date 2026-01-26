@@ -8,28 +8,22 @@
 
 /* FUNDO GERAL */
 body {
-  background: radial-gradient(circle at top, #35458f, #000000);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 20px;
+  background: #020617;
+  color: #020617;
+  padding: 12px;
+  margin: 0;
 }
+
 /* =========================
    CONTAINER PRINCIPAL
 ========================= */
-
 .container {
-
-  width: 100%;
-  max-width: 900px;
-  border-radius: 18px;
-  padding: 26px;
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.7),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  max-width: 100%;
+  margin: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px 16px 24px;
 }
-
 
 /* =========================
    ETAPAS
