@@ -24,7 +24,7 @@
         <label>CNPJ/CPF</label>
         <input id="documento" />
 
-        <label>Endereço</label>
+        <label>Endereço da obra</label>
         <input id="endereco" />
 
         <label>Cidade</label>
@@ -169,9 +169,9 @@ Total filtrado: 0 m
 <h2>Geologia do Poço</h2>
 
 
-<label>Geologia</label>
-<textarea id="geologia" rows="4"
-placeholder="Descreva a geologia encontrada (ex: arenito, basalto, argila...)"></textarea>
+<h4>Camadas Geologicas</h4>
+<div id="listaCamadasGeologia"></div>
+<button type="button" onclick="addCamadaGeologica()">Adicionar Camada</button>
 
 
 <label>Fraturas</label>
