@@ -38,6 +38,7 @@ const tipoRevestimento = document.getElementById("tipoRevestimento");
 const classeRevestimento = document.getElementById("classeRevestimento");
 
 const listaCamadasGeologia = document.getElementById("listaCamadasGeologia");
+const profundidadeGeologia = document.getElementById("profundidadeGeologia");
 const btnAvancarGeologia = document.querySelectorAll(".step")[6]?.querySelector("button[onclick='avancarEtapaAtual()']");
 const fraturas = document.getElementById("fraturas");
 const observacoes = document.getElementById("observacoes");
@@ -68,13 +69,21 @@ function formatarData(v) {
   return ano && mes && dia ? `${dia}/${mes}/${ano}` : v;
 }
 
+function textoTuboRevestimento() {
+  return `${textoOuNaoInformado(tipoRevestimento.value)} ${textoOuNaoInformado(classeRevestimento.value)}`.trim();
+}
+
+function textoPolegadaRevestimento() {
+  return `${f(polFinal.value)}"`;
+}
+
 function gerarTextoSanitario() {
   if (temSanitario.value !== "sim") return "";
 
   return `
 SANITÁRIO
-Tipo de Revestimento Sanitário: ${textoOuNaoInformado(tipoRevestimentoSanitario.value)}
-Polegada Sanitário: ${f(sanitarioPol.value)}
+Tipo do Tubo Sanitário: ${textoOuNaoInformado(tipoRevestimentoSanitario.value)}
+Polegada Sanitário: ${f(sanitarioPol.value)}"
 Comprimento Sanitário: ${f(sanitarioComp.value)} m
 `;
 }
@@ -176,6 +185,8 @@ function atualizarEstadoPerfuracao() {
 
 polInicial.addEventListener("input", atualizarEstadoPerfuracao);
 polFinal.addEventListener("input", atualizarEstadoPerfuracao);
+profundidade.addEventListener("input", atualizarProfundidadeGeologia);
+profundidade.addEventListener("blur", atualizarProfundidadeGeologia);
 
 /* ================== SANITÁRIO ================== */
 function toggleSanitario() {
@@ -277,7 +288,21 @@ function getUltimoAteGeologia() {
   return n(ultima.querySelector(".geo-ate").value);
 }
 
+function atualizarProfundidadeGeologia() {
+  const prof = n(profundidade.value);
+  const textoProfundidade = prof ? `${f(prof)} m` : "Não informada";
+
+  if (profundidadeGeologia) {
+    profundidadeGeologia.textContent = textoProfundidade;
+  }
+
+  document.querySelectorAll(".geo-ate").forEach(input => {
+    input.placeholder = prof ? `Máximo ${textoProfundidade}` : "";
+  });
+}
+
 function prepararEtapaGeologia() {
+  atualizarProfundidadeGeologia();
   if (!getCamadasGeologia().length) addCamadaGeologica();
   atualizarEstadoBotaoGeologia();
 }
@@ -393,6 +418,7 @@ function addCamadaGeologica() {
   atualizarDescricoesGeologia(div.querySelector(".geo-grupo"));
   atualizarNumeracaoGeologia();
   atualizarContinuidadeGeologia();
+  atualizarProfundidadeGeologia();
   atualizarEstadoBotaoGeologia();
 }
 
@@ -537,14 +563,19 @@ FILTROS
     const de = n(filtro.querySelector(".de").value);
     const ate = n(filtro.querySelector(".ate").value);
     totalFiltros += Math.max(0, ate - de);
-    html += `Filtro ${i + 1}: ${f(de)} – ${f(ate)} m\n`;
+    html += `Filtro ${i + 1}: ${f(de)} – ${f(ate)} m | Tubo: ${textoTuboRevestimento()} | Polegada: ${textoPolegadaRevestimento()}\n`;
   });
 
-  html += `\nTotal filtrado: ${totalFiltros.toFixed(2)} m\n\nTRECHOS LISOS\n`;
+  html += `\nTotal filtrado: ${f(totalFiltros)} m\n\nTRECHOS LISOS\n`;
+
+  let totalLisos = 0;
 
   gerarTrechosLisos().forEach((l, i) => {
-    html += `Liso ${i + 1}: ${f(l.de)} – ${f(l.ate)} m\n`;
+    totalLisos += Math.max(0, l.ate - l.de);
+    html += `Liso ${i + 1}: ${f(l.de)} – ${f(l.ate)} m | Tubo: ${textoTuboRevestimento()} | Polegada: ${textoPolegadaRevestimento()}\n`;
   });
+
+  html += `\nTotal de tubos lisos: ${f(totalLisos)} m\n`;
 
   html += `
 DADOS HIDRÁULICOS
