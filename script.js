@@ -8,6 +8,10 @@ const endereco = document.getElementById("endereco");
 const cidade = document.getElementById("cidade");
 const estado = document.getElementById("estado");
 
+const encarregadoPerfuracao = document.getElementById("encarregadoPerfuracao");
+const dataInicio = document.getElementById("dataInicio");
+const dataFim = document.getElementById("dataFim");
+
 const polInicial = document.getElementById("polInicial");
 const polFinal = document.getElementById("polFinal");
 const metrosInicial = document.getElementById("metrosInicial");
@@ -33,9 +37,16 @@ const tipoRevestimentoSanitario = document.getElementById("tipoRevestimentoSanit
 const tipoRevestimento = document.getElementById("tipoRevestimento");
 const classeRevestimento = document.getElementById("classeRevestimento");
 
-const geologia = document.getElementById("geologia");
+const listaCamadasGeologia = document.getElementById("listaCamadasGeologia");
+const btnAvancarGeologia = document.querySelectorAll(".step")[6]?.querySelector("button[onclick='avancarEtapaAtual()']");
 const fraturas = document.getElementById("fraturas");
 const observacoes = document.getElementById("observacoes");
+
+const descricoesPorGrupoGeologia = {
+  "Sedimentos / Solos": ["Cascalho", "Areia", "Silte", "Argila"],
+  "Rocha Sedimentar": ["Arenito", "Folhelho Cinza", "Calcario", "Argilito"],
+  "Rocha Cristalina": ["Granito", "Gnaisse", "Basalto", "Quartzo"]
+};
 
 /* ================== UTIL ================== */
 function n(v) {
@@ -45,6 +56,27 @@ function n(v) {
 
 function f(v) {
   return n(v).toFixed(2).replace(".", ",");
+}
+
+function textoOuNaoInformado(v) {
+  return v?.trim() || "Não informado";
+}
+
+function formatarData(v) {
+  if (!v) return "Não informado";
+  const [ano, mes, dia] = v.split("-");
+  return ano && mes && dia ? `${dia}/${mes}/${ano}` : v;
+}
+
+function gerarTextoSanitario() {
+  if (temSanitario.value !== "sim") return "";
+
+  return `
+SANITÁRIO
+Tipo de Revestimento Sanitário: ${textoOuNaoInformado(tipoRevestimentoSanitario.value)}
+Polegada Sanitário: ${f(sanitarioPol.value)}
+Comprimento Sanitário: ${f(sanitarioComp.value)} m
+`;
 }
 
 /* ================== FORMATAÇÃO ================== */
@@ -67,6 +99,7 @@ function showStep() {
   progressBar.style.width = (step / (steps.length - 1)) * 100 + "%";
 
   if (step === 2) atualizarEstadoPerfuracao();
+  if (step === 6) prepararEtapaGeologia();
   if (step === steps.length - 1) gerarResumoFinal();
 }
 
@@ -109,6 +142,10 @@ function avancarEtapaAtual() {
       alert("Informe a quantidade inicial em metros");
       return;
     }
+  }
+
+  if (step === 6 && !validarGeologia()) {
+    return;
   }
 
   nextStep();
@@ -227,6 +264,250 @@ function gerarTrechosLisos() {
   return lisos;
 }
 
+/* ================== GEOLOGIA ================== */
+function getCamadasGeologia() {
+  return document.querySelectorAll(".camada-geologia");
+}
+
+function getUltimoAteGeologia() {
+  const camadas = getCamadasGeologia();
+  if (!camadas.length) return 0;
+
+  const ultima = camadas[camadas.length - 1];
+  return n(ultima.querySelector(".geo-ate").value);
+}
+
+function prepararEtapaGeologia() {
+  if (!getCamadasGeologia().length) addCamadaGeologica();
+  atualizarEstadoBotaoGeologia();
+}
+
+function atualizarNumeracaoGeologia() {
+  getCamadasGeologia().forEach((camada, i) => {
+    camada.querySelector(".camada-geologia-numero").textContent = `Camada ${i + 1}`;
+  });
+}
+
+function atualizarDescricoesGeologia(selectGrupo) {
+  const camada = selectGrupo.closest(".camada-geologia");
+  const selectDescricao = camada.querySelector(".geo-descricao");
+  const descricoes = descricoesPorGrupoGeologia[selectGrupo.value] || [];
+
+  selectDescricao.innerHTML = descricoes
+    .map(descricao => `<option value="${descricao}">${descricao}</option>`)
+    .join("");
+}
+
+function atualizarContinuidadeGeologia() {
+  let inicio = 0;
+
+  getCamadasGeologia().forEach(camada => {
+    const campoDe = camada.querySelector(".geo-de");
+    campoDe.value = f(inicio);
+    inicio = n(camada.querySelector(".geo-ate").value);
+  });
+
+  atualizarEstadoBotaoGeologia();
+}
+
+function geologiaCompleta() {
+  const prof = n(profundidade.value);
+  const camadas = getCamadasGeologia();
+
+  if (!prof || !camadas.length) return false;
+
+  for (let i = 0; i < camadas.length; i++) {
+    const camada = camadas[i];
+    const de = n(camada.querySelector(".geo-de").value);
+    const ate = n(camada.querySelector(".geo-ate").value);
+
+    if (i === 0 && de !== 0) return false;
+    if (!ate || ate > prof || ate <= de) return false;
+  }
+
+  return getUltimoAteGeologia() === prof;
+}
+
+function atualizarEstadoBotaoGeologia() {
+  if (btnAvancarGeologia) btnAvancarGeologia.disabled = !geologiaCompleta();
+}
+
+function addCamadaGeologica() {
+  const camadas = getCamadasGeologia();
+  const prof = n(profundidade.value);
+  const ultimoAte = getUltimoAteGeologia();
+
+  if (camadas.length && !ultimoAte) {
+    alert("Informe o campo ATE da camada anterior antes de adicionar outra camada.");
+    return;
+    alert("Informe o campo ATÃ‰ da camada anterior antes de adicionar outra camada.");
+    return;
+  }
+
+  if (camadas.length && prof && ultimoAte >= prof) {
+    alert("A ultima camada ja alcancou a Profundidade Total.");
+    return;
+    alert("A Ãºltima camada jÃ¡ alcanÃ§ou a Profundidade Total.");
+    return;
+  }
+
+  const div = document.createElement("div");
+  div.className = "camada-geologia";
+
+  div.innerHTML = `
+<div class="camada-geologia-header">
+  <span class="camada-geologia-numero"></span>
+  <button type="button" class="btn-remover"
+    onclick="this.closest('.camada-geologia').remove(); atualizarNumeracaoGeologia(); atualizarContinuidadeGeologia(); atualizarEstadoBotaoGeologia();">
+    Remover
+  </button>
+</div>
+
+<label>Grupo</label>
+<select class="geo-grupo" onchange="atualizarDescricoesGeologia(this)">
+  <option>Sedimentos / Solos</option>
+  <option>Rocha Sedimentar</option>
+  <option>Rocha Cristalina</option>
+</select>
+
+<label>DescriÃ§Ã£o</label>
+<select class="geo-descricao"></select>
+
+<div class="linha-geologia">
+  <div>
+    <label>De (m)</label>
+    <input class="geo-de" disabled>
+  </div>
+  <div>
+    <label>AtÃ© (m)</label>
+    <input class="geo-ate" onblur="this.value=f(this.value); validarAteGeologia(this)" oninput="atualizarContinuidadeGeologia(); atualizarEstadoBotaoGeologia()">
+  </div>
+</div>
+`;
+
+  const labels = div.querySelectorAll("label");
+  labels[1].textContent = "Descricao";
+  labels[3].textContent = "Ate (m)";
+
+  listaCamadasGeologia.appendChild(div);
+  atualizarDescricoesGeologia(div.querySelector(".geo-grupo"));
+  atualizarNumeracaoGeologia();
+  atualizarContinuidadeGeologia();
+  atualizarEstadoBotaoGeologia();
+}
+
+function validarAteGeologia(input) {
+  const camada = input.closest(".camada-geologia");
+  const de = n(camada.querySelector(".geo-de").value);
+  const ate = n(input.value);
+  const prof = n(profundidade.value);
+
+  if (!ate) return true;
+
+  if (ate > prof) {
+    alert("O campo ATE nao pode ser maior que a Profundidade Total.");
+    input.value = "";
+    atualizarContinuidadeGeologia();
+    return false;
+    alert("O campo ATÃ‰ nÃ£o pode ser maior que a Profundidade Total.");
+    input.value = "";
+    atualizarContinuidadeGeologia();
+    return false;
+  }
+
+  if (ate <= de) {
+    alert("O campo ATE deve ser maior que o campo DE da mesma camada.");
+    input.value = "";
+    atualizarContinuidadeGeologia();
+    return false;
+    alert("O campo ATÃ‰ deve ser maior que o campo DE da mesma camada.");
+    input.value = "";
+    atualizarContinuidadeGeologia();
+    return false;
+  }
+
+  atualizarContinuidadeGeologia();
+  atualizarEstadoBotaoGeologia();
+  return true;
+}
+
+function validarGeologia() {
+  const prof = n(profundidade.value);
+  const camadas = getCamadasGeologia();
+
+  if (!prof) {
+    alert("Informe a Profundidade Total antes de finalizar a geologia.");
+    return false;
+  }
+
+  if (!camadas.length) {
+    alert("Adicione pelo menos uma camada geologica.");
+    return false;
+    alert("Adicione pelo menos uma camada geolÃ³gica.");
+    return false;
+  }
+
+  atualizarContinuidadeGeologia();
+
+  for (let i = 0; i < camadas.length; i++) {
+    const camada = camadas[i];
+    const de = n(camada.querySelector(".geo-de").value);
+    const ate = n(camada.querySelector(".geo-ate").value);
+
+    if (i === 0 && de !== 0) {
+      alert("A primeira camada deve comecar em 0,00.");
+      return false;
+      alert("A primeira camada deve comeÃ§ar em 0,00.");
+      return false;
+    }
+
+    if (!ate) {
+      alert(`Informe o campo ATE da camada ${i + 1}.`);
+      return false;
+      alert(`Informe o campo ATÃ‰ da camada ${i + 1}.`);
+      return false;
+    }
+
+    if (ate > prof) {
+      alert("O campo ATE nao pode ser maior que a Profundidade Total.");
+      return false;
+      alert("O campo ATÃ‰ nÃ£o pode ser maior que a Profundidade Total.");
+      return false;
+    }
+
+    if (ate <= de) {
+      alert(`O campo ATE da camada ${i + 1} deve ser maior que o campo DE.`);
+      return false;
+      alert(`O campo ATÃ‰ da camada ${i + 1} deve ser maior que o campo DE.`);
+      return false;
+    }
+  }
+
+  if (getUltimoAteGeologia() !== prof) {
+    alert("Para avancar, o ultimo campo ATE deve ser igual a Profundidade Total.");
+    return false;
+    alert("Para avanÃ§ar, o Ãºltimo campo ATÃ‰ deve ser igual Ã  Profundidade Total.");
+    return false;
+  }
+
+  return true;
+}
+
+function gerarTextoGeologia() {
+  const linhas = [];
+
+  getCamadasGeologia().forEach((camada, i) => {
+    const grupo = camada.querySelector(".geo-grupo").value;
+    const descricao = camada.querySelector(".geo-descricao").value;
+    const de = camada.querySelector(".geo-de").value;
+    const ate = camada.querySelector(".geo-ate").value;
+
+    linhas.push(`Camada ${i + 1}: ${de} - ${ate} m | ${grupo} | ${descricao}`);
+  });
+
+  return linhas.length ? linhas.join("\n") : "NÃ£o informado";
+}
+
 /* ================== RESUMO ================== */
 function gerarResumoFinal() {
   let html = `
@@ -239,9 +520,13 @@ Endereço: ${endereco.value}
 Cidade/UF: ${cidade.value} - ${estado.value}
 
 PERFURAÇÃO
+Encarregado: ${textoOuNaoInformado(encarregadoPerfuracao.value)}
+Data Início: ${formatarData(dataInicio.value)}
+Data Fim: ${formatarData(dataFim.value)}
 Ø Inicial: ${f(polInicial.value)} (0 – ${f(metrosInicial.value)} m)
 Ø Final Contínua: ${f(polFinal.value)} (${f(metrosInicial.value)} – ${f(profundidade.value)} m)
 Profundidade: ${f(profundidade.value)} m
+${gerarTextoSanitario()}
 
 FILTROS
 `;
@@ -272,7 +557,7 @@ ND: ${f(nd.value)}
   html += `
 
 GEOLOGIA DO POÇO
-${geologia?.value || "Não informado"}
+${gerarTextoGeologia()}
 
 FRATURAS
 ${fraturas?.value || "Não informado"}
