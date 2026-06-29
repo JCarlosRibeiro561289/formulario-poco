@@ -19,7 +19,7 @@
         <h2>Perfil Cliente</h2>
 
         <label>Nome cliente</label>
-        <input id="cliente" />
+        <input id="cliente" disabled />
 
         <label>CNPJ/CPF</label>
         <input id="documento" />
@@ -168,6 +168,10 @@ Total filtrado: 0 m
 <button type="button" class="btn-voltar-topo" onclick="prevStep()">← Voltar</button>
 <h2>Geologia do Poço</h2>
 
+<div class="profundidade-geologia">
+  <span>Profundidade Total definida</span>
+  <strong id="profundidadeGeologia">0,00 m</strong>
+</div>
 
 <h4>Camadas Geologicas</h4>
 <div id="listaCamadasGeologia"></div>
