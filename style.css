@@ -309,6 +309,29 @@ gap: 12px;
   gap: 12px;
 }
 
+.profundidade-geologia {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.profundidade-geologia span {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.profundidade-geologia strong {
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
 .step {
   opacity: 0;
   transform: translateY(8px);
