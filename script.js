@@ -9,6 +9,7 @@ const cidade = document.getElementById("cidade");
 const estado = document.getElementById("estado");
 
 const encarregadoPerfuracao = document.getElementById("encarregadoPerfuracao");
+const empresaPerfuracao = document.getElementById("empresaPerfuracao");
 const dataInicio = document.getElementById("dataInicio");
 const dataFim = document.getElementById("dataFim");
 
@@ -43,6 +44,11 @@ const btnAvancarGeologia = document.querySelectorAll(".step")[6]?.querySelector(
 const fraturas = document.getElementById("fraturas");
 const observacoes = document.getElementById("observacoes");
 
+const cnpjsEmpresaPerfuradora = {
+  "ALBUSERV": "33.765.202/0001-83",
+  "CRISTAL POÇOS LTDA": "48.550.641/0001-46"
+};
+
 const descricoesPorGrupoGeologia = {
   "Sedimentos / Solos": ["Cascalho", "Areia", "Silte", "Argila"],
   "Rocha Sedimentar": ["Arenito", "Folhelho Cinza", "Calcario", "Argilito"],
@@ -75,6 +81,10 @@ function textoTuboRevestimento() {
 
 function textoPolegadaRevestimento() {
   return `${f(polFinal.value)}"`;
+}
+
+function cnpjEmpresaPerfuradora() {
+  return cnpjsEmpresaPerfuradora[empresaPerfuracao.value] || "Não informado";
 }
 
 function gerarTextoSanitario() {
@@ -546,6 +556,8 @@ Endereço: ${endereco.value}
 Cidade/UF: ${cidade.value} - ${estado.value}
 
 PERFURAÇÃO
+Empresa Perfuradora: ${textoOuNaoInformado(empresaPerfuracao.value)}
+CNPJ Perfuradora: ${cnpjEmpresaPerfuradora()}
 Encarregado: ${textoOuNaoInformado(encarregadoPerfuracao.value)}
 Data Início: ${formatarData(dataInicio.value)}
 Data Fim: ${formatarData(dataFim.value)}
