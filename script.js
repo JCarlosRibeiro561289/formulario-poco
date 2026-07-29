@@ -1,7 +1,7 @@
 let modo = "novo";
 let step = 0;
 
-/* ================== ELEMENTOS ================== */
+/* =================== ELEMENTOS ================== */
 const cliente = document.getElementById("cliente");
 const documento = document.getElementById("documento");
 const endereco = document.getElementById("endereco");
